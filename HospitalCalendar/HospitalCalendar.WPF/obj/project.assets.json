@@ -5169,11 +5169,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
+      "projectUniqueName": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
       "projectName": "HospitalCalendar.WPF",
-      "projectPath": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
+      "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
       "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.WPF\\obj\\",
+      "outputPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -5192,11 +5192,11 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj": {
-              "projectPath": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj"
+            "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj": {
+              "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj"
             },
-            "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj": {
-              "projectPath": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj"
+            "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj": {
+              "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj"
             }
           }
         }

@@ -350,11 +350,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj",
+      "projectUniqueName": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj",
       "projectName": "HospitalCalendar.Domain",
-      "projectPath": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj",
+      "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj",
       "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.Domain\\obj\\",
+      "outputPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

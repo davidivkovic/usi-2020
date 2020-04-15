@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HospitalCalendar", "HospitalCalendar\HospitalCalendar.csproj", "{E6CE53A9-C8E1-437C-B454-29C99F33A3AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HospitalCalendar.Domain", "HospitalCalendar.Domain\HospitalCalendar.Domain.csproj", "{3B204ACA-262F-452E-8793-B9F8F9F8D4E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HospitalCalendar.EntityFramework", "HospitalCalendar.EntityFramework\HospitalCalendar.EntityFramework.csproj", "{236855DC-6280-4F2D-811B-83A3007F06E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HospitalCalendar.WPF", "HospitalCalendar.WPF\HospitalCalendar.WPF.csproj", "{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E6CE53A9-C8E1-437C-B454-29C99F33A3AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6CE53A9-C8E1-437C-B454-29C99F33A3AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6CE53A9-C8E1-437C-B454-29C99F33A3AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6CE53A9-C8E1-437C-B454-29C99F33A3AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B204ACA-262F-452E-8793-B9F8F9F8D4E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B204ACA-262F-452E-8793-B9F8F9F8D4E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B204ACA-262F-452E-8793-B9F8F9F8D4E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B204ACA-262F-452E-8793-B9F8F9F8D4E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{236855DC-6280-4F2D-811B-83A3007F06E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{236855DC-6280-4F2D-811B-83A3007F06E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{236855DC-6280-4F2D-811B-83A3007F06E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{236855DC-6280-4F2D-811B-83A3007F06E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

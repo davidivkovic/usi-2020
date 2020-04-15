@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Xxo7ztFHbUMS0N94iYCwLjr5oUrNfmlxSS8oWVm+mPrFhYpmA2F/tcOpMP3UccFXnH0CmC2OZM5rspkf4cggGQ==",
+  "dgSpecHash": "2x7s4h9eugAax+vGDIZMI0vmTPpY91dAVYxRJYzhjevh2xuf3lal7ktxuq5T0TZGsfkelutPxAkNo/IdeAlzwA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\david\\Desktop\\bckp\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
+  "projectFilePath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\david\\.nuget\\packages\\materialdesigncolors\\1.2.3\\materialdesigncolors.1.2.3.nupkg.sha512",
     "C:\\Users\\david\\.nuget\\packages\\materialdesignthemes\\3.1.0\\materialdesignthemes.3.1.0.nupkg.sha512",
