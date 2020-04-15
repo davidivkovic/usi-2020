@@ -1,0 +1,9 @@
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\bin\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.deps.json
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\bin\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.dll
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\bin\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.pdb
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\obj\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.csprojAssemblyReference.cache
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\obj\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.AssemblyInfoInputs.cache
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\obj\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.AssemblyInfo.cs
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\obj\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.dll
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\obj\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.pdb
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.DomainCore\obj\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.csproj.CoreCompileInputs.cache
