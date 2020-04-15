@@ -24,25 +24,29 @@ namespace ConsoleApp1
             // We couple every interface with some of its' implementations
 
             // Every service will inject its required dependencies
-            // We can then simply retrieve the service by its interface 
+            // We can then simply retrieve the service by its interface
             // Without having to worry about its' required parameters
 
             SimpleIoc.Default.Register<HospitalCalendarDbContextFactory>();
 
-            SimpleIoc.Default.Register<IUserService, UserDataService>();
-            SimpleIoc.Default.Register<IPasswordHasher<User>, PasswordHasher<User>>();
-            
+
             // Password hasher dependencies
             SimpleIoc.Default.Register<IOptions<PasswordHasherOptions>, OptionsWrapper<PasswordHasherOptions>>();
             SimpleIoc.Default.Register<PasswordHasherOptions>();
 
-            // The Authentication service takes parameters (IUserService userService, IPasswordHasher<User> passwordHasher)
+
+            SimpleIoc.Default.Register<IUserService, UserDataService>();
+            SimpleIoc.Default.Register<IPasswordHasher<User>, PasswordHasher<User>>();
+
+            // The Authentication service takes parameters AuthenticationService(IUserService userService, IPasswordHasher<User> passwordHasher)
             // We register those interfaces and their implementations as services above
 
             SimpleIoc.Default.Register<IAuthenticationService, AuthenticationService>();
 
-            SimpleIoc.Default.Register<IDataService<DomainObject>, GenericDataService<DomainObject>>();
 
+
+
+            SimpleIoc.Default.Register<IDataService<DomainObject>, GenericDataService<DomainObject>>();
 
             IDataService<Doctor> doctorService = SimpleIoc.Default.GetInstance<IDataService<Doctor>>();
 
