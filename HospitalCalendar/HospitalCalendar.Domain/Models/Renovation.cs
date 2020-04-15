@@ -19,10 +19,10 @@ public class Renovation : CalendarEntry
 
 	public RoomType NewRoomType { get; set; }
 
-    public Guid RemovedEquipmentItemsId { get; set; }
+    [NotMapped]
     public virtual ICollection<EquipmentItem> RemovedEquipmentItems { get; set; }
 
-    public Guid AddedEquipmentItemsId { get; set; }
+    [NotMapped]
     public virtual ICollection<EquipmentItem> AddedEquipmentItems { get; set; }
 
 
