@@ -9,6 +9,6 @@ namespace HospitalCalendar.Domain.Services
     interface IRoomService : IDataService<Room>
     {
         Task<Room> GetAllByItem(EquipmentItem equipmentItem);
-        Task<Room> GetAllByItems(IEnumerable<EquipmentItem> equipmentItems);
+        Task<Room> GetAllByItems(ICollection<EquipmentItem> equipmentItems);
     }
 }
