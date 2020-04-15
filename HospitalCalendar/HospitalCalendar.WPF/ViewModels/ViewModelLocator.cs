@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.Domain.Services;
+using HospitalCalendar.Domain.Services.AuthenticationServices;
 using HospitalCalendar.EntityFramework.Services;
+using HospitalCalendar.EntityFramework.Services.AuthenticationServices;
 using HospitalCalendar.WPF.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace HospitalCalendar.WPF.ViewModels
@@ -17,6 +20,8 @@ namespace HospitalCalendar.WPF.ViewModels
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<LoginViewModel>();
+
+            SimpleIoc.Default.Register<IAuthenticationService, AuthenticationService>();
 
         }
 

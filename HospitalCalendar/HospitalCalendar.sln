@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HospitalCalendar.EntityFram
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HospitalCalendar.WPF", "HospitalCalendar.WPF\HospitalCalendar.WPF.csproj", "{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesTestConsoleApp", "ServicesTestConsoleApp\ServicesTestConsoleApp.csproj", "{40839EE3-9B79-4685-A3AE-8C772FE16240}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9D67E4B-5DB5-460E-9BAF-1DD33AB84954}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40839EE3-9B79-4685-A3AE-8C772FE16240}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40839EE3-9B79-4685-A3AE-8C772FE16240}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40839EE3-9B79-4685-A3AE-8C772FE16240}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40839EE3-9B79-4685-A3AE-8C772FE16240}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

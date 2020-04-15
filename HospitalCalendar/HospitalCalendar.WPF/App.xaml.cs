@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.WPF.ViewModels;
 
 namespace HospitalCalendar.WPF
@@ -14,6 +15,6 @@ namespace HospitalCalendar.WPF
     /// </summary>
     public partial class App : Application
     {
-
+        
     }
 }
