@@ -1,0 +1,15 @@
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\bin\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.deps.json
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\bin\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.runtimeconfig.json
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\bin\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.runtimeconfig.dev.json
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\bin\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.dll
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\bin\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.pdb
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\bin\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.dll
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\bin\Debug\netcoreapp3.1\HospitalCalendar.DomainCore.pdb
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\obj\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.csprojAssemblyReference.cache
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\obj\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.csproj.CoreCompileInputs.cache
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\obj\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.AssemblyInfoInputs.cache
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\obj\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.AssemblyInfo.cs
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\obj\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.csproj.CopyComplete
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\obj\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.dll
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\obj\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.pdb
+C:\Users\david\Desktop\bckp\HospitalCalendar\HospitalCalendar.EntityFrameworkCore\obj\Debug\netcoreapp3.1\HospitalCalendar.EntityFrameworkCore.genruntimeconfig.cache
