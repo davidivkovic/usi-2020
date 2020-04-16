@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace HospitalCalendar.Domain.Services
 {
-    interface IEquipmentService : IDataService<EquipmentItem>
+    public interface IEquipmentService : IDataService<EquipmentItem>
     {
-        Task<EquipmentItem> GetAllByName(string name);
+        Task<List<EquipmentItem>> GetAllByName(string name);
 
     }
 }

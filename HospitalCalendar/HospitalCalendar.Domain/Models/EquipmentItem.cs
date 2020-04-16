@@ -12,6 +12,7 @@ public class EquipmentItem : DomainObject
 	}
 
 	public Room Room { get; set; }
-    private EquipmentType EquipmentType { get; set; }
+    public EquipmentType EquipmentType { get; set; }
+
 
 }

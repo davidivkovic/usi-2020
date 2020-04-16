@@ -6,9 +6,9 @@ using HospitalCalendar.Domain.Services;
 
 namespace HospitalCalendar.Domain.Services
 {
-    interface IRoomService : IDataService<Room>
+    public interface IRoomService : IDataService<Room>
     {
-        Task<Room> GetAllByItem(EquipmentItem equipmentItem);
-        Task<Room> GetAllByItems(ICollection<EquipmentItem> equipmentItems);
+        Task<ICollection<Room>> GetAllByEquipmentType(EquipmentType equipmentType);
+        Task<ICollection<Room>> GetAllByEquipmentTypes(ICollection<EquipmentType> equipmentTypes);
     }
 }

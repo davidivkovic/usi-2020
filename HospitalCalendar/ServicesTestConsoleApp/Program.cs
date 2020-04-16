@@ -18,8 +18,10 @@ namespace ConsoleApp1
 {
     class Program
     {
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) 
+        { 
+        
+      
             // This is IOC - inversion of control
             // We couple every interface with some of its' implementations
 
@@ -107,7 +109,10 @@ namespace ConsoleApp1
 
             // We can update database objects like this
             var x = doctorService.Update(foundDoctor).Result;
+            
 
+           
+            
             
         }
     }

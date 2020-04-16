@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj": {}
+    "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj": {}
   },
   "projects": {
-    "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj": {
+    "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj",
+        "projectUniqueName": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj",
         "projectName": "HospitalCalendar.Domain",
-        "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj",
-        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\obj\\",
+        "projectPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj",
+        "packagesPath": "C:\\Users\\Kupus\\.nuget\\packages\\",
+        "outputPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Kupus\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -65,20 +65,20 @@
         }
       }
     },
-    "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj": {
+    "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj",
+        "projectUniqueName": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj",
         "projectName": "HospitalCalendar.EntityFramework",
-        "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj",
-        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\obj\\",
+        "projectPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj",
+        "packagesPath": "C:\\Users\\Kupus\\.nuget\\packages\\",
+        "outputPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Kupus\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -91,8 +91,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj": {
-                "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj"
+              "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj": {
+                "projectPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj"
               }
             }
           }
@@ -140,20 +140,20 @@
         }
       }
     },
-    "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj": {
+    "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
+        "projectUniqueName": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
         "projectName": "HospitalCalendar.WPF",
-        "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
-        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\obj\\",
+        "projectPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\HospitalCalendar.WPF.csproj",
+        "packagesPath": "C:\\Users\\Kupus\\.nuget\\packages\\",
+        "outputPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.WPF\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Kupus\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -166,11 +166,11 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj": {
-                "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj"
+              "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj": {
+                "projectPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.Domain\\HospitalCalendar.Domain.csproj"
               },
-              "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj": {
-                "projectPath": "C:\\Projects\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj"
+              "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj": {
+                "projectPath": "D:\\FAX\\Uvod u Softversko Inzinjerstvo\\Projekat\\usi-2020\\HospitalCalendar\\HospitalCalendar.EntityFramework\\HospitalCalendar.EntityFramework.csproj"
               }
             }
           }

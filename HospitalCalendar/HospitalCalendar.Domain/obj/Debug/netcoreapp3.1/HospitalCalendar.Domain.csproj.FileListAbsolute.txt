@@ -15,3 +15,12 @@ C:\Projects\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcorea
 C:\Projects\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.AssemblyInfo.cs
 C:\Projects\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.dll
 C:\Projects\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.pdb
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\bin\Debug\netcoreapp3.1\HospitalCalendar.Domain.deps.json
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\bin\Debug\netcoreapp3.1\HospitalCalendar.Domain.dll
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\bin\Debug\netcoreapp3.1\HospitalCalendar.Domain.pdb
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.csprojAssemblyReference.cache
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.csproj.CoreCompileInputs.cache
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.AssemblyInfoInputs.cache
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.AssemblyInfo.cs
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.dll
+D:\FAX\Uvod u Softversko Inzinjerstvo\Projekat\usi-2020\HospitalCalendar\HospitalCalendar.Domain\obj\Debug\netcoreapp3.1\HospitalCalendar.Domain.pdb

@@ -23,4 +23,6 @@ public class Room : DomainObject
 
 	public virtual ICollection<Renovation> Renovations { get; set; }
 
+
+
 }
