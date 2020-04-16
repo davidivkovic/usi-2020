@@ -10,5 +10,6 @@ namespace HospitalCalendar.Domain.Services
     {
         Task<ICollection<Room>> GetAllByEquipmentType(EquipmentType equipmentType);
         Task<ICollection<Room>> GetAllByEquipmentTypes(ICollection<EquipmentType> equipmentTypes);
+        //Task<ICollection<Room>> GetAllByTimeFrame(DateTime start, DateTime end);
     }
 }
