@@ -7,8 +7,11 @@ using HospitalCalendar.EntityFramework;
 using System.Linq;
 using HospitalCalendar.Domain.Services.AuthenticationServices;
 using GalaSoft.MvvmLight.Ioc;
+using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.EntityFramework.Services.AuthenticationServices;
+using HospitalCalendar.EntityFramework.Services.EquipmentServices;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -44,13 +47,8 @@ namespace ConsoleApp1
             // We register those interfaces and their implementations as services above
 
             SimpleIoc.Default.Register<IAuthenticationService, AuthenticationService>();
+            SimpleIoc.Default.Register<IEquipmentTypeService, EquipmentTypeService>();
 
-
-
-
-            SimpleIoc.Default.Register<IDataService<DomainObject>, GenericDataService<DomainObject>>();
-
-            IDataService<Doctor> doctorService = SimpleIoc.Default.GetInstance<IDataService<Doctor>>();
 
 
             HospitalCalendarDbContextFactory dbContext = SimpleIoc.Default.GetInstance<HospitalCalendarDbContextFactory>();
@@ -59,13 +57,46 @@ namespace ConsoleApp1
 
             IAuthenticationService authenticationService = SimpleIoc.Default.GetInstance<IAuthenticationService>();
 
+            IEquipmentTypeService equipmentTypeService = SimpleIoc.Default.GetInstance<IEquipmentTypeService>();
+
+            var foundType = equipmentTypeService.GetByName("TV").Result;
+
+            foundType.Name = "Bed";
+
+            try
+            {
+                _ = equipmentTypeService.Update(foundType).Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The item type name " + foundType.Name + " already exists");
+                Console.WriteLine(e);
+            }
+            
+
+
+            IUserService userService = SimpleIoc.Default.GetInstance<IUserService>();
+
+            var foundUser = userService.GetByUsername("username1").Result;
+
+            foundUser.Username = "username";
+
+            try
+            {
+                _ = userService.Update(foundUser).Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            
 
             // administrator registers a doctor
             // returns an element of the RegistrationResultEnum
-            var register = authenticationService.Register<Doctor>("Name", "LastName", "username", "password",
-                "password").Result;
+            var register = userService.Register<Doctor>("Name", "LastName", "username", "password", "password").Result;
 
-            Console.WriteLine(register);
+            //Console.WriteLine(register);
             
 
             // returns the logged in user
@@ -74,7 +105,7 @@ namespace ConsoleApp1
             Console.WriteLine(login);
 
             // Example of finding doctors
-            ICollection<Doctor> doctors = new List<Doctor>(doctorService.GetAll().Result);
+            //ICollection<Doctor> doctors = new List<Doctor>(doctorService.GetAll().Result);
 
 
             // Another example of finding doctors returns a doctor
@@ -108,7 +139,7 @@ namespace ConsoleApp1
 
 
             // We can update database objects like this
-            var x = doctorService.Update(foundDoctor).Result;
+            //var x = doctorService.Update(foundDoctor).Result;
             
 
            
