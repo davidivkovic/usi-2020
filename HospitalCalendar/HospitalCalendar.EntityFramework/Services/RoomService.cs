@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HospitalCalendar.Domain.Services;
+using HospitalCalendar.Domain.Services.CalendarEntryServices;
 using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.EntityFramework;
 using HospitalCalendar.EntityFramework.Services;
@@ -13,11 +14,34 @@ namespace HospitalCalendar.EntityFramework.Services
 {
     public class RoomService : GenericDataService<Room> , IRoomService
     {
-        private IEquipmentItemService _equipmentItemService;
+        private readonly IEquipmentItemService _equipmentItemService;
 
         public RoomService(HospitalCalendarDbContextFactory contextFactory, IEquipmentItemService equipmentItemService) : base(contextFactory)
         {
             _equipmentItemService = equipmentItemService;
+        }
+
+
+        public async Task<ICollection<Room>> GetAllByFloor(int floor)
+        {
+            using (HospitalCalendarDbContext context = base._contextFactory.CreateDbContext())
+            {
+                return await context.Rooms
+                    .Where(r => r.Floor == floor)
+                    .ToListAsync();
+            }
+        }
+
+
+        public async Task<Room> GetByFloorAndNumber(int floor, string number)
+        {
+            using (HospitalCalendarDbContext context = base._contextFactory.CreateDbContext())
+            {
+                return await context.Rooms
+                    .Where(r => r.Number == number)
+                    .Where(r => r.Floor == floor)
+                    .FirstOrDefaultAsync();
+            }
         }
 
 
@@ -45,12 +69,6 @@ namespace HospitalCalendar.EntityFramework.Services
             }
         }
 
-        /*
-        public async Task<ICollection<Room>> GetAllByTimeFrame(DateTime start, DateTime end)
-        {
-
-        }*/
-
 
         public async Task<Room> Create(int floor, string number, RoomType type)
         {
@@ -60,7 +78,6 @@ namespace HospitalCalendar.EntityFramework.Services
                 Floor = floor,
                 Number = number,
                 IsActive = true,
-                Renovations = new List<Renovation>(),
                 Type = type
             };
 
@@ -71,6 +88,7 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
             {
+                // Cascade delete?
                 var result = await base.Delete(id);
 
                 _ = await _equipmentItemService.RefreshItems();
@@ -79,5 +97,27 @@ namespace HospitalCalendar.EntityFramework.Services
             }
         }
 
+        public async Task<ICollection<Room>> GetAllOccupied(DateTime start, DateTime end)
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.CalendarEntries
+                                    .Where(ce => ce.StartDateTime >= start && ce.EndDateTime <= end)
+                                    .Select(x => x.Room)
+                                    .ToListAsync();
+            }
+
+        }
+
+        public async Task<ICollection<Room>> GetAllFree(DateTime start, DateTime end)
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.CalendarEntries
+                                    .Where(ce => ce.StartDateTime < start && ce.EndDateTime > end)
+                                    .Select(x => x.Room)
+                                    .ToListAsync();
+            }
+        }
     }
 }
