@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HospitalCalendar.Domain.Services
+namespace HospitalCalendar.Domain.Services.CalendarEntryServices
 {
-    interface IAppointmentService : IDataService<Appointment>
+    public interface IAppointmentService : IDataService<Appointment>
     {
         Task<Appointment> GetAllByTimeFrame(DateTime start, DateTime end);
     }

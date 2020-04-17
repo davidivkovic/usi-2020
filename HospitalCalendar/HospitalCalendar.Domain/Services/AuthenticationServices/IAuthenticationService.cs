@@ -14,7 +14,6 @@ namespace HospitalCalendar.Domain.Services.AuthenticationServices
 
     public interface IAuthenticationService
     {
-        Task<RegistrationResult> Register<T>(string firstName, string lastName, string username, string password, string confirmPassword) where T : User, new();
         Task<User> Login(string username, string password);
     }
 }
