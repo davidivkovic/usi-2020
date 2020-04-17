@@ -32,42 +32,5 @@ namespace HospitalCalendar.EntityFramework.Services.AuthenticationServices
             return storedUser;
 
         }
-
-
-        public async Task<RegistrationResult> Register<T>(string firstName, string lastName, string username, string password, string confirmPassword) where T : User, new()
-        {
-            RegistrationResult result = RegistrationResult.Success;
-
-            if (password != confirmPassword)
-            {
-                result = RegistrationResult.PasswordsDoNotMatch;
-            }
-
-            User usernameAccount = await _userService.GetByUsername(username);
-
-            if (usernameAccount != null)
-            {
-                result = RegistrationResult.UsernameAlreadyExists;
-            }
-
-            if (result == RegistrationResult.Success)
-            {
-                T user = new T()
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    Username = username,
-                    IsActive = true
-                };
-
-                string hashedPassword = _passwordHasher.HashPassword(user, password);
-
-                user.Password = hashedPassword;
-
-                await _userService.Create(user);
-            }
-
-            return result;
-        }
     }
 }
