@@ -49,6 +49,7 @@ namespace HospitalCalendar.EntityFramework
 
         public DbSet<DoctorPatient> DoctorsPatients { get; set; }
 
+        
         public HospitalCalendarDbContext(DbContextOptions options) : base(options)
         {
         }
@@ -70,8 +71,15 @@ namespace HospitalCalendar.EntityFramework
                 .HasForeignKey(dp => dp.PatientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-           
-                
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<EquipmentType>()
+                .HasIndex(ei => ei.Name)
+                .IsUnique();
+
         }
 
     }
