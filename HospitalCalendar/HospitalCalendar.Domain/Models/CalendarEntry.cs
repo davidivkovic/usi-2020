@@ -15,4 +15,6 @@ public class CalendarEntry : DomainObject
 
 	public DateTime EndDateTime { get; set; }
 
+    public Room Room { get; set; }
+
 }

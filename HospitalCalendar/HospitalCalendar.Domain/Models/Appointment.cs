@@ -17,7 +17,7 @@ public class Appointment : CalendarEntry
 
     public Doctor Doctor { get; set; }
 
-    public Room Room { get; set; }
+    //public Room Room { get; set; }
 
     //public CalendarEntry CalendarEntry { get; set; }
 

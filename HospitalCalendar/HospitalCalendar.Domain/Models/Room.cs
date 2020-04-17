@@ -17,12 +17,6 @@ public class Room : DomainObject
 
 	public RoomType Type { get; set; }
 
-	public bool IsActive { get; set; }
-
-	public virtual ICollection<EquipmentItem> Equipment { get; set; }
-
-	public virtual ICollection<Renovation> Renovations { get; set; }
-
-
+    public virtual ICollection<EquipmentItem> Equipment { get; set; }
 
 }

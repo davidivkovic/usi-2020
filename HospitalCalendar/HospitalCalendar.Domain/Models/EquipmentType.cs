@@ -19,5 +19,5 @@ public class EquipmentType : DomainObject
 
 	public int InUseAmount { get; set; }
 
-
+    public string Description { get; set; }
 }
