@@ -1,9 +1,9 @@
-﻿
-using System.Threading.Tasks;
-using HospitalCalendar.Domain.Exceptions;
+﻿using HospitalCalendar.Domain.Exceptions;
+using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.Domain.Services.AuthenticationServices;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace HospitalCalendar.EntityFramework.Services.AuthenticationServices
 {
@@ -30,7 +30,6 @@ namespace HospitalCalendar.EntityFramework.Services.AuthenticationServices
             }
 
             return storedUser;
-
         }
     }
 }

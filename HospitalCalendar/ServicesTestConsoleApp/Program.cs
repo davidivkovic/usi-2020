@@ -1,30 +1,22 @@
-﻿using HospitalCalendar.EntityFramework.Services;
-using System;
-using System.Collections.Generic;
-using HospitalCalendar.Domain.Services;
+﻿using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.Domain.Models;
-using HospitalCalendar.EntityFramework;
-using System.Linq;
+using HospitalCalendar.Domain.Services;
 using HospitalCalendar.Domain.Services.AuthenticationServices;
-using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.Domain.Services.EquipmentServices;
+using HospitalCalendar.EntityFramework;
+using HospitalCalendar.EntityFramework.Services;
 using HospitalCalendar.EntityFramework.Services.AuthenticationServices;
 using HospitalCalendar.EntityFramework.Services.EquipmentServices;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace ConsoleApp1
 {
     class Program
     {
-        static void Main(string[] args) 
-        { 
-        
-      
+        static void Main(string[] args)
+        {
             // This is IOC - inversion of control
             // We couple every interface with some of its' implementations
 
@@ -34,13 +26,11 @@ namespace ConsoleApp1
 
             SimpleIoc.Default.Register<HospitalCalendarDbContextFactory>();
 
-
             // Password hasher dependencies
             SimpleIoc.Default.Register<IOptions<PasswordHasherOptions>, OptionsWrapper<PasswordHasherOptions>>();
             SimpleIoc.Default.Register<PasswordHasherOptions>();
 
-
-            SimpleIoc.Default.Register<IUserService, UserDataService>();
+            SimpleIoc.Default.Register<IUserService, UserService>();
             SimpleIoc.Default.Register<IPasswordHasher<User>, PasswordHasher<User>>();
 
             // The Authentication service takes parameters AuthenticationService(IUserService userService, IPasswordHasher<User> passwordHasher)
@@ -48,103 +38,37 @@ namespace ConsoleApp1
 
             SimpleIoc.Default.Register<IAuthenticationService, AuthenticationService>();
             SimpleIoc.Default.Register<IEquipmentTypeService, EquipmentTypeService>();
-
-
+            SimpleIoc.Default.Register<IEquipmentItemService, EquipmentItemService>();
+            SimpleIoc.Default.Register<IRoomService, RoomService>();
 
             HospitalCalendarDbContextFactory dbContext = SimpleIoc.Default.GetInstance<HospitalCalendarDbContextFactory>();
             HospitalCalendarDbContext hospitalCalendarDbContext = dbContext.CreateDbContext();
 
 
+            IUserService userService = SimpleIoc.Default.GetInstance<IUserService>();
+
+            var user = userService.Register<Patient>("Name", "Surname", "user", "pw").Result;
+            //Console.WriteLine(user.Username);
+
+            //Console.WriteLine(userService.GetByUsername("user1").Result);
+            //Console.WriteLine(userService.GetByUsername("user").Result.Username);
+
+            var result = userService.Update(user, "test", "test", "user", "         ").Result;
+            Console.WriteLine(userService.GetByUsername("user").Result.FirstName);
+
             IAuthenticationService authenticationService = SimpleIoc.Default.GetInstance<IAuthenticationService>();
+
+            // Console.WriteLine(authenticationService.Login("user", "pwp").Result);
+            Console.WriteLine(authenticationService.Login("user", "pw").Result.Username);
+
 
             IEquipmentTypeService equipmentTypeService = SimpleIoc.Default.GetInstance<IEquipmentTypeService>();
 
-            var foundType = equipmentTypeService.GetByName("TV").Result;
-
-            foundType.Name = "Bed";
-
-            try
-            {
-                _ = equipmentTypeService.Update(foundType).Result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("The item type name " + foundType.Name + " already exists");
-                Console.WriteLine(e);
-            }
-            
 
 
-            IUserService userService = SimpleIoc.Default.GetInstance<IUserService>();
-
-            var foundUser = userService.GetByUsername("username1").Result;
-
-            foundUser.Username = "username";
-
-            try
-            {
-                _ = userService.Update(foundUser).Result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            
-
-            // administrator registers a doctor
-            // returns an element of the RegistrationResultEnum
-            var register = userService.Register<Doctor>("Name", "LastName", "username", "password", "password").Result;
-
-            //Console.WriteLine(register);
-            
-
-            // returns the logged in user
-            var login = authenticationService.Login("username", "password").Result;
-
-            Console.WriteLine(login);
-
-            // Example of finding doctors
-            //ICollection<Doctor> doctors = new List<Doctor>(doctorService.GetAll().Result);
 
 
-            // Another example of finding doctors returns a doctor
-            var foundDoctor =  hospitalCalendarDbContext
-                                                    .Doctors
-                                                    .Where(d => d.FirstName == "Name")
-                                                    .FirstOrDefaultAsync()
-                                                    .Result;
 
-
-            // Manager later sets the doctors full data
-
-            List<Specialization> specializations = new List<Specialization>();
-
-            specializations.Add(new Specialization()
-            {
-                SingleSpecialization = Specializations.Anesthesiology,
-            });
-
-            specializations.Add(new Specialization()
-            {
-                SingleSpecialization = Specializations.GeneralSurgery
-            });
-
-
-            foundDoctor.Specializations = specializations;
-
-            foundDoctor.WorkingHoursStart = new TimeSpan(9, 30, 00);
-            foundDoctor.WorkingHoursEnd = new TimeSpan(17, 30, 00);
-            foundDoctor.DoctorsPatients = new List<DoctorPatient>();
-
-
-            // We can update database objects like this
-            //var x = doctorService.Update(foundDoctor).Result;
-            
-
-           
-            
-            
         }
     }
 }

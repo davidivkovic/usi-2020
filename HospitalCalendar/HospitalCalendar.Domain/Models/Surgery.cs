@@ -1,15 +1,7 @@
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-public class Surgery : Appointment 
+namespace HospitalCalendar.Domain.Models
 {
-
-	public Surgery() 
+    public class Surgery : Appointment
     {
-	}
-
-    public bool IsUrgent { get; set; }
-
+        public bool IsUrgent { get; set; }
+    }
 }

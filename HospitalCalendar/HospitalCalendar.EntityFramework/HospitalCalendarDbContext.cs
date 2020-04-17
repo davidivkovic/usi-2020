@@ -1,12 +1,10 @@
-﻿
-using HospitalCalendar.Domain.Models;
+﻿using HospitalCalendar.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HospitalCalendar.EntityFramework
 {
     public class HospitalCalendarDbContext : DbContext
     {
-
         public DbSet<Anamnesis> Anamneses { get; set; }
 
         public DbSet<Appointment> Appointments { get; set; }
@@ -49,14 +47,12 @@ namespace HospitalCalendar.EntityFramework
 
         public DbSet<DoctorPatient> DoctorsPatients { get; set; }
 
-        
         public HospitalCalendarDbContext(DbContextOptions options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
             modelBuilder.Entity<DoctorPatient>().HasKey(dp => new { dp.DoctorId, dp.PatientId });
 
             modelBuilder.Entity<DoctorPatient>()
@@ -71,7 +67,6 @@ namespace HospitalCalendar.EntityFramework
                 .HasForeignKey(dp => dp.PatientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
@@ -79,8 +74,6 @@ namespace HospitalCalendar.EntityFramework
             modelBuilder.Entity<EquipmentType>()
                 .HasIndex(ei => ei.Name)
                 .IsUnique();
-
         }
-
     }
 }

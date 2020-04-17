@@ -1,39 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HospitalCalendar.Domain.Services;
+﻿using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services.EquipmentServices;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
 {
     public class EquipmentItemService : GenericDataService<EquipmentItem>, IEquipmentItemService
     {
-        private readonly IEquipmentTypeService _equipmentTypeService;
-
-        public EquipmentItemService(HospitalCalendarDbContextFactory contextFactory, IEquipmentTypeService equipmentTypeService) : base(contextFactory)
-        {
-            _equipmentTypeService = equipmentTypeService;
-        }
-
+        public EquipmentItemService(HospitalCalendarDbContextFactory contextFactory) : base(contextFactory) { }
 
         public async Task<ICollection<EquipmentItem>> GetAllByType(EquipmentType equipmentType)
         {
-            using (HospitalCalendarDbContext context = base._contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
             {
                 return await context.EquipmentItems
                     .Where(e => e.EquipmentType.Name == equipmentType.Name)
                     .ToListAsync();
             }
-
         }
 
-        public async Task<bool> RefreshItems()
+        public async Task<bool> Create(EquipmentType equipmentType, int count)
         {
-            return await _equipmentTypeService.EnsureCapacity();
+            if (count <= 0)
+            {
+                // TODO: Throw exception
+            }
+
+            return await Task.Run(() =>
+            {
+                Enumerable.Range(1, count).ToList().ForEach(async i =>
+                {
+                    var equipmentItem = new EquipmentItem()
+                    {
+                        Room = null,
+                        EquipmentType = equipmentType,
+                        IsActive = true
+                    };
+
+                    _ = await Create(equipmentItem);
+                });
+
+                return true;
+            });
         }
     }
 }

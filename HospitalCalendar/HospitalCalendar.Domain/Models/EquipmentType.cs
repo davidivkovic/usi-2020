@@ -1,23 +1,8 @@
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-using HospitalCalendar.Domain.Models;
-
-public class EquipmentType : DomainObject
+namespace HospitalCalendar.Domain.Models
 {
-
-	public EquipmentType() 
+    public class EquipmentType : DomainObject
     {
-	}
-
-    public string Name { get; set; }
-
-	public int TotalAmount { get; set; }
-
-	public int FreeAmount { get; set; }
-
-	public int InUseAmount { get; set; }
-
-    public string Description { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
 }

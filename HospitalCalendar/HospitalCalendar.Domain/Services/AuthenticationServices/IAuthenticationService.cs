@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HospitalCalendar.Domain.Models;
 using System.Threading.Tasks;
 
 namespace HospitalCalendar.Domain.Services.AuthenticationServices

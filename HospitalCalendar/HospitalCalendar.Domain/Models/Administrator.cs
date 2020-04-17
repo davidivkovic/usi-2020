@@ -1,11 +1,7 @@
+namespace HospitalCalendar.Domain.Models
+{
+    public class Administrator : User
+    {
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-public class Administrator : User {
-
-	public Administrator() {
-	}
-
+    }
 }

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
 
 namespace HospitalCalendar.Domain.Exceptions
 {
     public class InvalidPasswordException : Exception
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string Username { get; }
+        public string Password { get; }
 
         public InvalidPasswordException(string username, string password)
         {

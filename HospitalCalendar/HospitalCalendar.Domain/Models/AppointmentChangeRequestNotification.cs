@@ -1,14 +1,7 @@
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-public class AppointmentChangeRequestNotification : Notification {
-
-	public AppointmentChangeRequestNotification() {
-	}
-
-	public AppointmentChangeRequest AppointmentChangeRequest { get; set; }
-
-
+namespace HospitalCalendar.Domain.Models
+{
+    public class AppointmentChangeRequestNotification : Notification
+    {
+        public AppointmentChangeRequest AppointmentChangeRequest { get; set; }
+    }
 }

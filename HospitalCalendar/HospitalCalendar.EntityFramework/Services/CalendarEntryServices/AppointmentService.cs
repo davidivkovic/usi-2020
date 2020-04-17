@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HospitalCalendar.Domain.Models;
 
 namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 {

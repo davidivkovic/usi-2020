@@ -1,22 +1,12 @@
-
 using System;
-using System.Collections.Generic;
-using System.Text;
-using HospitalCalendar.Domain.Models;
 
-public class Entry : DomainObject
+namespace HospitalCalendar.Domain.Models
 {
-
-	public Entry() 
+    public class Entry : DomainObject
     {
+        public DateTime DateCreated { get; set; }
+        public string Description { get; set; }
+        public Doctor Doctor { get; set; }
+        public Anamnesis Anamnesis { get; set; }
     }
-
-    public DateTime DateCreated { get; set; }
-
-	public string Description { get; set; }
-
-	public Doctor Doctor { get; set; }
-
-    public Anamnesis Anamnesis { get; set; }
-
 }
