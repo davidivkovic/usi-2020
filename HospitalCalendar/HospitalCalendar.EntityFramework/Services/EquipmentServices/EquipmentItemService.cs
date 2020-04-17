@@ -12,7 +12,7 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
 {
     public class EquipmentItemService : GenericDataService<EquipmentItem>, IEquipmentItemService
     {
-        private IEquipmentTypeService _equipmentTypeService;
+        private readonly IEquipmentTypeService _equipmentTypeService;
 
         public EquipmentItemService(HospitalCalendarDbContextFactory contextFactory, IEquipmentTypeService equipmentTypeService) : base(contextFactory)
         {
