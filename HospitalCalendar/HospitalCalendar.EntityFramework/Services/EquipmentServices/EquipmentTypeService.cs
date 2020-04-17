@@ -15,6 +15,7 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
         {
         }
 
+
         public async Task<EquipmentType> Create(string name, string description, int amount)
         {
             EquipmentType created = new EquipmentType()
@@ -29,9 +30,62 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             return await Create(created);
         }
 
+
+        public async Task<EquipmentType> Update(EquipmentType entity, string name, string description, int amount)
+        {
+            if (amount < entity.InUseAmount)
+            {
+                // TODO: Throw exception when reducing item count below allowed
+                // cant reduce number of items beyond than what is in use
+            }
+
+            entity.Name = name;
+            entity.Description = description;
+            entity.TotalAmount = amount;
+            entity.FreeAmount = entity.TotalAmount - entity.InUseAmount;
+
+            return await Update(entity);
+        }
+
+        public new async Task<bool> Delete(Guid id)
+        {
+            using (HospitalCalendarDbContext context = base._contextFactory.CreateDbContext())
+            {
+                await context.EquipmentTypes.ForEachAsync(async et =>
+                    {
+                        var discardedItems = context
+                            .EquipmentItems
+                            .Where(ei => ei.EquipmentType.Name == et.Name);
+
+                        await discardedItems.ForEachAsync(async di =>
+                        {
+                            await Delete(di.ID);
+                        });
+                    });
+
+                return true;
+            }
+        }
+
         public async Task<bool> EnsureCapacity()
         {
-            
+            using (HospitalCalendarDbContext context = base._contextFactory.CreateDbContext())
+            {
+                await context.EquipmentTypes.ForEachAsync(async et =>
+                {
+                    var inUse = context
+                        .EquipmentItems
+                        .Where(ei => ei.EquipmentType.Name == et.Name)
+                        .Count(ei => ei.Room != null);
+
+                    et.InUseAmount = inUse;
+                    et.FreeAmount = et.TotalAmount - et.InUseAmount;
+
+                    _ = await Update(et);
+                });
+
+                return true;
+            }
         }
 
         public async Task<EquipmentType> GetByName(string name)
