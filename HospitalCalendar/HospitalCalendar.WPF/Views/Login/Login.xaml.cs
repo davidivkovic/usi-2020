@@ -11,11 +11,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace HospitalCalendar.WPF.Views
+namespace HospitalCalendar.WPF.Views.Login
 {
-    /// <summary>
-    /// Interaction logic for Login.xaml
-    /// </summary>
     public partial class Login : UserControl
     {
         public Login()
