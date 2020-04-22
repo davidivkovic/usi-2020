@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.AdministratorView.Dialogs.CreateNewRoomDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.AdministratorView.Dialogs"
+             mc:Ignorable="d" 
+             d:DesignHeight="280" d:DesignWidth="440"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="16"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+             Background="White"
+             FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <StackPanel>
+        <TextBlock Margin="0 30 0 0" Text="CREATE NEW ROOM" Foreground="DarkGray" HorizontalAlignment="Center"/>
+        <Grid Margin="30 20 30 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                    VerticalAlignment="Top"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    Margin="10 0 10 0"
+                    materialDesign:HintAssist.Hint="Floor Number"
+                    FontSize="14"/>
+            <TextBox Grid.Column="1" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                    VerticalAlignment="Top"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    Margin="10 0 10 0"
+                    materialDesign:HintAssist.Hint="Room Number"
+                    FontSize="14"/>
+            <TextBox Grid.Column="2" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                    VerticalAlignment="Top"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    Margin="10 0 10 0"
+                    materialDesign:HintAssist.Hint="Room Size"
+                    FontSize="14"/>
+        </Grid>
+        <ComboBox materialDesign:HintAssist.Hint="Purpose"
+                Margin="0 40 0 0"
+                Width ="160">
+            <ComboBoxItem>
+                Examination Room
+            </ComboBoxItem>
+            <ComboBoxItem>
+                Operating Room
+            </ComboBoxItem>
+            <ComboBoxItem>
+                Hospital Room
+            </ComboBoxItem>
+        </ComboBox>
+        <StackPanel Orientation="Horizontal" Margin="0 30" HorizontalAlignment="Center">
+            <Button
+                Style="{StaticResource MaterialDesignFlatButton}"
+                ToolTip="Cancel"
+                Margin="20 0"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                CANCEL
+            </Button>
+            <Button
+                Style="{StaticResource MaterialDesignFlatButton}"
+                ToolTip="Create New Account"
+                Margin="20 0"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                REGISTER
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
