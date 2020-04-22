@@ -2,10 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:local="clr-namespace:HospitalCalendar.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:views="clr-namespace:HospitalCalendar.WPF.Views"
              xmlns:viewModels="clr-namespace:HospitalCalendar.WPF.ViewModels"
+             xmlns:converters="clr-namespace:HospitalCalendar.WPF.Converters"
+             xmlns:administratorViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.AdministratorMenu"
+             xmlns:loginViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.Login"
+             xmlns:administratorMenu="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
+             xmlns:views="clr-namespace:HospitalCalendar.WPF.Views.Login"
              StartupUri="MainWindow.xaml">
 
     <Application.Resources >
@@ -13,13 +16,25 @@
         <ResourceDictionary >
             <viewModels:ViewModelLocator x:Key="Locator" />
 
-            <DataTemplate DataType="{x:Type viewModels:LoginViewModel}">
+            <DataTemplate DataType="{x:Type loginViewModels:LoginViewModel}">
                 <views:Login/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type administratorViewModels:AdministratorViewModel}">
+                <administratorMenu:Administrator/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type administratorViewModels:UserRegisterViewModel}">
+                <administratorMenu:UserRegistration/>
+            </DataTemplate>
+
+            <converters:UserObjectToRoleStringConverter x:Key="UserObjectToRoleStringConverter" />
+            <converters:RoomTypeToStringConverter x:Key="RoomTypeToStringConverter" />
+
             <!-- Application styles definition -->
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
+                
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Indigo" SecondaryColor="Lime" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

@@ -5,6 +5,8 @@ namespace HospitalCalendar.EntityFramework
 {
     public class HospitalCalendarDbContext : DbContext
     {
+        public DbSet<Administrator> Administrators { get; set; }
+
         public DbSet<Anamnesis> Anamneses { get; set; }
 
         public DbSet<Appointment> Appointments { get; set; }
