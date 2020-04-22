@@ -4,7 +4,6 @@ namespace HospitalCalendar.Domain.Models
     {
         Surgery,
         CheckUp,
-        Ward,
-        EquipmentStorage
+        Ward
     }
 }
