@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HospitalCalendar.EntityFramework.Exceptions;
 
 namespace HospitalCalendar.EntityFramework.Services
 {
@@ -68,8 +69,8 @@ namespace HospitalCalendar.EntityFramework.Services
             {
                 return await context.CalendarEntries
                                     .Where(ce => ce.StartDateTime >= start && ce.EndDateTime <= end)
-                                    .Where(r => r.IsActive)
                                     .Select(x => x.Room)
+                                    .Where(r => r.IsActive)
                                     .ToListAsync();
             }
 
@@ -89,6 +90,13 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<Room> Create(int floor, string number, RoomType type)
         {
+            var existingRoom = GetByFloorAndNumber(floor, number).Result;
+
+            if (existingRoom != null)
+            {
+                throw new RoomAlreadyExistsException(floor, number);
+            }
+
             Room created = new Room()
             {
                 Floor = floor,
@@ -103,19 +111,14 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public new async Task<bool> Delete(Guid id)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
-            {
-                var room = await Get(id);
+            var room = await Get(id);
+            // TODO: Test removal of items from room
+            room.Equipment?.Clear();
+            room.IsActive = false;
 
-                // TODO: Test removal of items from room
-                room.Equipment.Clear();
+            _ = await Update(room);
 
-                room.IsActive = false;
-
-                _ = await Update(room);
-
-                return true;
-            }
+            return true;
         }
     }
 }

@@ -4,6 +4,7 @@ using HospitalCalendar.EntityFramework.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,9 +23,10 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
             {
-                return await context.Users
+                var x = await context.Users
                                     .Where(u => u.IsActive)
                                     .FirstOrDefaultAsync(u => u.Username == username);
+                return x;
             }
         }
 
@@ -54,6 +56,7 @@ namespace HospitalCalendar.EntityFramework.Services
             return newUser;
         }
 
+        
         public async Task<User> Update(User user, string newFirstName, string newLastName, string newUsername, string newPassword)
         {
             var existingUser = await GetByUsername(newUsername);
@@ -79,18 +82,12 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public new async Task<bool> Delete(Guid id)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
-            {
-                var existingUser = await context.Users
-                                 .Where(u => u.ID == id)
-                                 .FirstOrDefaultAsync(u => u.ID == id);
+            var existingUser = await Get(id);
+            existingUser.IsActive = false;
 
-                existingUser.IsActive = false;
+            await Update(existingUser);
 
-                _ = await Update(existingUser);
-
-                return true;
-            }
+            return true;
         }
     }
 }
