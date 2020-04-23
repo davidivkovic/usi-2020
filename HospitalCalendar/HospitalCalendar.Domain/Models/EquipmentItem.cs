@@ -1,17 +1,8 @@
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-using HospitalCalendar.Domain.Models;
-
-public class EquipmentItem : DomainObject
+namespace HospitalCalendar.Domain.Models
 {
-
-	public EquipmentItem() 
+    public class EquipmentItem : DomainObject
     {
-	}
-
-	public Room Room { get; set; }
-    private EquipmentType EquipmentType { get; set; }
-
+        public Room Room { get; set; }
+        public EquipmentType EquipmentType { get; set; }
+    }
 }

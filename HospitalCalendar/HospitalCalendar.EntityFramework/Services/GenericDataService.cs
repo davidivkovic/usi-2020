@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
-using HospitalCalendar.Domain.Models;
-using HospitalCalendar.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HospitalCalendar.EntityFramework.Services
 {
@@ -22,7 +20,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<T> Create(T entity)
         {
-            using(HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
             {
                 EntityEntry<T> createdResult = await context.Set<T>().AddAsync(entity);
                 await context.SaveChangesAsync();
@@ -47,7 +45,7 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
             {
-                T entity = await context.Set<T>().FirstOrDefaultAsync((e) => e.ID == id);
+                T entity = await context.Set<T>().FirstOrDefaultAsync((e) => e.ID == id && e.IsActive);
 
                 return entity;
             }
@@ -57,7 +55,7 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
             {
-                IEnumerable<T> entities = await context.Set<T>().ToListAsync();
+                IEnumerable<T> entities = await context.Set<T>().Where(e => e.IsActive).ToListAsync();
 
                 return entities;
             }

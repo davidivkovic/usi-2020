@@ -1,0 +1,145 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.AdministratorMenu.UserRegistration"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
+             mc:Ignorable="d"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             d:DesignHeight="570" d:DesignWidth="268"
+             DataContext="{Binding Path=RegistrationViewModel, Source={StaticResource Locator}}">
+    
+    <Grid>
+        <StackPanel>
+            <TextBlock Margin="32 20 0 0" Text="Register a new user" FontSize="18"/>
+
+            <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" 
+                          Margin="32, 30, 32, 0" materialDesign:HintAssist.Hint="Role"
+                          ItemsSource="{Binding Path=Roles}"
+                          SelectedItem="{Binding SelectedRole, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource UserObjectToRoleStringConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBox
+                    Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    Margin="32, 35, 32, 0"
+                    VerticalAlignment="Top"
+                    Height="37"
+                    AcceptsReturn="True"
+                    Text="{Binding FirstName}"
+                    materialDesign:HintAssist.Hint="First Name">
+            </TextBox>
+
+            <TextBox
+                    Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    Margin="32, 25, 32, 0"
+                    VerticalAlignment="Top"
+                    Height="37"
+                    AcceptsReturn="True"
+                    Text="{Binding LastName}"
+                    materialDesign:HintAssist.Hint="Last Name"/>
+
+            <TextBox
+                    Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    Margin="32, 50, 32, 0"
+                    VerticalAlignment="Top"
+                    Height="37"
+                    AcceptsReturn="True"
+                    Text="{Binding Username}"
+                    materialDesign:HintAssist.Hint="Username"/>
+
+            <TextBox
+                    Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    Margin="32, 25, 32, 0"
+                    VerticalAlignment="Top"
+                    Height="37"
+                    AcceptsReturn="True"
+                    Text="{Binding Password}"
+                    materialDesign:HintAssist.Hint="Password"/>
+
+            <TextBox
+                    Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    Margin="32, 25, 32, 0"
+                    VerticalAlignment="Top"
+                    Height="37"
+                    AcceptsReturn="True"
+                    Text="{Binding ConfirmPassword}"
+                    materialDesign:HintAssist.Hint="Confirm Password"/>
+
+            <Button
+                    Style ="{StaticResource MaterialDesignFlatMidBgButton}"
+                    FontWeight = "Regular"
+                    Margin="0 44 0 0"
+                    Width="205"
+                    Height="35"
+                    Content="Register User" 
+                    VerticalAlignment="Center"
+                    Command = "{Binding RegisterUser}">
+            </Button>
+
+        </StackPanel>
+
+
+        <TextBlock HorizontalAlignment="Center"
+                   Margin="0 405 0 0" FontSize="12"
+                   Height="20"
+                   Foreground="#FF3C3C3C"
+                   Text ="Fields may not be empty">
+
+            <TextBlock.Style >
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ValidationError}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <TextBlock HorizontalAlignment="Center"
+                   Margin="0 405 0 0" FontSize="12"
+                   Height="20"
+                   Text ="Username already exists"
+                   Foreground="#FF3C3C3C">
+
+            <TextBlock.Style >
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding UsernameAlreadyExists}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <TextBlock HorizontalAlignment="Center"
+                   Margin="0 405 0 0" FontSize="12"
+                   Height="20"
+                   Text ="Passwords do not match"
+                   Foreground="#FF3C3C3C">
+
+            <TextBlock.Style >
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding NonMatchingPasswords}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+    </Grid>
+</UserControl>

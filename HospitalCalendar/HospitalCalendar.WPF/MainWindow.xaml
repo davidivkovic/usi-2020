@@ -3,19 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HospitalCalendar.WPF"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:views="clr-namespace:HospitalCalendar.WPF.Views"
-        xmlns:viewmodels="clr-namespace:HospitalCalendar.WPF.ViewModels"
+        xmlns:administratorMenu="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{materialDesign:MaterialDesignFont}"
         
         WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="751" Width="1290"
+        Title="MainWindow" Height="720" Width="1280"
 
-        DataContext="{Binding Path=MainViewModel, Source={StaticResource Locator}}">
+        DataContext="{Binding Path=MainViewModel, Source={StaticResource Locator}}"
+        ResizeMode="NoResize">
 
 
     <WindowChrome.WindowChrome>
@@ -23,21 +22,19 @@
     </WindowChrome.WindowChrome>
 
 
-
-
-
     <Grid VerticalAlignment="Top" HorizontalAlignment="Right" Height="720" Width="1280">
-        
 
-
-        <StackPanel Panel.ZIndex="100" Height="40" WindowChrome.IsHitTestVisibleInChrome="True" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+        <StackPanel Panel.ZIndex="100" Height="40"
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    Orientation="Horizontal" HorizontalAlignment="Right" 
+                    VerticalAlignment="Top">
 
             <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
                           ToolTip="Minimize"
                           Name="MinimizeButton"
                           Height="40"
                           Width="35"
-                          Foreground="#FF131313">
+                          Foreground="{DynamicResource MaterialDesignBody}">
                 <materialDesign:PackIcon
                     Kind ="WindowMinimize" Height="12" Margin="0 16"
                 />
@@ -47,19 +44,16 @@
             <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
                           ToolTip="Client Settings"
                           Name="SettingsButton"
-                          Foreground="#FF131313"
+                          Foreground="{DynamicResource MaterialDesignBody}"
                           Height="40"
-                          Width="35"
-                          >
-                <materialDesign:PackIcon
-                    Kind ="SettingsOutline" 
-                />
+                          Width="35">
+                <materialDesign:PackIcon Kind ="SettingsOutline"/>
             </ToggleButton>
 
             <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
                           ToolTip="Exit"
                           Name="CloseButton"
-                          Foreground="#FF131313"
+                          Foreground="{DynamicResource MaterialDesignBody}"
                           Height="40"
                           Width="35">
                 <materialDesign:PackIcon Kind = "Close"/>
@@ -67,7 +61,45 @@
 
         </StackPanel>
 
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right"
+                    Margin="0 5 105 0" Height="30"
+                    Panel.ZIndex="100" 
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    Orientation="Horizontal">
+
+            <!--TextBlock Margin="0 8 8 0" Text="Firstname Lastname"/-->
+
+            <TextBlock Margin="0 9 8 0" FontWeight="Medium">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} {1}">
+                        <Binding Path="CurrentUserFirstName"/>
+                        <Binding Path="CurrentUserLastName"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <Button Width="60" MaxHeight="20"  Margin="0 0 0 0" 
+                    Padding="0"
+                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                    Height="28" FontSize="12"
+                    Content="Log out"
+                    Command="{Binding Logout}">
+            </Button>
+
+            <StackPanel.Style>
+                <Style TargetType="{x:Type StackPanel}">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentUser}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+        </StackPanel>
+
         <!--views:Login/-->
+        <!--administratorMenu:Administrator /-->
         <ContentControl Height="720" Width="1280" Panel.ZIndex="0" Content="{Binding CurrentViewModel}" />
 
     </Grid>

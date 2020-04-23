@@ -1,11 +1,6 @@
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-public class Manager : User {
-
-	public Manager() {
-	}
-
+namespace HospitalCalendar.Domain.Models
+{
+    public class Manager : User
+    {
+    }
 }

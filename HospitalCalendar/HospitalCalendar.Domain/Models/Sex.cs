@@ -1,5 +1,8 @@
-
-public enum Sex {
-	Male,
-	Female
+namespace HospitalCalendar.Domain.Models
+{
+    public enum Sex
+    {
+        Male,
+        Female
+    }
 }

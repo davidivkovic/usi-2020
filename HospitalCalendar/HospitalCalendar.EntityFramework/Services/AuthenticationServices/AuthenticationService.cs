@@ -1,9 +1,10 @@
-﻿
-using System.Threading.Tasks;
-using HospitalCalendar.Domain.Exceptions;
+﻿using HospitalCalendar.Domain.Exceptions;
+using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.Domain.Services.AuthenticationServices;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using HospitalCalendar.EntityFramework.Exceptions.HospitalCalendar.Domain.Exceptions;
 
 namespace HospitalCalendar.EntityFramework.Services.AuthenticationServices
 {
@@ -22,52 +23,19 @@ namespace HospitalCalendar.EntityFramework.Services.AuthenticationServices
         {
             var storedUser = await _userService.GetByUsername(username);
 
+            if (storedUser == null)
+            {
+                throw new InvalidUsernameException(username, password);
+            }
+            
             PasswordVerificationResult passwordResult = _passwordHasher.VerifyHashedPassword(storedUser, storedUser.Password, password);
 
             if (passwordResult != PasswordVerificationResult.Success)
             {
                 throw new InvalidPasswordException(username, password);
             }
-
+            
             return storedUser;
-
-        }
-
-
-        public async Task<RegistrationResult> Register<T>(string firstName, string lastName, string username, string password, string confirmPassword) where T : User, new()
-        {
-            RegistrationResult result = RegistrationResult.Success;
-
-            if (password != confirmPassword)
-            {
-                result = RegistrationResult.PasswordsDoNotMatch;
-            }
-
-            User usernameAccount = await _userService.GetByUsername(username);
-
-            if (usernameAccount != null)
-            {
-                result = RegistrationResult.UsernameAlreadyExists;
-            }
-
-            if (result == RegistrationResult.Success)
-            {
-                T user = new T()
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    Username = username,
-                    IsActive = true
-                };
-
-                string hashedPassword = _passwordHasher.HashPassword(user, password);
-
-                user.Password = hashedPassword;
-
-                await _userService.Create(user);
-            }
-
-            return result;
         }
     }
 }

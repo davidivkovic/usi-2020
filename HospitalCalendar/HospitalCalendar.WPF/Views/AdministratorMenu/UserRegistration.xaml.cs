@@ -11,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace HospitalCalendar.WPF.Views
+namespace HospitalCalendar.WPF.Views.AdministratorMenu
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    /// Interaction logic for UserRegistration.xaml
     /// </summary>
-    public partial class Login : UserControl
+    public partial class UserRegistration : UserControl
     {
-        public Login()
+        public UserRegistration()
         {
             InitializeComponent();
         }
