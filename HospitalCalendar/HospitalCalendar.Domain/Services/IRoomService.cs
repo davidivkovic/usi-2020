@@ -7,6 +7,7 @@ namespace HospitalCalendar.Domain.Services
 {
     public interface IRoomService : IDataService<Room>
     {
+        //test change
         Task<ICollection<Room>> GetAllByFloor(int floor);
         Task<Room> GetByFloorAndNumber(int floor, string number);
         Task<ICollection<Room>> GetAllByEquipmentType(EquipmentType equipmentType);
