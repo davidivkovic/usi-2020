@@ -26,11 +26,13 @@
                 materialDesign:HintAssist.Hint="Datum" FirstDayOfWeek="Monday"/>
         <Grid Margin="65 40 65 0">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Choose Available time : " Foreground="DarkGray" FontSize="15" VerticalAlignment="Center"/>
+                <TextBlock Text="Choose Available time : " Margin="0 0 0 1" Foreground="DarkGray" FontSize="15" VerticalAlignment="Center"/>
                 <Grid HorizontalAlignment="Right">
                     <ComboBox materialDesign:HintAssist.Hint="00:00"
+                              materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                              BorderThickness="0"
                               Width="60"
-                              FontSize="15"
+                              FontWeight="Light"
                               Margin="5 0 0 0"
                               ItemsSource="{Binding LongListToTestComboVirtualization}"
                               SelectedValue="{Binding SelectedValueOne}">
