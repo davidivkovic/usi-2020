@@ -47,7 +47,7 @@
 
             
             <!--ROOM PURPOSE CHANGE-->
-            <Border Margin="10" Grid.Column="0" CornerRadius="7" BorderThickness="0.5" BorderBrush="DarkGray">
+            <Border Margin="10 2 10 10" Grid.Column="0" CornerRadius="7" BorderThickness="0.5" BorderBrush="DarkGray">
                 <StackPanel Margin="14 14 10 0">
                     <TextBlock Text="Change room purpose" FontWeight="Normal" Foreground="#404040" FontSize="24"/>
                     <TextBlock TextWrapping="Wrap" Text="Changes will take effect when the scheduled renovation period ends. The room will be unavailable during that time." FontWeight="Normal" Margin="2 8 0 0" Foreground="Gray" FontSize="14">
@@ -82,7 +82,7 @@
             </Border>
 
             <!--OTHER RENOVATIONS-->
-            <Border Margin="10" Grid.Column="1" CornerRadius="7" BorderThickness="0.5" BorderBrush="DarkGray">
+            <Border Margin="10 2 10 10" Grid.Column="1" CornerRadius="7" BorderThickness="0.5" BorderBrush="DarkGray">
                 <StackPanel Margin="14 10 10 0">
                     <TextBlock Text="Other renovations" FontWeight="Normal" Foreground="#404040" FontSize="24"/>
                     <TextBlock Text="The room will be unavailable during selected period." FontWeight="Normal" Margin="2 8 0 0" Foreground="Gray" FontSize="14" TextWrapping="Wrap"/>
@@ -110,7 +110,7 @@
 
 
         <!--EQUIPMENT TRANSFER-->
-        <Border Margin="10" Grid.Row="2" CornerRadius="7" BorderThickness="0.5" BorderBrush="DarkGray">
+        <Border Margin="10 10 10 10" Grid.Row="2" CornerRadius="7" BorderThickness="0.5" BorderBrush="DarkGray">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"/>
@@ -242,7 +242,7 @@
 
         
         <!--ROOM SPLITTING/MERGING-->
-        <Border Margin="10" Grid.Row="3" CornerRadius="7" BorderThickness="0.5" BorderBrush="DarkGray">
+        <Border Margin="10 10 10 15" Grid.Row="3" CornerRadius="7" BorderThickness="0.5" BorderBrush="DarkGray">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"/>
