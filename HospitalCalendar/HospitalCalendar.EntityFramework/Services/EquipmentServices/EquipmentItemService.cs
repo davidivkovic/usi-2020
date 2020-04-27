@@ -42,5 +42,17 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
                 return true;
             });
         }
+
+        public async Task<ICollection<EquipmentItem>> GetAllWithoutRoom() 
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.EquipmentItems
+                                    .Where(ei => ei.IsActive)
+                                    .Where(ei => ei.Room == null)
+                                    .ToListAsync();
+            }
+        
+        }
     }
 }
