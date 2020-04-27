@@ -29,9 +29,11 @@
                 <TextBlock Text="Choose Available time : " Foreground="DarkGray" FontSize="15" VerticalAlignment="Center"/>
                 <Grid HorizontalAlignment="Right">
                     <ComboBox materialDesign:HintAssist.Hint="00:00"
-                              Width="60"
+                              materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                              BorderThickness="0"
+                              Width="62"
                               FontSize="15"
-                              Margin="5 0 0 0"
+                              Margin="5 1 0 0"
                               ItemsSource="{Binding LongListToTestComboVirtualization}"
                               SelectedValue="{Binding SelectedValueOne}">
                         <ComboBox.SelectedItem>

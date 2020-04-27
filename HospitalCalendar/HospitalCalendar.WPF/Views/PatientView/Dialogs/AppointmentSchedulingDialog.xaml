@@ -40,8 +40,10 @@
                 <TextBlock Text="From" Grid.Column="0" Foreground="DarkGray" FontSize="16" VerticalAlignment="Center"/>
                 <Grid HorizontalAlignment="Right">
                     <ComboBox materialDesign:HintAssist.Hint="00:00"
-                              Width="60"
-                              Margin="5 0 0 0"
+                              materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                              BorderThickness="0"
+                              Width="62"
+                              Margin="5 1 0 0"
                               ItemsSource="{Binding LongListToTestComboVirtualization}"
                               SelectedValue="{Binding SelectedValueOne}">
                         <ComboBox.SelectedItem>
@@ -63,8 +65,10 @@
                 <TextBlock Text="To" Grid.Column="0" Foreground="DarkGray" FontSize="16" VerticalAlignment="Center"/>
                 <Grid HorizontalAlignment="Right">
                     <ComboBox materialDesign:HintAssist.Hint="00:00"
-                              Width="60"
-                              Margin="5 0 0 0"
+                              materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                              BorderThickness="0"
+                              Width="62"
+                              Margin="5 1 0 0"
                               ItemsSource="{Binding LongListToTestComboVirtualization}"
                               SelectedValue="{Binding SelectedValueOne}">
                         <ComboBox.SelectedItem>

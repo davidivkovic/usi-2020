@@ -75,8 +75,7 @@
                     <Grid Margin="5 10 5 0" Height="40">
                         <Button Style="{StaticResource MaterialDesignFlatButton}"
                             ToolTip="Apply room changes"
-                            FontSize="18"
-                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                            FontSize="18">
                             SCHEDULE RENOVATION
                         </Button>
                     </Grid>
@@ -101,8 +100,7 @@
                     <Grid Margin="5 20 5 0" Height="40">
                         <Button Style="{StaticResource MaterialDesignFlatButton}"
                             ToolTip="Apply room changes"
-                            FontSize="18"
-                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                            FontSize="18">
                             SCHEDULE RENOVATION
                         </Button>
                     </Grid>
@@ -125,8 +123,7 @@
                     <Grid Margin="5 92 5 0" Height="40">
                         <Button Style="{StaticResource MaterialDesignFlatButton}"
                             ToolTip="Apply room changes"
-                            FontSize="18"
-                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                            FontSize="18">
                             COMPLETE TRANSFER
                         </Button>
                     </Grid>
@@ -281,8 +278,7 @@
                     <Grid Margin="5 0 5 0" Height="40">
                         <Button Style="{StaticResource MaterialDesignFlatButton}"
                             ToolTip="Apply room changes"
-                            FontSize="18"
-                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                            FontSize="18">
                             SCHEDULE RENOVATION
                         </Button>
                     </Grid>
