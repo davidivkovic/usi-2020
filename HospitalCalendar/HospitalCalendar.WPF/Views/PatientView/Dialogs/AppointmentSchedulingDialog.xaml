@@ -42,9 +42,8 @@
                     <ComboBox materialDesign:HintAssist.Hint="00:00"
                               materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                               BorderThickness="0"
-                              Width="60"
-                              FontWeight="Light"
-                              Margin="10 0 0 0"
+                              Width="62"
+                              Margin="5 1 0 0"
                               ItemsSource="{Binding LongListToTestComboVirtualization}"
                               SelectedValue="{Binding SelectedValueOne}">
                         <ComboBox.SelectedItem>
@@ -68,9 +67,8 @@
                     <ComboBox materialDesign:HintAssist.Hint="00:00"
                               materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                               BorderThickness="0"
-                              FontWeight="Light"
-                              Width="60"
-                              Margin="10 0 0 0"
+                              Width="62"
+                              Margin="5 1 0 0"
                               ItemsSource="{Binding LongListToTestComboVirtualization}"
                               SelectedValue="{Binding SelectedValueOne}">
                         <ComboBox.SelectedItem>
