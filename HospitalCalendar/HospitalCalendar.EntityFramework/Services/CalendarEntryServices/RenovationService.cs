@@ -51,5 +51,16 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 
             return entity;
         }
+
+        public async Task<ICollection<Renovation>> GetAllByTimeFrame(DateTime start, DateTime end) 
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext()) 
+            {
+                return await context.Renovations
+                                    .Where(r => r.IsActive)
+                                    .Where(r => r.StartDateTime >= start && r.EndDateTime <= end)
+                                    .ToListAsync();
+            }
+        }
     }
 }

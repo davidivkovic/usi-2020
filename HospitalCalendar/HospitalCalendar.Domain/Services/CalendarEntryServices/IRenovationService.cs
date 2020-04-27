@@ -11,5 +11,6 @@ namespace HospitalCalendar.Domain.Services.CalendarEntryServices
             ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems);
         Task<Renovation> Update(Renovation entity,Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end, bool splitting,
             ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems);
+        Task<ICollection<Renovation>> GetAllByTimeFrame(DateTime start, DateTime end);
     }
 }
