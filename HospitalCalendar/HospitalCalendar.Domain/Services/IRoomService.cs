@@ -7,7 +7,6 @@ namespace HospitalCalendar.Domain.Services
 {
     public interface IRoomService : IDataService<Room>
     {
-        //test change
         Task<ICollection<Room>> GetAllByFloor(int floor);
         Task<Room> GetByFloorAndNumber(int floor, string number);
         Task<ICollection<Room>> GetAllByEquipmentType(EquipmentType equipmentType);
@@ -15,6 +14,7 @@ namespace HospitalCalendar.Domain.Services
         Task<ICollection<Room>> GetAllOccupied(DateTime start, DateTime end);
         Task<ICollection<Room>> GetAllFree(DateTime start, DateTime end);
         Task<Room> Create(int floor, string number, RoomType type);
+        Task<ICollection<Room>> GetAllByRoomType(RoomType roomType);
         new Task<bool> Delete(Guid id);
     }
 }

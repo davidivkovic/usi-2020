@@ -23,10 +23,7 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
 
         public async Task<bool> Create(EquipmentType equipmentType, int count)
         {
-            if (count <= 0)
-            {
-                // TODO: Throw exception
-            }
+ 
 
             return await Task.Run(() =>
             {

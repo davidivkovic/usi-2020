@@ -27,7 +27,7 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             }
         }
 
-        public async Task<EquipmentType> Create(string name, string description, int amount)
+        public async Task<EquipmentType> Create(string name, string description)
         {
             EquipmentType equipmentType = new EquipmentType()
             {
@@ -36,7 +36,6 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             };
 
             _ = await Create(equipmentType);
-            _ = await _equipmentItemService.Create(equipmentType, amount);
 
             return equipmentType;
         }
@@ -49,12 +48,6 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             return await Update(entity);
         }
 
-        public async Task<EquipmentType> Add(EquipmentType equipmentType, int amount)
-        {
-            _ = await _equipmentItemService.Create(equipmentType, amount);
-
-            return equipmentType;
-        }
 
         public new async Task<bool> Delete(Guid id)
         {

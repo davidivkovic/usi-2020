@@ -120,5 +120,17 @@ namespace HospitalCalendar.EntityFramework.Services
 
             return true;
         }
+
+        public async Task<ICollection<Room>> GetAllByRoomType(RoomType roomType) 
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Rooms
+                                    .Where(r => r.IsActive)
+                                    .Where(r => r.Type == roomType)
+                                    .ToListAsync();
+            }
+        
+        }
     }
 }
