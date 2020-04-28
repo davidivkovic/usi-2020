@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.AdministratorView.Dialogs"
              mc:Ignorable="d" 
-             d:DesignHeight="280" d:DesignWidth="440"
+             d:DesignHeight="250" d:DesignWidth="400"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontWeight="Regular"
@@ -17,9 +17,8 @@
 
     <StackPanel>
         <TextBlock Margin="0 30 0 0" Text="CREATE NEW ROOM" Foreground="DarkGray" HorizontalAlignment="Center"/>
-        <Grid Margin="30 20 30 0">
+        <Grid Width="200">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
@@ -28,26 +27,19 @@
                     AcceptsReturn="True"
                     TextWrapping="Wrap"
                     Margin="10 0 10 0"
-                    materialDesign:HintAssist.Hint="Floor Number"
+                    materialDesign:HintAssist.Hint="Floor"
                     FontSize="14"/>
             <TextBox Grid.Column="1" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                     VerticalAlignment="Top"
                     AcceptsReturn="True"
                     TextWrapping="Wrap"
                     Margin="10 0 10 0"
-                    materialDesign:HintAssist.Hint="Room Number"
-                    FontSize="14"/>
-            <TextBox Grid.Column="2" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                    VerticalAlignment="Top"
-                    AcceptsReturn="True"
-                    TextWrapping="Wrap"
-                    Margin="10 0 10 0"
-                    materialDesign:HintAssist.Hint="Room Size"
+                    materialDesign:HintAssist.Hint="Number"
                     FontSize="14"/>
         </Grid>
         <ComboBox materialDesign:HintAssist.Hint="Purpose"
                 Margin="0 40 0 0"
-                Width ="160">
+                Width ="200">
             <ComboBoxItem>
                 Examination Room
             </ComboBoxItem>

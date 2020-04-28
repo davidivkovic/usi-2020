@@ -17,7 +17,7 @@
 
     <materialDesign:DialogHost IsOpen="{Binding IsDialogOpen}" CloseOnClickAway="True" OverlayBackground="Azure" BorderBrush="{DynamicResource MaterialDesignDivider}">
         <materialDesign:DialogHost.DialogContent>
-            <dialogs:CreateNewRoomDialog Height="280" Width="440"/>
+            <dialogs:CreateNewRoomDialog Height="250" Width="400"/>
         </materialDesign:DialogHost.DialogContent>
         <materialDesign:DialogHost IsOpen="{Binding IsDialogOpen}" CloseOnClickAway="True" OverlayBackground="Azure" BorderBrush="{DynamicResource MaterialDesignDivider}">
             <materialDesign:DialogHost.DialogContent>
@@ -76,13 +76,6 @@
                                     CanUserReorder="False"
                                     CanUserResize="False"/>
                             <materialDesign:DataGridTextColumn
-                                    Binding="{Binding RoomSize}"
-                                    IsReadOnly="True"
-                                    Header="Size"
-                                    CanUserResize="False"
-                                    CanUserReorder="False"
-                                    Width="2*" />
-                            <materialDesign:DataGridTextColumn
                                     Binding="{Binding RoomPurpose}"
                                     IsReadOnly="True"
                                     Header="Purpose"
@@ -94,14 +87,14 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1">
                     <Button Command="{Binding ShowDialogCommand}"
-                        Margin="10 80 10 0"
-                        Style="{StaticResource MaterialDesignFlatDarkBgButton}"
+                        Margin="10 65 10 0"
+                        Style="{StaticResource MaterialDesignFlatButton}"
                         Height="42">
                         <TextBlock Text="Create New Room" Padding="10 0 10 0" FontWeight="Medium" FontSize="14" TextDecorations="{x:Null}"/>
                     </Button>
                     <Button Command="{Binding ShowDialogCommand}"
                         Margin="10 20 10 0"
-                        Style="{StaticResource MaterialDesignFlatDarkBgButton}"
+                        Style="{StaticResource MaterialDesignFlatButton}"
                         Height="42">
                         <TextBlock Text="Delete Room" Padding="10 0 10 0" FontWeight="Medium" FontSize="14" TextDecorations="{x:Null}"/>
                     </Button>

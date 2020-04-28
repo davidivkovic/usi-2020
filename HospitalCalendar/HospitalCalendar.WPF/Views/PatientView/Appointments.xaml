@@ -111,15 +111,15 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1">
                     <Button Command="{Binding ShowDialogCommand}"
-                                    Margin="10 80 10 0"
-                                    Style="{StaticResource MaterialDesignFlatDarkBgButton}"
-                                    Height="42">
+                            Margin="10 65 10 0"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Height="42">
                         <TextBlock Text="Schedule An Appointment" Padding="10 0 10 0" FontWeight="Medium" FontSize="14" TextDecorations="{x:Null}"/>
                     </Button>
                     <Button Command="{Binding ShowDialogCommand}"
-                                    Margin="10 20 10 0"
-                                    Style="{StaticResource MaterialDesignFlatDarkBgButton}"
-                                    Height="42">
+                            Margin="10 20 10 0"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Height="42">
                         <TextBlock Text="Move Appointment" Padding="10 0 10 0" FontWeight="Medium" FontSize="14" TextDecorations="{x:Null}"/>
                     </Button>
                 </StackPanel>

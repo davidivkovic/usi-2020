@@ -104,24 +104,24 @@
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
-                    
-                    
+
+
                     <StackPanel Grid.Column="1">
                         <Button Command="{Binding ShowDialogCommand}"
-                                Margin="10 80 10 0"
-                                Style="{StaticResource MaterialDesignFlatDarkBgButton}"
+                                Margin="10 65 10 0"
+                                Style="{StaticResource MaterialDesignFlatButton}"
                                 Height="42">
                             <TextBlock Text="Create New Account" Padding="10 0 10 0" FontWeight="Medium" FontSize="14" TextDecorations="{x:Null}"/>
                         </Button>
                         <Button Command="{Binding ShowDialogCommand}"
                                 Margin="10 20 10 0"
-                                Style="{StaticResource MaterialDesignFlatDarkBgButton}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
                                 Height="42">
                                 <TextBlock Text="Delete Accounts" Padding="10 0 10 0" FontWeight="Medium" FontSize="14" TextDecorations="{x:Null}"/>
                         </Button>
                         <Button Command="{Binding ShowDialogCommand}"
                                 Margin="10 20 10 0"
-                                Style="{StaticResource MaterialDesignFlatDarkBgButton}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
                                 Height="42">
                             <TextBlock Text="Edit Account" Padding="10 0 10 0" FontWeight="Medium" FontSize="14" TextDecorations="{x:Null}"/>
                         </Button>
