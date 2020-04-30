@@ -92,11 +92,6 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
         {
             await using var context = ContextFactory.CreateDbContext();
 
-            if (amount <= 0)
-            {
-                // TODO: Throw exception
-            }
-
             return await Task.Run(async() =>
             {
                 var createdEquipmentItems = Enumerable
@@ -114,7 +109,7 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
                 return true;
             });
         }
-
+        
         public async Task<bool> Remove(EquipmentType equipmentType, int amount)
         {
             await using var context = ContextFactory.CreateDbContext();
@@ -126,6 +121,16 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             await context.SaveChangesAsync();
 
             return true;
+
+        public async Task<ICollection<EquipmentItem>> GetAllWithoutRoom() 
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.EquipmentItems
+                                    .Where(ei => ei.IsActive)
+                                    .Where(ei => ei.Room == null)
+                                    .ToListAsync();
+            }
         }
     }
 }

@@ -120,5 +120,40 @@ namespace HospitalCalendar.EntityFramework.Services
 
             return true;
         }
+
+        public async Task<ICollection<Room>> GetAllByRoomType(RoomType roomType) 
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Rooms
+                                    .Where(r => r.IsActive)
+                                    .Where(r => r.Type == roomType)
+                                    .ToListAsync();
+            }
+        
+        }
+
+        public async Task<Room> AddItems(Room room, ICollection<EquipmentItem> equipment) 
+        {
+            foreach (var e in equipment)
+            {
+                room.Equipment.Add(e);
+            }
+            _ = await Update(room);
+
+            return room;
+        
+        }
+
+        public async Task<Room> Update(Room entity, int floor, string number, RoomType roomType, ICollection<EquipmentItem> equipment) 
+        {
+            entity.Floor = floor;
+            entity.Number = number;
+            entity.Type = roomType;
+            entity.Equipment = equipment;
+
+            _ = await Update(entity);
+            return entity;
+        }
     }
 }

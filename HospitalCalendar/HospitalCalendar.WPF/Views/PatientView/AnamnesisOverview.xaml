@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.PatientView.AnamnesisOverview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.PatientView"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="960"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="16"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+             Background="White"
+             FontFamily="{DynamicResource MaterialDesignFont}">
+    
+    
+    <!--Item templates for a ListView containing expanders, each of which is one anamnesis entry-->
+    <Border Padding="20">
+        <Grid>
+            <ListView Width="Auto">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Expander
+                            HorizontalAlignment="Stretch"
+                            Background="White"
+                            Width="880">
+                            <Expander.Header>
+                                <Grid>
+                                    <StackPanel HorizontalAlignment="Left">
+                                        <TextBlock HorizontalAlignment="Right" Foreground="DarkGray" FontSize="18" FontWeight="DemiBold">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}, {1}">
+                                                    <Binding Path="ProcedureDate" />
+                                                    <Binding Path="ProcedureTime" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <TextBlock Text="" FontSize="12" Foreground="DarkGray"/>
+                                    </StackPanel>
+                                    <!--ProcedureType can be EXAMINATION or SURGERY-->
+                                    <TextBlock Text="{Binding ProcedureType}" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="DarkGray" FontSize="18" FontWeight="DemiBold"/>
+                                </Grid>
+                            </Expander.Header>
+                            <StackPanel
+                                  Orientation="Vertical"
+                                  Margin="24,8,24,16">
+                                <TextBlock
+                                    Opacity=".68"
+                                    FontSize="18"
+                                    Text="{Binding AnamnesisText}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Expander>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Border>
+</UserControl>

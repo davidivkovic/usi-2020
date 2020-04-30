@@ -1,4 +1,4 @@
-﻿using HospitalCalendar.Domain.Models;
+using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services.EquipmentServices;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -27,7 +27,7 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<EquipmentType> Create(string name, string description, int amount)
+        public async Task<EquipmentType> Create(string name, string description)
         {
             var existingEquipmentType = await GetByName(name);
 
@@ -66,22 +66,6 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
 
             return await Update(equipmentType);
         }
-
-        // stoji samo zbog interfejsa, remove pls
-        public async Task<EquipmentType> Add(EquipmentType equipmentType, int amount)
-        {
-            await _equipmentItemService.Create(equipmentType, amount);
-
-            return equipmentType;
-        }
-
-        /*
-        public async Task<EquipmentType> Remove(EquipmentType equipmentType, int amount)
-        {
-            await _equipmentItemService.Create(equipmentType, amount);
-
-            return equipmentType;
-        }*/
 
         public async Task<bool> PhysicalDelete(Guid id)
         {

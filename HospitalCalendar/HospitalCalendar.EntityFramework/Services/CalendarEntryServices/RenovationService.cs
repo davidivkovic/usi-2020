@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,32 +14,53 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
         {
         }
 
-        public Task<Renovation> Create(Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end,
-            bool splitting, ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems)
+        public async Task<Renovation> Create(Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end, bool splitting,
+            ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems)
         {
-            throw new NotImplementedException();
+            Renovation entity = new Renovation()
+            {
+                Room = room,
+                RoomToAdd = roomToAdd,
+                NewRoomType = newRoomType,
+                StartDateTime = start,
+                EndDateTime = end,
+                Splitting = splitting,
+                RemovedEquipmentItems = removedEquipmentItems,
+                AddedEquipmentItems = addedEquipmentItems
+            };
+
+            _ = await Create(entity);
+
+            return entity;
         }
-        /*
-public new async Task<Renovation> Create(List<EquipmentItem> addedEquipmentItems)
-{
-   using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-   {
-       addedEquipmentItems.ForEach(aei =>
-       {
-           var addedEquipmentItemsToUpdate = context.EquipmentItems
-               .FirstOrDefaultAsync(ei => ei.ID == aei.ID).Result;
 
-           addedEquipmentItemsToUpdate.
-       });
+        public async Task<Renovation> Update(Renovation entity,Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end, bool splitting,
+            ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems)
+        {
+            entity.Room = room;
+            entity.RoomToAdd = roomToAdd;
+            entity.NewRoomType = newRoomType;
+            entity.StartDateTime = start;
+            entity.EndDateTime = end;
+            entity.Splitting = splitting;
+            entity.RemovedEquipmentItems = removedEquipmentItems;
+            entity.AddedEquipmentItems = addedEquipmentItems;
+           
 
+            _ = await Update(entity);
 
-       var createdRenovation = new Renovation()
-       {
+            return entity;
+        }
 
-       };
-       return createdRenovation;
-   }
-}
-*/
+        public async Task<ICollection<Renovation>> GetAllByTimeFrame(DateTime start, DateTime end) 
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext()) 
+            {
+                return await context.Renovations
+                                    .Where(r => r.IsActive)
+                                    .Where(r => r.StartDateTime >= start && r.EndDateTime <= end)
+                                    .ToListAsync();
+            }
+        }
     }
 }
