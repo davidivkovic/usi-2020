@@ -8,5 +8,8 @@ namespace HospitalCalendar.Domain.Services.EquipmentServices
     {
         Task<ICollection<EquipmentItem>> GetAllByType(EquipmentType equipmentType);
         Task<bool> Create(EquipmentType equipmentType, int count);
+        Task<ICollection<EquipmentItem>> GetAllInUseByType(EquipmentType equipmentType);
+        Task<bool> Remove(EquipmentType equipmentType, int amount);
+        Task<ICollection<EquipmentItem>> GetAllFreeByType(EquipmentType equipmentType);
     }
 }
