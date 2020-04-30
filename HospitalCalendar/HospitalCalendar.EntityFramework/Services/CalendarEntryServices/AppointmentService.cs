@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Immutable;
 
 namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 {
@@ -64,6 +65,18 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
                                     .ToListAsync();
             }
 
+        }
+
+        public async Task<ICollection<Appointment>> GetAllByRoom(Room room) 
+        {
+            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Appointments
+                                    .Where(a => a.IsActive)
+                                    .Where(a => a.Room.ID == room.ID)
+                                    .ToListAsync();
+            }
+        
         }
 
         public async Task<Appointment> Create(DateTime start, DateTime end, Patient patient, Doctor doctor, Specialization type)

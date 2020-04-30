@@ -15,6 +15,7 @@ namespace HospitalCalendar.Domain.Services.CalendarEntryServices
         Task<ICollection<Appointment>> GetAllPatient(Patient patient);
 
         Task<ICollection<Appointment>> GetAllDoctor(Doctor doctor);
+        Task<ICollection<Appointment>> GetAllByRoom(Room room);
 
         Task<Appointment> Create(DateTime start, DateTime end, Patient patient, Doctor doctor,Specialization type);
 
