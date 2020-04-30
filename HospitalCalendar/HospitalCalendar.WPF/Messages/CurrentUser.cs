@@ -1,6 +1,6 @@
 ﻿using HospitalCalendar.Domain.Models;
 
-namespace HospitalCalendar.WPF.ViewModels
+namespace HospitalCalendar.WPF.Messages
 {
     internal class CurrentUser
     {
