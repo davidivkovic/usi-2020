@@ -9,10 +9,9 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
     public class RoomBindableViewModel : ViewModelBase, INotifyPropertyChanged
     {
+        #region Properties
         private bool _isSelected;
         private Room _room;
-
-        public new event PropertyChangedEventHandler PropertyChanged;
 
         public bool IsSelected
         {
@@ -21,40 +20,41 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             {
                 if (_isSelected == value) return;
                 _isSelected = value;
-                OnPropertyChanged();
+                RaisePropertyChanged(nameof(IsSelected));
+                MessengerInstance.Send(new RoomBindableViewModelChanged());
             }
         }
 
         public string Number
         {
-            get => Room.Number;
+            get => _room.Number;
             set
             {
-                if (Room.Number == value) return;
-                Room.Number = value;
-                OnPropertyChanged();
+                if (_room.Number == value) return;
+                _room.Number = value;
+                RaisePropertyChanged(nameof(Number));
             }
         }
 
         public int Floor
         {
-            get => Room.Floor;
+            get => _room.Floor;
             set
             {
-                if (Room.Floor == value) return;
-                Room.Floor = value;
-                OnPropertyChanged();
+                if (_room.Floor == value) return;
+                _room.Floor = value;
+                RaisePropertyChanged(nameof(Floor));
             }
         }
 
         public RoomType Type
         {
-            get => Room.Type;
+            get => _room.Type;
             set
             {
-                if (Room.Type == value) return;
-                Room.Type = value;
-                OnPropertyChanged();
+                if (_room.Type == value) return;
+                _room.Type = value;
+                RaisePropertyChanged(nameof(Type));
             }
         }
 
@@ -65,22 +65,14 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             {
                 if (_room == value) return;
                 _room = value;
-                OnPropertyChanged();
+                RaisePropertyChanged(nameof(Room));
             }
         }
+        #endregion
 
         public RoomBindableViewModel(Room room)
         {
             Room = room;
-            Floor = room.Floor;
-            Number = room.Number;
-            Type = Room.Type;
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            MessengerInstance.Send(new RoomBindableViewModelChanged());
         }
     }
 }
