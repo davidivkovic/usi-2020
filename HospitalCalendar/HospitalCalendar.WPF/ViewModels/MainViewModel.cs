@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Windows.Input;
-using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.Domain.Models;
+using HospitalCalendar.WPF.Messages;
 using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
 using HospitalCalendar.WPF.ViewModels.Login;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 
@@ -14,8 +15,10 @@ namespace HospitalCalendar.WPF.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        #region Properties
         private ViewModelBase _currentViewModel;
         private User _currentUser;
+        private bool _darkModeIsEnabled;
 
         public ICommand Logout { get; set; }
 
@@ -74,42 +77,82 @@ namespace HospitalCalendar.WPF.ViewModels
             }
         }
 
-
-        public MainViewModel()
+        public bool DarkModeIsEnabled
         {
+            get => _darkModeIsEnabled;
+
+            set
+            {
+                if (_darkModeIsEnabled == value)
+                    return;
+                _darkModeIsEnabled = value;
+                RaisePropertyChanged(nameof(DarkModeIsEnabled));
+            }
+        }
+
+        public ICommand ToggleDarkMode { get; }
+        public AdministratorViewModel AdministratorViewModel { get; set; }
+        public ManagerMenuViewModel ManagerMenuViewModel { get; set; }
+        public LoginViewModel LoginViewModel { get; set; }
+
+        #endregion
+
+        public MainViewModel(AdministratorViewModel administratorViewModel, ManagerMenuViewModel managerMenuViewModel, LoginViewModel loginViewModel)
+        {
+            DarkModeIsEnabled = false;
+
+            AdministratorViewModel = administratorViewModel;
+            ManagerMenuViewModel = managerMenuViewModel;
+            LoginViewModel = loginViewModel;
+
+
+            ToggleDarkMode = new RelayCommand(ExecuteToggleDarkMode);
+
             CurrentUser = null;
-            CurrentViewModel = SimpleIoc.Default.GetInstance<LoginViewModel>();
+            CurrentViewModel = LoginViewModel;
             MessengerInstance.Register<UserLoginSuccess>(this, ExecuteLogin);
             Logout = new RelayCommand(ExecuteLogout);
+        }
 
-            /*
+        private void ExecuteToggleDarkMode()
+        {
             var paletteHelper = new PaletteHelper();
             //Retrieve the app's existing theme
             ITheme theme = paletteHelper.GetTheme();
 
-            //Change the base theme to Dark
-            theme.SetBaseTheme(Theme.Dark);
-            //or theme.SetBaseTheme(Theme.Light);
+            theme.SetBaseTheme(DarkModeIsEnabled ? Theme.Light : Theme.Dark);
+            DarkModeIsEnabled = !DarkModeIsEnabled;
 
             //Change the app's current theme
             paletteHelper.SetTheme(theme);
-            */
         }
 
         private void ExecuteLogout()
         {
+            if (DarkModeIsEnabled)
+            {
+                ExecuteToggleDarkMode();
+            }
+                
             CurrentUser = null;
-            CurrentViewModel = SimpleIoc.Default.GetInstance<LoginViewModel>();
+            CurrentViewModel = LoginViewModel;
         }
 
-        private void ExecuteLogin(UserLoginSuccess obj)
+        private void ExecuteLogin( UserLoginSuccess message)
         {
-            CurrentUser = obj.User;
 
-            if (obj.User is Administrator administrator)
+            CurrentUser = message.User;
+
+            switch (message.User)
             {
-                CurrentViewModel = SimpleIoc.Default.GetInstance<AdministratorViewModel>();
-                MessengerInstance.Send(new CurrentUser(administrator));
+                case Administrator administrator:
+                    CurrentViewModel = AdministratorViewModel;
+                    MessengerInstance.Send(new CurrentUser(administrator));
+                    break;
+                case Manager manager:
+                    CurrentViewModel = ManagerMenuViewModel;
+                    MessengerInstance.Send(new CurrentUser(manager));
+                    break;
             }
         }
     }
