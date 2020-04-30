@@ -11,6 +11,7 @@ using HospitalCalendar.Domain.Exceptions;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services.AuthenticationServices;
 using HospitalCalendar.EntityFramework.Exceptions.HospitalCalendar.Domain.Exceptions;
+using HospitalCalendar.WPF.Messages;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace HospitalCalendar.WPF.ViewModels.Login
@@ -52,30 +53,25 @@ namespace HospitalCalendar.WPF.ViewModels.Login
         public LoginViewModel(IAuthenticationService authenticationService)
         {
             _authenticationService = authenticationService;
-            Login = new RelayCommand<PasswordBox>(ExecuteLogin);
+            Login = new RelayCommand<PasswordBox>(async(passwordBox) => await ExecuteLogin(passwordBox.Password));
         }
 
-        private void ExecuteLogin(PasswordBox passwordBox)
+        private async Task ExecuteLogin(string password)
         {
             InvalidCredentials = false;
-
-            Task.Run(() =>
+            try
             {
-                try
-                {
-                    var user = _authenticationService.Login(Username, passwordBox.Password).GetAwaiter().GetResult();
-                    MessengerInstance.Send(new UserLoginSuccess(user));
-                }
-                catch (InvalidUsernameException)
-                {
-                    InvalidCredentials = true;
-                }
-                catch (InvalidPasswordException)
-                {
-                    InvalidCredentials = true;
-                }
-            });
-
+                var user = await _authenticationService.Login(Username, password);
+                MessengerInstance.Send(new UserLoginSuccess(user));
+            }
+            catch (InvalidUsernameException)
+            {
+                InvalidCredentials = true;
+            }
+            catch (InvalidPasswordException)
+            {
+                InvalidCredentials = true;
+            }
         }
     }
 }

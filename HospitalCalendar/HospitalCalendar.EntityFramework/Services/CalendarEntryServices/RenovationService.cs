@@ -1,14 +1,14 @@
-﻿using HospitalCalendar.Domain.Models;
-using HospitalCalendar.Domain.Services.CalendarEntryServices;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
+using HospitalCalendar.Domain.Models;
+using HospitalCalendar.Domain.Services.CalendarEntryServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 {
-    public class RenovationService : GenericDataService<Renovation>,IRenovationService
+    public class RenovationService : GenericDataService<Renovation>, IRenovationService
     {
         public RenovationService(HospitalCalendarDbContextFactory contextFactory) : base(contextFactory)
         {

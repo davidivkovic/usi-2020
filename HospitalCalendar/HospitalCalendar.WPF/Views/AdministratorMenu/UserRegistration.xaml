@@ -19,7 +19,7 @@
             <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" 
                           Margin="32, 30, 32, 0" materialDesign:HintAssist.Hint="Role"
                           ItemsSource="{Binding Path=Roles}"
-                          SelectedItem="{Binding SelectedRole, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                          SelectedItem="{Binding UserToRegister, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                 <ComboBox.ItemTemplate>
                     <DataTemplate>

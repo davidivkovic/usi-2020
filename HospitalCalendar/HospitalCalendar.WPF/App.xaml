@@ -6,8 +6,12 @@
              xmlns:viewModels="clr-namespace:HospitalCalendar.WPF.ViewModels"
              xmlns:converters="clr-namespace:HospitalCalendar.WPF.Converters"
              xmlns:administratorViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.AdministratorMenu"
+             xmlns:managerViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu"
+             xmlns:managerEquipmentMenuViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu"
              xmlns:loginViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.Login"
              xmlns:administratorMenu="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
+             xmlns:managerMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu"
+             xmlns:managerMenuEquipmentMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu"
              xmlns:views="clr-namespace:HospitalCalendar.WPF.Views.Login"
              StartupUri="MainWindow.xaml">
 
@@ -24,8 +28,12 @@
                 <administratorMenu:Administrator/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type administratorViewModels:UserRegisterViewModel}">
-                <administratorMenu:UserRegistration/>
+            <DataTemplate DataType="{x:Type managerViewModels:ManagerMenuViewModel}" x:Shared="false">
+                <managerMenu:ManagerMenu/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type managerEquipmentMenuViewModels:EquipmentMenuViewModel}" x:Shared="false">
+                <managerMenuEquipmentMenu:EquipmentMenu/>
             </DataTemplate>
 
             <converters:UserObjectToRoleStringConverter x:Key="UserObjectToRoleStringConverter" />

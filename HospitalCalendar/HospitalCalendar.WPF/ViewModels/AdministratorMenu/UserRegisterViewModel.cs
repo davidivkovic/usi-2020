@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
@@ -11,56 +8,66 @@ using GalaSoft.MvvmLight.Command;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.EntityFramework.Exceptions;
-using HospitalCalendar.EntityFramework.Exceptions.HospitalCalendar.Domain.Exceptions;
-using HospitalCalendar.EntityFramework.Services;
+using HospitalCalendar.WPF.Messages;
 
 namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
     public class UserRegisterViewModel : ViewModelBase
     {
-        private string _firstName;
-        private string _lastName;
-        private string _username;
+        private User _userToRegister;
         private string _password;
         private string _confirmPassword;
         private bool _validationError;
         private bool _usernameAlreadyExists;
         private bool _nonMatchingPasswords;
-        private User _selectedRole;
         private readonly IUserService _userService;
 
         public List<User> Roles { get; set; }
+
         public ICommand RegisterUser { get; private set; }
+
+        public User UserToRegister
+        {
+            get => _userToRegister;
+            set
+            {
+                _userToRegister = value;
+                RaisePropertyChanged(nameof(UserToRegister));
+                RaisePropertyChanged(nameof(FirstName));
+                RaisePropertyChanged(nameof(LastName));
+                RaisePropertyChanged(nameof(Username));
+            }
+        }
 
         public string FirstName
         {
-            get => _firstName;
+            get => _userToRegister?.FirstName;
             set
             {
-                if (_firstName == value) return;
-                _firstName = value;
+                if (_userToRegister.FirstName == value) return;
+                _userToRegister.FirstName = value;
                 RaisePropertyChanged(nameof(FirstName));
             }
         }
 
         public string LastName
         {
-            get => _lastName;
+            get => _userToRegister?.LastName;
             set
             {
-                if (_lastName == value) return;
-                _lastName = value;
+                if (_userToRegister.LastName == value) return;
+                _userToRegister.LastName = value;
                 RaisePropertyChanged(nameof(LastName));
             }
         }
 
         public string Username
         {
-            get => _username;
+            get => _userToRegister?.Username;
             set
             {
-                if (_username == value) return;
-                _username = value;
+                if (_userToRegister.Username == value) return;
+                _userToRegister.Username = value;
                 RaisePropertyChanged(nameof(Username));
             }
         }
@@ -84,17 +91,6 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
                 if (_confirmPassword == value) return;
                 _confirmPassword = value;
                 RaisePropertyChanged(nameof(ConfirmPassword));
-            }
-        }
-
-        public User SelectedRole
-        {
-            get => _selectedRole;
-            set
-            {
-                if (_selectedRole == value) return;
-                _selectedRole = value;
-                RaisePropertyChanged(nameof(SelectedRole));
             }
         }
 
@@ -136,6 +132,7 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             _userService = userService;
 
             RegisterUser = new RelayCommand(ExecuteRegistration);
+
             Roles = new List<User>
             {
                 new Doctor(),
@@ -146,18 +143,17 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
         private void ExecuteRegistration()
         {
-            string[] inputs = {FirstName, LastName, Username, Password, ConfirmPassword};
-            var userToRegister = SelectedRole;
+            string[] inputFields = {FirstName, LastName, Username, Password, ConfirmPassword};
+
+            ValidationError = false;
+            UsernameAlreadyExists = false;
+            NonMatchingPasswords = false;
 
             Task.Run(() =>
             {
-                ValidationError = false;
-                UsernameAlreadyExists = false;
-                NonMatchingPasswords = false;
-
                 try
                 {
-                    if (inputs.Any(string.IsNullOrWhiteSpace))
+                    if (inputFields.Any(string.IsNullOrWhiteSpace) || UserToRegister == null)
                     {
                         throw new ArgumentNullException();
                     }
@@ -166,15 +162,15 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
                     {
                         throw new NonMatchingPasswordException(Password);
                     }
-
+                    // TODO: This should be extracted to a separate method
                     var genericRegisterMethod = _userService.GetType().GetMethod("Register");
-                    var userType = userToRegister?.GetType();
+                    var userType = UserToRegister?.GetType();
                     var typedRegisterMethod = genericRegisterMethod?.MakeGenericMethod(userType);
 
                     var registeredUser = (typedRegisterMethod?.Invoke(_userService, new object[] {FirstName, LastName, Username, Password}) as Task<User>)?.GetAwaiter().GetResult();
 
                     FirstName = LastName = Username = Password = ConfirmPassword = "";
-                    SelectedRole = null;
+                    UserToRegister = null;
 
                     MessengerInstance.Send(new UserRegisterSuccess(registeredUser));
                 }

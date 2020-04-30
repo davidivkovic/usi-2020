@@ -1,14 +1,22 @@
-﻿using GalaSoft.MvvmLight.Ioc;
+﻿using System;
+using System.Runtime.InteropServices.ComTypes;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.Domain.Services.AuthenticationServices;
+using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.EntityFramework;
 using HospitalCalendar.EntityFramework.Services;
 using HospitalCalendar.EntityFramework.Services.AuthenticationServices;
+using HospitalCalendar.EntityFramework.Services.EquipmentServices;
 using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
 using HospitalCalendar.WPF.ViewModels.Login;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 
@@ -16,37 +24,59 @@ namespace HospitalCalendar.WPF.ViewModels
 {
     public class ViewModelLocator
     {
+        public IServiceProvider ServiceProvider { get; set; }
+
         public ViewModelLocator()
         {
-            SimpleIoc.Default.Unregister<IMessenger>();
-            SimpleIoc.Default.Register<IMessenger>(() => Messenger.Default);
-
-            // Password hasher dependencies
-            SimpleIoc.Default.Register<IOptions<PasswordHasherOptions>, OptionsWrapper<PasswordHasherOptions>>();
-            SimpleIoc.Default.Register<PasswordHasherOptions>();
-
-            // Password hasher
-            SimpleIoc.Default.Register<IPasswordHasher<User>, PasswordHasher<User>>();
-
-            // Register services here
-            SimpleIoc.Default.Register<IAuthenticationService, AuthenticationService>();
-            SimpleIoc.Default.Register<IUserService, UserService>();
-            SimpleIoc.Default.Register<IRoomService, RoomService>();
-            SimpleIoc.Default.Register<HospitalCalendarDbContextFactory>();
-
-            SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<LoginViewModel>();
-            SimpleIoc.Default.Register<AdministratorViewModel>();
-            SimpleIoc.Default.Register<UserRegisterViewModel>();
-            SimpleIoc.Default.Register<UserUpdateViewModel>();
-            SimpleIoc.Default.Register<RoomCreateViewModel>();
+            ServiceProvider = CreateServiceProvider();
         }
 
-        public MainViewModel MainViewModel => SimpleIoc.Default.GetInstance<MainViewModel>();
-        public LoginViewModel LoginViewModel => SimpleIoc.Default.GetInstance<LoginViewModel>();
-        public AdministratorViewModel AdministratorViewModel => SimpleIoc.Default.GetInstance<AdministratorViewModel>();
-        public UserRegisterViewModel RegistrationViewModel => SimpleIoc.Default.GetInstance<UserRegisterViewModel>();
-        public UserUpdateViewModel UserModificationViewModel => SimpleIoc.Default.GetInstance<UserUpdateViewModel>();
-        public RoomCreateViewModel RoomCreateViewModel => SimpleIoc.Default.GetInstance<RoomCreateViewModel>();
+        private IServiceProvider CreateServiceProvider()
+        {
+            IServiceCollection services = new ServiceCollection();
+
+            //SimpleIoc.Default.Unregister<IMessenger>();
+            //SimpleIoc.Default.Register(() => Messenger.Default);
+
+            // Password hasher dependencies
+            services.AddScoped<IOptions<PasswordHasherOptions>, OptionsWrapper<PasswordHasherOptions>>();
+            services.AddScoped<PasswordHasherOptions>();
+
+            // Password hasher
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+            // Register services here
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IEquipmentTypeService, EquipmentTypeService>();
+            services.AddScoped<IEquipmentItemService, EquipmentItemService>();
+            services.AddScoped<HospitalCalendarDbContextFactory>();
+
+            // Register ViewModels here
+            services.AddScoped<MainViewModel>();
+            services.AddScoped<LoginViewModel>();
+            services.AddTransient<AdministratorViewModel>();
+            services.AddTransient<UserRegisterViewModel>();
+            services.AddTransient<UserUpdateViewModel>();
+            services.AddTransient<RoomCreateViewModel>();
+            services.AddTransient<ManagerMenuViewModel>();
+            services.AddTransient<EquipmentMenuViewModel>();
+            services.AddTransient<EquipmentTypeCreateViewModel>();
+            services.AddTransient<EquipmentTypeUpdateViewModel>();
+
+            return services.BuildServiceProvider();
+        }
+
+        public MainViewModel MainViewModel => ServiceProvider.GetRequiredService<MainViewModel>();
+        public LoginViewModel LoginViewModel => ServiceProvider.GetRequiredService<LoginViewModel>();
+        public AdministratorViewModel AdministratorViewModel => ServiceProvider.GetRequiredService<AdministratorViewModel>();
+        public UserRegisterViewModel RegistrationViewModel => ServiceProvider.GetRequiredService<UserRegisterViewModel>();
+        public UserUpdateViewModel UserModificationViewModel => ServiceProvider.GetRequiredService<UserUpdateViewModel>();
+        public RoomCreateViewModel RoomCreateViewModel => ServiceProvider.GetRequiredService<RoomCreateViewModel>();
+        public ManagerMenuViewModel ManagerMenuViewModel => ServiceProvider.GetRequiredService<ManagerMenuViewModel>();
+        public EquipmentMenuViewModel EquipmentMenuViewModel => ServiceProvider.GetRequiredService<EquipmentMenuViewModel>();
+        public EquipmentTypeCreateViewModel EquipmentTypeCreateViewModel => ServiceProvider.GetRequiredService<EquipmentTypeCreateViewModel>();
+        public EquipmentTypeUpdateViewModel EquipmentTypeUpdateViewModel => ServiceProvider.GetRequiredService<EquipmentTypeUpdateViewModel>();
     }
 }
