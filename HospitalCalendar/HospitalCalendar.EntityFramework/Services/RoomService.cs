@@ -15,7 +15,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllByFloor(int floor)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.Rooms
                     .Where(r => r.Floor == floor)
@@ -26,7 +26,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<Room> GetByFloorAndNumber(int floor, string number)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.Rooms
                     .Where(r => r.Number == number)
@@ -38,7 +38,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllByEquipmentType(EquipmentType equipmentType)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 // TODO: Re-check
 
@@ -52,7 +52,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllByEquipmentTypes(ICollection<EquipmentType> equipmentTypes)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.Rooms
                                     .Where(r => r.IsActive)
@@ -65,7 +65,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllOccupied(DateTime start, DateTime end)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.CalendarEntries
                                     .Where(ce => ce.StartDateTime >= start && ce.EndDateTime <= end)
@@ -78,7 +78,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllFree(DateTime start, DateTime end)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.CalendarEntries
                                     .Where(ce => ce.StartDateTime < start && ce.EndDateTime > end)
