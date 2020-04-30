@@ -11,16 +11,16 @@ namespace HospitalCalendar.EntityFramework.Services
 {
     public class GenericDataService<T> : IDataService<T> where T : DomainObject
     {
-        protected readonly HospitalCalendarDbContextFactory _contextFactory;
+        protected readonly HospitalCalendarDbContextFactory ContextFactory;
 
         public GenericDataService(HospitalCalendarDbContextFactory contextFactory)
         {
-            _contextFactory = contextFactory;
+            ContextFactory = contextFactory;
         }
 
         public async Task<T> Create(T entity)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 EntityEntry<T> createdResult = await context.Set<T>().AddAsync(entity);
                 await context.SaveChangesAsync();
@@ -31,7 +31,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 T entity = await context.Set<T>().FirstOrDefaultAsync((e) => e.ID == id);
                 context.Set<T>().Remove(entity);
@@ -43,9 +43,9 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<T> Get(Guid id)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
-                T entity = await context.Set<T>().FirstOrDefaultAsync((e) => e.ID == id && e.IsActive);
+                T entity = await context.Set<T>().FirstOrDefaultAsync(e => e.ID == id && e.IsActive);
 
                 return entity;
             }
@@ -53,7 +53,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 IEnumerable<T> entities = await context.Set<T>().Where(e => e.IsActive).ToListAsync();
 
@@ -63,7 +63,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<T> Update(T entity)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 context.Set<T>().Update(entity);
                 await context.SaveChangesAsync();
