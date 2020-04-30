@@ -25,9 +25,9 @@ namespace HospitalCalendar.EntityFramework
 
         public DbSet<Entry> Entries { get; set; }
 
-        public DbSet<EquipmentItem> EquipmentItems { get; set; }
-
         public DbSet<EquipmentType> EquipmentTypes { get; set; }
+
+        public DbSet<EquipmentItem> EquipmentItems { get; set; }
 
         public DbSet<Manager> Managers { get; set; }
 
@@ -72,6 +72,19 @@ namespace HospitalCalendar.EntityFramework
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
+
+           // modelBuilder.Entity<EquipmentItem>()
+            
+            /*
+            modelBuilder.Entity<EquipmentItem>()
+                .HasOne(ei => ei.EquipmentType)
+                .WithOne()
+                .HasForeignKey<EquipmentType>(et => et.EquipmentTypeId);*/
+            
+            //.HasOne(dp => dp.EquipmentType)
+            //.WithMany(p => p.Name)
+            //.HasForeignKey(dp => dp.PatientId)
+            //.OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<EquipmentType>()
                 .HasIndex(ei => ei.Name)
