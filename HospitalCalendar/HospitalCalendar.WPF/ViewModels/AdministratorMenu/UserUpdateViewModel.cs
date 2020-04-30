@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -9,52 +6,64 @@ using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.EntityFramework.Exceptions;
 using HospitalCalendar.WPF.Messages;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 
 namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
     public class UserUpdateViewModel : ViewModelBase
     {
-        private string _username;
+        #region Properties
+        private User _userToUpdate;
         private string _password;
         private string _confirmPassword;
         private bool _usernameAlreadyExists;
         private bool _nonMatchingPasswords;
+        
         private readonly IUserService _userService;
 
-        public User UserToUpdate { get; set; }
         public ICommand UpdateUser { get; set; }
+        
+        public User UserToUpdate
+        {
+            get => _userToUpdate;
+            set
+            {
+                _userToUpdate = value;
+                RaisePropertyChanged(nameof(UserToUpdate));
+                RaisePropertyChanged(nameof(FirstName));
+                RaisePropertyChanged(nameof(LastName));
+                RaisePropertyChanged(nameof(Username));
+            }
+        }
 
         public string FirstName
         {
-            get => UserToUpdate?.FirstName;
+            get => _userToUpdate?.FirstName;
             set
             {
-                if (UserToUpdate?.FirstName == value) return;
-                UserToUpdate.FirstName = value;
+                if (_userToUpdate.FirstName == value) return;
+                _userToUpdate.FirstName = value;
                 RaisePropertyChanged(nameof(FirstName));
             }
         }
 
         public string LastName
         {
-            get => UserToUpdate?.LastName;
+            get => _userToUpdate?.LastName;
             set
             {
-                if (UserToUpdate?.LastName == value) return;
-                UserToUpdate.LastName = value;
+                if (_userToUpdate.LastName == value) return;
+                _userToUpdate.LastName = value;
                 RaisePropertyChanged(nameof(LastName));
             }
         }
 
         public string Username
         {
-            get => _username;
+            get => _userToUpdate?.Username;
             set
             {
-                if (_username == value) return;
-                _username = value;
+                if (_userToUpdate.Username == value) return;
+                _userToUpdate.Username = value;
                 RaisePropertyChanged(nameof(Username));
             }
         }
@@ -102,6 +111,7 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
                 RaisePropertyChanged(nameof(NonMatchingPasswords));
             }
         }
+        #endregion
 
         public UserUpdateViewModel(IUserService userService)
         {
@@ -110,19 +120,16 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             MessengerInstance.Register<UserUpdateRequest>(this, message =>
             {
                 UserToUpdate = message.User;
-                Username = UserToUpdate.Username;
-                RaisePropertyChanged(nameof(FirstName));
-                RaisePropertyChanged(nameof(LastName));
-                RaisePropertyChanged(nameof(Username));
             });
         }
 
         private void ExecuteUpdateUser()
         {
+            UsernameAlreadyExists = false;
+            NonMatchingPasswords = false;
+
             Task.Run(() =>
             {
-                UsernameAlreadyExists = false;
-                NonMatchingPasswords = false;
                 try
                 {
                     if (Password != ConfirmPassword)
