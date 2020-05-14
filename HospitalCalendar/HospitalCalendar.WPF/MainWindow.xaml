@@ -6,6 +6,7 @@
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:administratorMenu="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
+        xmlns:managerMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{materialDesign:MaterialDesignFont}"
@@ -43,7 +44,7 @@
 
             <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
                           ToolTip="Client Settings"
-                          Name="SettingsButton"
+                          x:Name="SettingsToggle"
                           Foreground="{DynamicResource MaterialDesignBody}"
                           Height="40"
                           Width="35">
@@ -78,10 +79,10 @@
                 </TextBlock.Text>
             </TextBlock>
 
-            <Button Width="60" MaxHeight="20"  Margin="0 0 0 0" 
+            <Button Width="60" Height="20"  Margin="0 0 0 0" 
                     Padding="0"
                     Style="{StaticResource MaterialDesignFlatMidBgButton}"
-                    Height="28" FontSize="12"
+                    FontSize="11"
                     Content="Log out"
                     Command="{Binding Logout}">
             </Button>
@@ -98,8 +99,69 @@
             </StackPanel.Style>
         </StackPanel>
 
+
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right"
+                    Margin="0 40 10 0"
+                    Panel.ZIndex="100" 
+                    Orientation="Horizontal">
+            <StackPanel>
+                <materialDesign:Card
+                    materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                    Background="{DynamicResource PrimaryHueMidBrush}"
+                    Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                    Width="85"
+                    Height="75"
+                    Padding="8"
+                    UniformCornerRadius="6">
+                
+                    <StackPanel>
+                        <TextBlock
+                            TextWrapping="Wrap">
+                            Enable Dark mode
+                        </TextBlock>
+                        <ToggleButton Margin="0 15 0 0" Height="10" Command="{Binding ToggleDarkMode}" Background="{DynamicResource MaterialDesignDarkForeground}">
+                            <ToggleButton.Style>
+                                <Style TargetType="{x:Type ToggleButton}">
+                                    <Setter Property="IsChecked" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DarkModeIsEnabled}" Value="false">
+                                            <Setter Property="IsChecked" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <StackPanel.Style>
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Setter Property="IsEnabled" Value="True" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentUser}" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+
+                    </Style>
+                </StackPanel.Style>
+            </StackPanel>
+
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=SettingsToggle}" Value="true">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+
+        </StackPanel>
         <!--views:Login/-->
-        <!--administratorMenu:Administrator /-->
+        <!--managerMenu:ManagerMenu /-->
         <ContentControl Height="720" Width="1280" Panel.ZIndex="0" Content="{Binding CurrentViewModel}" />
 
     </Grid>

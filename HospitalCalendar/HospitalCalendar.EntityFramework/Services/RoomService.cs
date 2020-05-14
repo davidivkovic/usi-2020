@@ -15,7 +15,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllByFloor(int floor)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.Rooms
                     .Where(r => r.Floor == floor)
@@ -26,7 +26,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<Room> GetByFloorAndNumber(int floor, string number)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.Rooms
                     .Where(r => r.Number == number)
@@ -38,7 +38,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllByEquipmentType(EquipmentType equipmentType)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 // TODO: Re-check
 
@@ -52,7 +52,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllByEquipmentTypes(ICollection<EquipmentType> equipmentTypes)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.Rooms
                                     .Where(r => r.IsActive)
@@ -65,7 +65,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllOccupied(DateTime start, DateTime end)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.CalendarEntries
                                     .Where(ce => ce.StartDateTime >= start && ce.EndDateTime <= end)
@@ -78,7 +78,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllFree(DateTime start, DateTime end)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.CalendarEntries
                                     .Where(ce => ce.StartDateTime < start && ce.EndDateTime > end)
@@ -119,6 +119,41 @@ namespace HospitalCalendar.EntityFramework.Services
             _ = await Update(room);
 
             return true;
+        }
+
+        public async Task<ICollection<Room>> GetAllByRoomType(RoomType roomType) 
+        {
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
+            {
+                return await context.Rooms
+                                    .Where(r => r.IsActive)
+                                    .Where(r => r.Type == roomType)
+                                    .ToListAsync();
+            }
+        
+        }
+
+        public async Task<Room> AddItems(Room room, ICollection<EquipmentItem> equipment) 
+        {
+            foreach (var e in equipment)
+            {
+                room.Equipment.Add(e);
+            }
+            _ = await Update(room);
+
+            return room;
+        
+        }
+
+        public async Task<Room> Update(Room entity, int floor, string number, RoomType roomType, ICollection<EquipmentItem> equipment) 
+        {
+            entity.Floor = floor;
+            entity.Number = number;
+            entity.Type = roomType;
+            entity.Equipment = equipment;
+
+            _ = await Update(entity);
+            return entity;
         }
     }
 }

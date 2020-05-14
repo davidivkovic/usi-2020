@@ -1,36 +1,36 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.WPF.Messages;
-using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
 
 namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
     public class AdministratorViewModel : ViewModelBase
     {
+        #region Properties
         private bool _canRegisterUser;
         private bool _canModifyUser;
         private bool _canDeleteUser;
         private bool _selectAllUsers;
-
         private bool _canCreateRoom;
+
         private bool _selectAllRooms;
+
+        private ObservableCollection<UserBindableViewModel> _userBindableViewModels;
+        private ObservableCollection<RoomBindableViewModel> _roomBindableViewModels;
         private readonly IUserService _userService;
         private readonly IRoomService _roomService;
 
         public int NumberOfUsersChecked { get; set; }
         public int NumberOfRoomsChecked { get; set; }
         public Administrator Administrator { get; set; }
-        public ObservableCollection<UserBindableViewModel> UserBindableViewModels { get; set; }
-        public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels { get; set; }
         public ICommand DeleteUsers { get; set; }
         public ICommand DeleteRooms { get; set; }
 
@@ -114,97 +114,96 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             }
         }
 
+        public ObservableCollection<UserBindableViewModel> UserBindableViewModels
+        {
+            get => _userBindableViewModels;
+            set
+            {
+                if (_userBindableViewModels == value) return;
+                _userBindableViewModels = value;
+                RaisePropertyChanged(nameof(UserBindableViewModels));
+            }
+        }
+
+        public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels
+        {
+            get => _roomBindableViewModels;
+            set
+            {
+                if (_roomBindableViewModels == value) return;
+                _roomBindableViewModels = value;
+                RaisePropertyChanged(nameof(RoomBindableViewModels));
+            }
+        }
+        #endregion
+
         public AdministratorViewModel(IUserService userService, IRoomService roomService)
         {
             _userService = userService;
             _roomService = roomService;
 
+            DeleteUsers = new RelayCommand(ExecuteDeleteUsers);
+            DeleteRooms = new RelayCommand(ExecuteDeleteRooms);
             CanRegisterUser = true;
             CanCreateRoom = true;
+
+            UserBindableViewModels = new ObservableCollection<UserBindableViewModel>();
+            RoomBindableViewModels = new ObservableCollection<RoomBindableViewModel>();
 
             LoadRooms();
             LoadUsers();
 
-            DeleteUsers = new RelayCommand(ExecuteDeleteUsers);
-            DeleteRooms = new RelayCommand(ExecuteDeleteRooms);
             MessengerInstance.Register<UserBindableViewModelChanged>(this, HandleUserBindableViewModelChanged);
             MessengerInstance.Register<RoomBindableViewModelChanged>(this, HandleRoomBindableViewModelChanged);
+            MessengerInstance.Register<UserRegisterSuccess>(this, HandleUserRegisterSuccess);
+            MessengerInstance.Register<RoomCreateSuccess>(this, HandleRoomCreateSuccess);
+            MessengerInstance.Register<UserUpdateSuccess>(this, HandleUserUpdateSuccess);
+            MessengerInstance.Register<CurrentUser>(this, message => Administrator = message.User as Administrator);
+        }
 
-            MessengerInstance.Register<CurrentUser>(this, message =>
+        private static void UiDispatch(Action action)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(action);
+        }
+
+        private void HandleUserRegisterSuccess(UserRegisterSuccess message)
+        {
+            UiDispatch(() => UserBindableViewModels.Insert(0, new UserBindableViewModel(message.User)));
+        }
+
+        private void HandleRoomCreateSuccess(RoomCreateSuccess message)
+        {
+            UiDispatch(() =>
             {
-                Administrator = message.User as Administrator;
+                RoomBindableViewModels.Add(new RoomBindableViewModel(message.Room));
+                RoomBindableViewModels = new ObservableCollection<RoomBindableViewModel>(RoomBindableViewModels.OrderBy(rbvm => rbvm.Room.Floor));
             });
+        }
 
-            MessengerInstance.Register<UserRegisterSuccess>(this, message =>
-            {
-                System.Windows.Application.Current.Dispatcher.Invoke(delegate
-                {
-                    UserBindableViewModels.Insert(0, new UserBindableViewModel(message.User));
-                });
-            });
-
-            MessengerInstance.Register<RoomCreateSuccess>(this, message =>
-            {
-                System.Windows.Application.Current.Dispatcher.Invoke(delegate
-                {
-                    RoomBindableViewModels.Add(new RoomBindableViewModel(message.Room));
-                    RoomBindableViewModels = new ObservableCollection<RoomBindableViewModel>(RoomBindableViewModels.OrderBy(rbvm => rbvm.Room.Floor));
-                    RaisePropertyChanged(nameof(RoomBindableViewModels));
-                });
-            });
-
-            MessengerInstance.Register<UserUpdateSuccess>(this, message =>
-            {
-                System.Windows.Application.Current.Dispatcher.Invoke(delegate
-                {
-                    var viewModelToUpdate = UserBindableViewModels.FirstOrDefault(i => i.User.ID == message.User.ID);
-
-                    if (viewModelToUpdate != null)
-                    {
-                        var indexOf = UserBindableViewModels.IndexOf(viewModelToUpdate);
-                        UserBindableViewModels.Remove(viewModelToUpdate);
-                        UserBindableViewModels.Insert(indexOf, viewModelToUpdate);
-                    }
-                });
-            });
+        private void HandleUserUpdateSuccess(UserUpdateSuccess message)
+        {
+            UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User = message.User);
         }
 
         private void LoadRooms()
         {
             Task.Run(() =>
             {
-                RoomBindableViewModels = new ObservableCollection<RoomBindableViewModel>();
-
                 var rooms = _roomService.GetAll().Result.ToList();
                 rooms.Sort((x, y) => x.Floor.CompareTo(y.Floor));
 
-                rooms.ForEach(r =>
-                    {
-                        System.Windows.Application.Current.Dispatcher.Invoke(delegate
-                        {
-                            RoomBindableViewModels.Add(new RoomBindableViewModel(r));
-                        });
-                    });
+                UiDispatch(() => rooms.ForEach(r => RoomBindableViewModels.Add(new RoomBindableViewModel(r))));
             });
         }
 
         private void LoadUsers()
         {
-            Task.Run(() =>
+            Task.Run(async() =>
             {
-                UserBindableViewModels = new ObservableCollection<UserBindableViewModel>();
+                var allUsers = await _userService.GetAll();
+                var doctorsManagersSecretaries = allUsers.Where(u => u is Doctor || u is Manager || u is Secretary).ToList();
 
-                var users = _userService.GetAll()
-                    .Result
-                    .Where(u => u is Doctor || u is Manager || u is Secretary).ToList();
-
-                users.ForEach(u =>
-                {
-                    System.Windows.Application.Current.Dispatcher.Invoke(delegate
-                    {
-                        UserBindableViewModels.Add(new UserBindableViewModel(u));
-                    });
-                });
+                UiDispatch(() => doctorsManagersSecretaries.ForEach(u => UserBindableViewModels.Add(new UserBindableViewModel(u))));
             });
         }
 
@@ -212,17 +211,13 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
         {
             Task.Run(() =>
             {
-                System.Windows.Application.Current.Dispatcher.Invoke(delegate
-                {
-                    UserBindableViewModels
-                        .Where(ubvm => ubvm.IsSelected)
-                        .ToList()
-                        .ForEach(ubvm =>
-                        {
-                            _userService.Delete(ubvm.User.ID);
-                            UserBindableViewModels.Remove(ubvm);
-                        });
-                });
+                UiDispatch(() => UserBindableViewModels.Where(ubvm => ubvm.IsSelected)
+                                .ToList()
+                                .ForEach(ubvm =>
+                                {
+                                    _userService.Delete(ubvm.User.ID);
+                                    UserBindableViewModels.Remove(ubvm);
+                                }));
                 MessengerInstance.Send(new UserBindableViewModelChanged());
             });
         }
@@ -231,17 +226,13 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
         {
             Task.Run(() =>
             {
-                System.Windows.Application.Current.Dispatcher.Invoke(delegate
-                {
-                    RoomBindableViewModels
-                        .Where(rbvm => rbvm.IsSelected)
+                UiDispatch(() => RoomBindableViewModels.Where(rbvm => rbvm.IsSelected)
                         .ToList()
                         .ForEach(rbvm =>
                         {
                             _roomService.Delete(rbvm.Room.ID);
                             RoomBindableViewModels.Remove(rbvm);
-                        });
-                });
+                        }));
                 MessengerInstance.Send(new RoomBindableViewModelChanged());
             });
         }
@@ -277,6 +268,7 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
         private void HandleRoomBindableViewModelChanged(RoomBindableViewModelChanged obj)
         {
+            //TODO: Fix "select all" not unchecking when deleting all rooms
             NumberOfRoomsChecked = RoomBindableViewModels.Count(rbvm => rbvm.IsSelected);
             CanCreateRoom = NumberOfRoomsChecked == 0;
         }

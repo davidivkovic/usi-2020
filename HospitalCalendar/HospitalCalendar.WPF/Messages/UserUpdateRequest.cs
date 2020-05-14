@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using HospitalCalendar.Domain.Models;
+﻿using HospitalCalendar.Domain.Models;
 
 namespace HospitalCalendar.WPF.Messages
 {
-    class UserUpdateRequest
+    public class UserUpdateRequest
     {
         public User User { get; }
 
