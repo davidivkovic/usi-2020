@@ -9,7 +9,7 @@
              Background="{DynamicResource MaterialDesignPaper}"
              mc:Ignorable="d" 
              d:DesignHeight="1000" d:DesignWidth="300"
-             DataContext="{Binding Path=AdministratorViewModel, Source={StaticResource Locator}}">
+             d:DataContext="{Binding Path=AdministratorViewModel, Source={StaticResource Locator}}">
     <Grid>
         <ItemsControl ItemsSource="{Binding RoomBindableViewModels}"
                       Grid.IsSharedSizeScope="True">

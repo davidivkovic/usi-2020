@@ -1,8 +1,8 @@
 ﻿using HospitalCalendar.Domain.Models;
 
-namespace HospitalCalendar.WPF.ViewModels
+namespace HospitalCalendar.WPF.Messages
 {
-    internal class UserRegisterSuccess
+    public class UserRegisterSuccess
     {
         public User User { get; }
 

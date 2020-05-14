@@ -9,10 +9,9 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
     public class UserBindableViewModel : ViewModelBase, INotifyPropertyChanged
     {
+        #region Properties
         private bool _isSelected;
         private User _user;
-
-        public new event PropertyChangedEventHandler PropertyChanged;
 
         public bool IsSelected
         {
@@ -21,40 +20,41 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             {
                 if (_isSelected == value) return;
                 _isSelected = value;
-                OnPropertyChanged();
+                RaisePropertyChanged(nameof(IsSelected));
+                MessengerInstance.Send(new UserBindableViewModelChanged());
             }
         }
 
         public string Username
         {
-            get => User.Username;
+            get => _user.Username;
             set
             {
-                if (User.Username == value) return;
-                User.Username = value;
-                OnPropertyChanged();
+                if (_user.Username == value) return;
+                _user.Username = value;
+                RaisePropertyChanged(nameof(Username));
             }
         }
 
         public string FirstName
         {
-            get => User.FirstName;
+            get => _user.FirstName;
             set
             {
-                if (User.FirstName == value) return;
-                User.FirstName = value;
-                OnPropertyChanged();
+                if (_user.FirstName == value) return;
+                _user.FirstName = value;
+                RaisePropertyChanged(nameof(FirstName));
             }
         }
 
         public string LastName
         {
-            get => User.LastName;
+            get => _user.LastName;
             set
             {
-                if (User.LastName == value) return;
-                User.LastName = value;
-                OnPropertyChanged();
+                if (_user.LastName == value) return;
+                _user.LastName = value;
+                RaisePropertyChanged(nameof(LastName));
             }
         }
 
@@ -63,18 +63,20 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             get => _user;
             set
             {
-                if (_user == value) return;
                 _user = value;
-                OnPropertyChanged();
+                RaisePropertyChanged(nameof(User));
+                RaisePropertyChanged(nameof(Username));
+                RaisePropertyChanged(nameof(FirstName));
+                RaisePropertyChanged(nameof(LastName));
             }
         }
+        #endregion
 
         public UserBindableViewModel(User user)
         {
             User = user;
-            FirstName = user.FirstName;
-            LastName = user.LastName;
-            Username = user.Username;
+            // TODO: Look into this, probably unnecessary
+            /*
             MessengerInstance.Register<UserUpdateSuccess>(this, message =>
             {
                 if (User.ID == message.User.ID)
@@ -82,13 +84,7 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
                     User = message.User;
                     IsSelected = true;
                 }
-            });
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            MessengerInstance.Send(new UserBindableViewModelChanged());
+            });*/
         }
     }
 }

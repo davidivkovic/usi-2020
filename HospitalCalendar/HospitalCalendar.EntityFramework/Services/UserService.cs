@@ -21,7 +21,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<User> GetByUsername(string username)
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 var x = await context.Users
                                     .Where(u => u.IsActive)
@@ -30,11 +30,23 @@ namespace HospitalCalendar.EntityFramework.Services
             }
         }
 
+        public async Task<User> GetInactiveByUsername(string username)
+        {
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
+            {
+                var x = await context.Users
+                    .Where(u => !u.IsActive)
+                    .FirstOrDefaultAsync(u => u.Username == username);
+                return x;
+            }
+        }
+
         public async Task<User> Register<T>(string firstName, string lastName, string username, string password) where T : User, new()
         {
             var existingUser = await GetByUsername(username);
+            var existingUserInactive = await GetInactiveByUsername(username);
 
-            if (existingUser != null)
+            if (existingUser != null || existingUserInactive != null)
             {
                 throw new UsernameAlreadyExistsException(username);
             }
