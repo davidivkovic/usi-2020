@@ -5,13 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HospitalCalendar.Domain.Services.CalendarEntryServices;
 using HospitalCalendar.EntityFramework.Exceptions;
 
 namespace HospitalCalendar.EntityFramework.Services
 {
     public class RoomService : GenericDataService<Room>, IRoomService
     {
-        public RoomService(HospitalCalendarDbContextFactory contextFactory) : base(contextFactory) { }
+        private readonly ICalendarEntryService _calendarEntryService;
+
+        public RoomService(HospitalCalendarDbContextFactory contextFactory, ICalendarEntryService calendarEntryService) : base(contextFactory)
+        {
+            _calendarEntryService = calendarEntryService;
+        }
 
         public async Task<ICollection<Room>> GetAllByFloor(int floor)
         {
@@ -40,7 +46,7 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
-                // TODO: Re-check
+                // TODO: Re-check - doesnt work
 
                 return await context.Rooms
                                     .Where(r => r.IsActive)
@@ -54,38 +60,57 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
-                return await context.Rooms
-                                    .Where(r => r.IsActive)
-                                    .Include(r => r.Equipment
-                                        .Where(e => equipmentTypes
-                                            .All(et => et.Name == e.EquipmentType.Name && e.IsActive)))
-                                    .ToListAsync();
+                var allRooms = await context.Rooms
+                    .Where(r => r.IsActive)
+                    .Include(r => r.Equipment)
+                    .ThenInclude(e => e.EquipmentType)
+                    .ToListAsync();
+
+                if (equipmentTypes.Count == 0)
+                {
+                    return allRooms.Where(r => r.Equipment
+                            .All(ei => equipmentTypes
+                                .Any(et => et.Name == ei.EquipmentType.Name)))
+                        .ToList();
+                }
+
+                return allRooms.Where(r => r.Equipment
+                    .Any(ei => equipmentTypes
+                        .All(et => et.Name == ei.EquipmentType.Name)))
+                    .ToList();
             }
         }
 
         public async Task<ICollection<Room>> GetAllOccupied(DateTime start, DateTime end)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
+            await using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
-                return await context.CalendarEntries
-                                    .Where(ce => ce.StartDateTime >= start && ce.EndDateTime <= end)
-                                    .Select(x => x.Room)
-                                    .Where(r => r.IsActive)
-                                    .ToListAsync();
-            }
+                var f = await context.CalendarEntries
+                    .Include(ce => ce.Room)
+                    .Where(ce => ce.StartDateTime >= start && ce.EndDateTime <= end)
+                    .Select(ce => ce.Room)
+                    .Where(r => r.IsActive)
+                    .ToListAsync();
 
+                return f.GroupBy(r => r.ID)
+                        .Select(g => g.First())
+                        .ToList();
+            }
         }
 
         public async Task<ICollection<Room>> GetAllFree(DateTime start, DateTime end)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
+            var allRooms = await GetAll();
+            var occupiedRooms = await GetAllOccupied(start, end);
+
+            return await Task.Run(() =>
             {
-                return await context.CalendarEntries
-                                    .Where(ce => ce.StartDateTime < start && ce.EndDateTime > end)
-                                    .Where(r => r.IsActive)
-                                    .Select(x => x.Room)
-                                    .ToListAsync();
-            }
+                var freeRooms = allRooms
+                    .Where(r => occupiedRooms
+                        .All(or => or.ID != r.ID))
+                    .ToList();
+                return freeRooms;
+            });
         }
 
         public async Task<Room> Create(int floor, string number, RoomType type)
@@ -123,7 +148,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<ICollection<Room>> GetAllByRoomType(RoomType roomType) 
         {
-            using (HospitalCalendarDbContext context = _contextFactory.CreateDbContext())
+            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
             {
                 return await context.Rooms
                                     .Where(r => r.IsActive)
@@ -133,13 +158,16 @@ namespace HospitalCalendar.EntityFramework.Services
         
         }
 
-        public async Task<Room> AddItems(Room room, ICollection<EquipmentItem> equipment) 
+        public async Task<Room> AddItems(Room room, ICollection<EquipmentItem> equipment)
         {
+            //TODO: Check
+            room.Equipment = equipment;
+            /*
             foreach (var e in equipment)
             {
                 room.Equipment.Add(e);
-            }
-            _ = await Update(room);
+            }*/
+            await Update(room);
 
             return room;
         
