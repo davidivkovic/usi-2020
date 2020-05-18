@@ -7,26 +7,16 @@ using GalaSoft.MvvmLight;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.WPF.Messages;
+using PropertyChanged;
 
 namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 {
-    public class EquipmentTypeBindableViewModel : ViewModelBase, INotifyPropertyChanged
+    public class EquipmentTypeBindableViewModel : ViewModelBase
     {
-        private EquipmentType _equipmentType;
-        private int _amount;
         private bool _isSelected;
 
-        public EquipmentType EquipmentType
-        {
-            get => _equipmentType;
-            set
-            {
-                _equipmentType = value;
-                RaisePropertyChanged(nameof(EquipmentType));
-                RaisePropertyChanged(nameof(Name));
-                RaisePropertyChanged(nameof(Description));
-            }
-        }
+        [AlsoNotifyFor(nameof(Name), nameof(Description))]
+        public EquipmentType EquipmentType { get; set; }
 
         public bool IsSelected
         {
@@ -42,36 +32,27 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 
         public string Name
         {
-            get => _equipmentType.Name;
+            get => EquipmentType.Name;
             set
             {
-                if (_equipmentType.Name == value) return;
-                _equipmentType.Name = value;
+                if (EquipmentType.Name == value) return;
+                EquipmentType.Name = value;
                 RaisePropertyChanged(nameof(Name));
             }
         }
 
         public string Description
         {
-            get => _equipmentType.Description;
+            get => EquipmentType.Description;
             set
             {
-                if (_equipmentType.Description == value) return;
-                _equipmentType.Description = value;
+                if (EquipmentType.Description == value) return;
+                EquipmentType.Description = value;
                 RaisePropertyChanged(nameof(Description));
             }
         }
 
-        public int Amount
-        {
-            get => _amount;
-            set
-            {
-                if (_amount == value) return;
-                _amount  = value;
-                RaisePropertyChanged(nameof(Amount));
-            }
-        }
+        public int Amount { get; set; }
 
         public EquipmentTypeBindableViewModel(EquipmentType equipmentType, int amount)
         {
