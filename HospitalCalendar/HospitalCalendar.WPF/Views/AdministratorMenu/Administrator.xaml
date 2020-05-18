@@ -7,151 +7,81 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
+             Background="{DynamicResource MaterialDesignBackground}"
              xmlns:userManagement="clr-namespace:HospitalCalendar.WPF.ViewModels.AdministratorMenu"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="720" d:DesignWidth="1280"
+             Width="1280" Height="720"
              DataContext="{Binding Path=AdministratorViewModel, Source={StaticResource Locator}}">
 
-    <Grid>
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="10*"/>
-            <ColumnDefinition Width="10*"/>
-            <ColumnDefinition Width="9.5*"/>
-            <ColumnDefinition Width="10.5*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="9.5*"/>
+                <ColumnDefinition Width="10.5*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="40*"/>
-            <RowDefinition Height="2*"/>
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="2" Grid.Column="1" Margin="0 0 0 40">
-
-            <StackPanel.Style >
-                <Style TargetType="{x:Type StackPanel}">
-                    <Setter Property="Visibility" Value="Hidden" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding CanRegisterUser}" Value="True">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Style>
-
-        </StackPanel>
-
-        <StackPanel Grid.Row="0" Grid.Column="1" 
-                        Grid.ColumnSpan="2" 
-                        HorizontalAlignment="Left" VerticalAlignment="Bottom" 
-                        Margin=" 0">
-            <Label FontSize="34" FontWeight="Black" Content="User Management"/>
-            <Label FontSize="15" FontWeight="Regular" Content="Register, modify or delete user accounts"/>
-        </StackPanel>
-
-        <StackPanel Margin="8.3 20 0 0" Grid.Row="1" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
-
-            <CheckBox VerticalAlignment="Top"
-                      IsChecked="{Binding SelectAllUsers}"
-                      Margin="0 5 12 0">
-            <TextBlock Margin="8 0 0 2" FontWeight="Medium" Text="Select All"  VerticalAlignment="Center"
-                   FontSize="14" />
-            </CheckBox>
-
-            <StackPanel>
-                <Button Width="140" Margin="20 0 0 0" 
-                        Padding="0"
-                        Style="{StaticResource MaterialDesignFlatMidBgButton}"
-                        ToolTip="MaterialDesignOutlinedButton" Height="28" FontSize="12"
-                        Content="Delete selected users"
-                        Command="{Binding DeleteUsers}">
-                </Button>
-
-                <StackPanel.Style >
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="Visibility" Value="Hidden" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding CanDeleteUser}" Value="True">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
-
-            </StackPanel>
-        </StackPanel>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="1" 
-                      Padding="0 6 14 0" 
-                      Margin="0 55 0 50"
-                      Height="515"
-                      VerticalScrollBarVisibility="Hidden">
-            <local:UserList/>
-        </ScrollViewer>
-
-        <Grid Grid.Row="1" Grid.Column="2" Margin="0 0 20 0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="9*"/>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel>
-                <local:UserUpdate/>
+            <StackPanel Grid.Row="2" Grid.Column="1" Margin="0 0 0 40">
+
                 <StackPanel.Style >
                     <Style TargetType="{x:Type StackPanel}">
                         <Setter Property="Visibility" Value="Hidden" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding CanModifyUser}" Value="True">
+                            <DataTrigger Binding="{Binding CanRegisterUser}" Value="True">
                                 <Setter Property="Visibility" Value="Visible" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Style>
+
             </StackPanel>
 
-            <StackPanel>
-                <local:UserRegistration/>
-
-                <StackPanel.Style >
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="Visibility" Value="Visible" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding CanRegisterUser}" Value="False">
-                                <Setter Property="Visibility" Value="Hidden" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
+            <StackPanel Grid.Row="0" Grid.Column="1" 
+                            Grid.ColumnSpan="2" 
+                            HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                            Margin=" 0">
+                <Label FontSize="34" FontWeight="Black" Content="User Management"/>
+                <Label FontSize="15" FontWeight="Regular" Content="Register, modify or delete user accounts"/>
             </StackPanel>
-        </Grid>
 
-        <StackPanel Grid.Row="1" Grid.Column="3" Margin="0 0 0 40">
             <StackPanel Margin="8.3 20 0 0" Grid.Row="1" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
 
                 <CheckBox VerticalAlignment="Top"
-                          IsChecked="{Binding SelectAllRooms}"
+                          IsChecked="{Binding SelectAllUsers}"
                           Margin="0 5 12 0">
-                    <TextBlock Margin="8 0 0 2" FontWeight="Medium" Text="Select All"  VerticalAlignment="Center"
-                               FontSize="14" />
+                <TextBlock Margin="8 0 0 2" FontWeight="Medium" Text="Select All"  VerticalAlignment="Center"
+                       FontSize="14" />
                 </CheckBox>
 
                 <StackPanel>
-                    <Button Width="140" Margin="7 0 0 0" 
+                    <Button Width="140" Margin="20 0 0 0" 
                             Padding="0"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}"
                             ToolTip="MaterialDesignOutlinedButton" Height="28" FontSize="12"
-                            Content="Delete selected rooms"
-                            Command="{Binding DeleteRooms}">
+                            Content="Delete selected users"
+                            Command="{Binding DeleteUsers}">
                     </Button>
 
                     <StackPanel.Style >
                         <Style TargetType="{x:Type StackPanel}">
                             <Setter Property="Visibility" Value="Hidden" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding CanCreateRoom}" Value="False">
+                                <DataTrigger Binding="{Binding CanDeleteUser}" Value="True">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -161,42 +91,119 @@
                 </StackPanel>
             </StackPanel>
 
-            <ScrollViewer  
-                      Padding="0 6 14 0" 
-                      Margin="0 10 0 50"
-                      Height="515"
-                      VerticalScrollBarVisibility="Hidden">
-            <local:RoomList/>
-        </ScrollViewer>
+            <ScrollViewer Grid.Row="1" Grid.Column="1" 
+                          Padding="0 6 14 0" 
+                          Margin="0 55 0 50"
+                          Height="515"
+                          VerticalScrollBarVisibility="Hidden">
+                <local:UserList/>
+            </ScrollViewer>
 
-        </StackPanel>
-        <Grid Grid.Row="1" Grid.Column="4" Margin="0 0 29 0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+            <Grid Grid.Row="1" Grid.Column="2" Margin="0 0 20 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <StackPanel>
-                <local:RoomCreate />
+                <StackPanel>
+                    <local:UserUpdate/>
+                    <StackPanel.Style >
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanModifyUser}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                </StackPanel>
 
-                <StackPanel.Style >
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="Visibility" Value="Visible" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding CanCreateRoom}" Value="False">
+                <StackPanel>
+                    <local:UserRegistration/>
+
+                    <StackPanel.Style >
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanRegisterUser}" Value="False">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Row="1" Grid.Column="3" Margin="0 0 0 40">
+                <StackPanel Margin="8.3 20 0 0" Grid.Row="1" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+
+                    <CheckBox VerticalAlignment="Top"
+                              IsChecked="{Binding SelectAllRooms}"
+                              Margin="0 5 12 0">
+                        <TextBlock Margin="8 0 0 2" FontWeight="Medium" Text="Select All"  VerticalAlignment="Center"
+                                   FontSize="14" />
+                    </CheckBox>
+
+                    <StackPanel>
+                        <Button Width="140" Margin="7 0 0 0" 
+                                Padding="0"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                ToolTip="MaterialDesignOutlinedButton" Height="28" FontSize="12"
+                                Content="Delete selected rooms"
+                                Command="{Binding DeleteRooms}">
+                        </Button>
+
+                        <StackPanel.Style >
+                            <Style TargetType="{x:Type StackPanel}">
                                 <Setter Property="Visibility" Value="Hidden" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CanCreateRoom}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                    </StackPanel>
+                </StackPanel>
+
+                <ScrollViewer  
+                          Padding="0 6 14 0" 
+                          Margin="0 10 0 50"
+                          Height="515"
+                          VerticalScrollBarVisibility="Hidden">
+                <local:RoomList/>
+            </ScrollViewer>
+
+            </StackPanel>
+            <Grid Grid.Row="1" Grid.Column="4" Margin="0 0 29 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel>
+                    <local:RoomCreate />
+
+                    <StackPanel.Style >
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanCreateRoom}" Value="False">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Row="0" Grid.Column="3" 
+                        Grid.ColumnSpan="2" 
+                        HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                        Margin="0 0 0 0">
+                <Label FontSize="34" FontWeight="Black" Content="Room Management"/>
+                <Label FontSize="15" Content="Add or delete hospital rooms"/>
             </StackPanel>
         </Grid>
-
-        <StackPanel Grid.Row="0" Grid.Column="3" 
-                    Grid.ColumnSpan="2" 
-                    HorizontalAlignment="Left" VerticalAlignment="Bottom" 
-                    Margin="0 0 0 0">
-            <Label FontSize="34" FontWeight="Black" Content="Room Management"/>
-            <Label FontSize="15" Content="Add or delete hospital rooms"/>
-        </StackPanel>
-    </Grid>
+    </materialDesign:TransitioningContent>
 </UserControl>
