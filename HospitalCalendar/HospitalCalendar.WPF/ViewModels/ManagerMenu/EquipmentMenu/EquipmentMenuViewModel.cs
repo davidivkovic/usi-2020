@@ -11,66 +11,13 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 {
     public class EquipmentMenuViewModel : ViewModelBase
     {
-        #region Properties
         private readonly IEquipmentTypeService _equipmentTypeService;
         private readonly IEquipmentItemService _equipmentItemService;
-        private ObservableCollection<EquipmentTypeBindableViewModel> _equipmentTypeBindableViewModels;
-        private bool _canCreateEquipmentType;
-        private bool _canUpdateEquipmentType;
-        private bool _allEquipmentTypesSelected;
 
-        public ObservableCollection<EquipmentTypeBindableViewModel> EquipmentTypeBindableViewModels
-        {
-            get => _equipmentTypeBindableViewModels;
-            set
-            {
-                if (_equipmentTypeBindableViewModels == value) return;
-                _equipmentTypeBindableViewModels = value;
-                RaisePropertyChanged(nameof(EquipmentTypeBindableViewModels));
-            }
-        }
-
-        public bool CanCreateEquipmentType
-        {
-            get => _canCreateEquipmentType;
-            set
-            {
-                if (_canCreateEquipmentType == value) return;
-                _canCreateEquipmentType = value;
-                RaisePropertyChanged(nameof(CanCreateEquipmentType));
-            }
-        }
-
-        public bool CanUpdateEquipmentType
-        {
-            get => _canUpdateEquipmentType;
-            set
-            {
-                if (_canUpdateEquipmentType == value) return;
-                _canUpdateEquipmentType = value;
-                RaisePropertyChanged(nameof(CanUpdateEquipmentType));
-            }
-        }
-
-        public bool AllEquipmentTypesSelected
-        {
-            get => _allEquipmentTypesSelected;
-            set
-            {
-                if (_allEquipmentTypesSelected == value) return;
-                _allEquipmentTypesSelected = value;
-
-                foreach (var model in EquipmentTypeBindableViewModels)
-                {
-                    model.IsSelected = value;
-                }
-
-                RaisePropertyChanged(nameof(AllEquipmentTypesSelected));
-            }
-        }
-
+        public ObservableCollection<EquipmentTypeBindableViewModel> EquipmentTypeBindableViewModels { get; set; }
+        public bool CanCreateEquipmentType { get; set; }
+        public bool CanUpdateEquipmentType { get; set; }
         public int NumberOfEquipmentTypesChecked { get; set; }
-        #endregion
 
         public EquipmentMenuViewModel(IEquipmentTypeService equipmentTypeService, IEquipmentItemService equipmentItemService)
         {
@@ -95,15 +42,15 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 
         private void LoadEquipmentTypes()
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
-                var equipmentTypes = _equipmentTypeService.GetAll().Result.ToList();
+                var equipmentTypes = (await _equipmentTypeService.GetAll()).ToList();
                 equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
 
-                equipmentTypes.ForEach(et =>
+                equipmentTypes.ForEach(async et =>
                 {
-                    int amount = _equipmentItemService.GetAllByType(et).Result.ToList().Count;
-                    UiDispatch(() => EquipmentTypeBindableViewModels.Add(new EquipmentTypeBindableViewModel(et, amount))); 
+                    int amount = (await _equipmentItemService.GetAllByType(et)).Count;
+                    UiDispatch(() => EquipmentTypeBindableViewModels.Add(new EquipmentTypeBindableViewModel(et, amount)));
                 });
             });
         }
@@ -129,33 +76,31 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 
         private void HandleEquipmentTypeBindableViewModelChanged(EquipmentTypeBindableViewModelChecked obj)
         {
-            NumberOfEquipmentTypesChecked = EquipmentTypeBindableViewModels.Count(etbvm => etbvm.IsSelected);
-
-            if (NumberOfEquipmentTypesChecked == 0)
+            Task.Run(() =>
             {
-                CanCreateEquipmentType = true;
-                CanUpdateEquipmentType = false;
-            }
-            else if (NumberOfEquipmentTypesChecked == 1)
-            {
-                CanCreateEquipmentType = false;
-                CanUpdateEquipmentType = true;
+                NumberOfEquipmentTypesChecked = EquipmentTypeBindableViewModels.Count(etbvm => etbvm.IsSelected);
 
-                var equipmentTypeToUpdate = EquipmentTypeBindableViewModels
-                    .First(etbvm => etbvm.IsSelected)
-                    .EquipmentType;
-                var equipmentTypeAmount = EquipmentTypeBindableViewModels
-                    .First(etbvm => etbvm.IsSelected)
-                    .Amount;
+                if (NumberOfEquipmentTypesChecked == 0)
+                {
+                    CanCreateEquipmentType = true;
+                    CanUpdateEquipmentType = false;
+                }
+                else if (NumberOfEquipmentTypesChecked == 1)
+                {
+                    CanCreateEquipmentType = false;
+                    CanUpdateEquipmentType = true;
 
-                MessengerInstance.Send(new EquipmentTypeSelected(equipmentTypeToUpdate, equipmentTypeAmount));
-            }
-            else
-            {
-                CanCreateEquipmentType = false;
-                CanUpdateEquipmentType = false;
-            }
+                    var selectedEquipmentType = EquipmentTypeBindableViewModels
+                        .First(etbvm => etbvm.IsSelected);
+
+                    MessengerInstance.Send(new EquipmentTypeSelected(selectedEquipmentType.EquipmentType, selectedEquipmentType.Amount));
+                }
+                else
+                {
+                    CanCreateEquipmentType = false;
+                    CanUpdateEquipmentType = false;
+                }
+            });
         }
     }
 }
-
