@@ -44,7 +44,6 @@
                                     <TextBlock Text="{Binding RoomNumber}" FontSize="38" HorizontalAlignment="Left" Foreground="DarkGray" FontWeight="DemiBold"/>
                                     <TextBlock Text="{Binding RoomFloor}" FontSize="12" Foreground="DarkGray"/>
                                 </StackPanel>
-                                <!--ProcedureType can be EXAMINATION or SURGERY-->
                                 <TextBlock Text="{Binding RoomPurpose}" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="DarkGray" FontSize="18" FontWeight="DemiBold"/>
                             </Grid>
                         </DataTemplate>

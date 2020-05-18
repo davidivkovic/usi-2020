@@ -32,7 +32,6 @@
                     </TextBlock>
                 </Grid>
             </ListViewItem>-->
-            
 
             <ListView.ItemTemplate>
                 <DataTemplate>
