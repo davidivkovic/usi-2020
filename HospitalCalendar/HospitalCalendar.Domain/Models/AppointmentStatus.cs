@@ -4,6 +4,7 @@ namespace HospitalCalendar.Domain.Models
     {
         Scheduled,
         Finished,
-        Cancelled
+        Cancelled,
+        InProgress
     }
 }
