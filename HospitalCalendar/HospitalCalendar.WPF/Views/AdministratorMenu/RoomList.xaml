@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
              xmlns:administratorMenu="clr-namespace:HospitalCalendar.WPF.ViewModels.AdministratorMenu"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
+             Background="{DynamicResource MaterialDesignBackground}"
              mc:Ignorable="d" 
              d:DesignHeight="1000" d:DesignWidth="300"
              d:DataContext="{Binding Path=AdministratorViewModel, Source={StaticResource Locator}}">
