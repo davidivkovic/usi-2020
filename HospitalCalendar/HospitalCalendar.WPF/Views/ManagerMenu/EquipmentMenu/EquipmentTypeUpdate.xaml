@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
+             Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="570" d:DesignWidth="268"
              DataContext="{Binding Path=EquipmentTypeUpdateViewModel, Source={StaticResource Locator}}">
@@ -42,6 +42,7 @@
                 </CheckBox>
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                         Margin="32, 5, 32, 0"
                         VerticalAlignment="Top"
                         Height="40"
@@ -60,6 +61,7 @@
                 </CheckBox>
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                         Margin="32, 5, 32, 0"
                         VerticalAlignment="Top"
                         Height="100"
@@ -84,12 +86,6 @@
                           ItemsSource="{Binding AmountEnumerable}"
                           IsEnabled="{Binding Path=IsChecked, ElementName=ChangeAmountCheckBox}"
                           SelectedItem="{Binding NewAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-
-                    <ComboBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel />
-                        </ItemsPanelTemplate>
-                    </ComboBox.ItemsPanel>
                 </ComboBox>
 
             </StackPanel>
