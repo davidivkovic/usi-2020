@@ -22,5 +22,10 @@ namespace HospitalCalendar.WPF.Views.ManagerMenu
         {
             InitializeComponent();
         }
+
+        private void MenuToggleButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            Drawer.IsLeftDrawerOpen = !Drawer.IsLeftDrawerOpen;
+        }
     }
 }
