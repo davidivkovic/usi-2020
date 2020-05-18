@@ -9,17 +9,11 @@ namespace HospitalCalendar.Domain.Services.CalendarEntryServices
     public interface IAppointmentService : IDataService<Appointment>
     {
         Task<ICollection<Appointment>> GetAllByTimeFrame(DateTime start, DateTime end);
-
         Task<ICollection<Appointment>> GetAllByStatus(AppointmentStatus status);
-
-        Task<ICollection<Appointment>> GetAllPatient(Patient patient);
-
-        Task<ICollection<Appointment>> GetAllDoctor(Doctor doctor);
+        Task<ICollection<Appointment>> GetAllByPatient(Patient patient);
+        Task<ICollection<Appointment>> GetAllByDoctor(Doctor doctor);
         Task<ICollection<Appointment>> GetAllByRoom(Room room);
-
         Task<Appointment> Create(DateTime start, DateTime end, Patient patient, Doctor doctor,Specialization type);
-
-        Task<Appointment> Update(Appointment entity,DateTime start, DateTime end, Patient patient, Doctor doctor, Specialization type, AppointmentStatus status);
-
+        Task<Appointment> Update(Appointment appointment,DateTime start, DateTime end, Patient patient, Doctor doctor, Specialization type, AppointmentStatus status);
     }
 }
