@@ -14,19 +14,11 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
     public class AdministratorViewModel : ViewModelBase
     {
-        #region Properties
-        private bool _canRegisterUser;
-        private bool _canModifyUser;
-        private bool _canDeleteUser;
-        private bool _selectAllUsers;
-        private bool _canCreateRoom;
-
-        private bool _selectAllRooms;
-
-        private ObservableCollection<UserBindableViewModel> _userBindableViewModels;
-        private ObservableCollection<RoomBindableViewModel> _roomBindableViewModels;
         private readonly IUserService _userService;
         private readonly IRoomService _roomService;
+
+        private bool _selectAllUsers;
+        private bool _selectAllRooms;
 
         public int NumberOfUsersChecked { get; set; }
         public int NumberOfRoomsChecked { get; set; }
@@ -34,38 +26,10 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
         public ICommand DeleteUsers { get; set; }
         public ICommand DeleteRooms { get; set; }
 
-        public bool CanRegisterUser
-        {
-            get => _canRegisterUser;
-            set
-            {
-                if (_canRegisterUser == value) return;
-                _canRegisterUser = value;
-                RaisePropertyChanged(nameof(CanRegisterUser));
-            }
-        }
-
-        public bool CanModifyUser
-        {
-            get => _canModifyUser;
-            set
-            {
-                if (_canModifyUser == value) return;
-                _canModifyUser = value;
-                RaisePropertyChanged(nameof(CanModifyUser));
-            }
-        }
-
-        public bool CanDeleteUser
-        {
-            get => _canDeleteUser;
-            set
-            {
-                if (_canDeleteUser == value) return;
-                _canDeleteUser = value;
-                RaisePropertyChanged(nameof(CanDeleteUser));
-            }
-        }
+        public bool CanRegisterUser { get; set; }
+        public bool CanModifyUser { get; set; }
+        public bool CanDeleteUser { get; set; }
+        public bool CanCreateRoom { get; set; }
 
         public bool SelectAllUsers
         {
@@ -82,17 +46,6 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
                 }
 
                 RaisePropertyChanged(nameof(SelectAllUsers));
-            }
-        }
-
-        public bool CanCreateRoom
-        {
-            get => _canCreateRoom;
-            set
-            {
-                if (_canCreateRoom == value) return;
-                _canCreateRoom = value;
-                RaisePropertyChanged(nameof(CanCreateRoom));
             }
         }
 
@@ -114,28 +67,8 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             }
         }
 
-        public ObservableCollection<UserBindableViewModel> UserBindableViewModels
-        {
-            get => _userBindableViewModels;
-            set
-            {
-                if (_userBindableViewModels == value) return;
-                _userBindableViewModels = value;
-                RaisePropertyChanged(nameof(UserBindableViewModels));
-            }
-        }
-
-        public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels
-        {
-            get => _roomBindableViewModels;
-            set
-            {
-                if (_roomBindableViewModels == value) return;
-                _roomBindableViewModels = value;
-                RaisePropertyChanged(nameof(RoomBindableViewModels));
-            }
-        }
-        #endregion
+        public ObservableCollection<UserBindableViewModel> UserBindableViewModels { get; set; }
+        public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels { get; set; }
 
         public AdministratorViewModel(IUserService userService, IRoomService roomService)
         {
