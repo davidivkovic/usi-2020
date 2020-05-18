@@ -6,15 +6,19 @@ using GalaSoft.MvvmLight.Messaging;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.Domain.Services.AuthenticationServices;
+using HospitalCalendar.Domain.Services.CalendarEntryServices;
 using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.EntityFramework;
 using HospitalCalendar.EntityFramework.Services;
 using HospitalCalendar.EntityFramework.Services.AuthenticationServices;
+using HospitalCalendar.EntityFramework.Services.CalendarEntryServices;
 using HospitalCalendar.EntityFramework.Services.EquipmentServices;
 using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
 using HospitalCalendar.WPF.ViewModels.Login;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -49,6 +53,9 @@ namespace HospitalCalendar.WPF.ViewModels
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<ICalendarEntryService, CalendarEntryService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
+            services.AddScoped<IRenovationService, RenovationService>();
             services.AddScoped<IEquipmentTypeService, EquipmentTypeService>();
             services.AddScoped<IEquipmentItemService, EquipmentItemService>();
             services.AddScoped<HospitalCalendarDbContextFactory>();
@@ -64,6 +71,8 @@ namespace HospitalCalendar.WPF.ViewModels
             services.AddTransient<EquipmentMenuViewModel>();
             services.AddTransient<EquipmentTypeCreateViewModel>();
             services.AddTransient<EquipmentTypeUpdateViewModel>();
+            services.AddTransient<RenovationMenuViewModel>();
+            services.AddTransient<RoomSearchViewModel>();
 
             return services.BuildServiceProvider();
         }
@@ -78,5 +87,7 @@ namespace HospitalCalendar.WPF.ViewModels
         public EquipmentMenuViewModel EquipmentMenuViewModel => ServiceProvider.GetRequiredService<EquipmentMenuViewModel>();
         public EquipmentTypeCreateViewModel EquipmentTypeCreateViewModel => ServiceProvider.GetRequiredService<EquipmentTypeCreateViewModel>();
         public EquipmentTypeUpdateViewModel EquipmentTypeUpdateViewModel => ServiceProvider.GetRequiredService<EquipmentTypeUpdateViewModel>();
+        public RenovationMenuViewModel RenovationMenuViewModel => ServiceProvider.GetRequiredService<RenovationMenuViewModel>();
+        public RoomSearchViewModel RoomSearchViewModel => ServiceProvider.GetRequiredService<RoomSearchViewModel>();
     }
 }
