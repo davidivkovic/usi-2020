@@ -9,102 +9,110 @@
              mc:Ignorable="d"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="720" d:DesignWidth="1280"
+             Width="1280" Height="720"
              DataContext="{Binding Path=LoginViewModel, Source={StaticResource Locator}}" >
 
-    <Grid Background="#FFF9FDF9">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2.5*"/>
-        </Grid.ColumnDefinitions>
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects>
+            <materialDesign:TransitionEffect Kind="SlideInFromRight" Duration="0:0:0.450" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.450" />
+        </materialDesign:TransitioningContent.OpeningEffects>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <Label Grid.Column="1">
-            <Label.Background >
-                <ImageBrush ImageSource="new_splash.png" Stretch="UniformToFill"/>
-            </Label.Background>
-        </Label>
-
-        <Grid>
+        <Grid Background="#FFF9FDF9">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.7*"/>
-                <ColumnDefinition Width="3.3*"/>
-                <ColumnDefinition Width="0.4*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2.5*"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="4*"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Grid.Column="1" 
-                        Grid.ColumnSpan="2" 
-                        HorizontalAlignment="Left" VerticalAlignment="Bottom" >
-                <Label FontSize="36" FontWeight="Regular" Content="Login"/>
-                <Label FontSize="16" Content="Enter your credentials to get started"/>
-            </StackPanel>
+            <Label Grid.Column="1">
+                <Label.Background >
+                    <ImageBrush ImageSource="new_splash.png" Stretch="UniformToFill"/>
+                </Label.Background>
+            </Label>
 
-            <StackPanel Grid.Row="1" Grid.Column="1" 
-                        Margin="5 0 5 45" 
-                        VerticalAlignment="Bottom" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition Width="3.3*"/>
+                    <ColumnDefinition Width="0.4*"/>
+                </Grid.ColumnDefinitions>
 
-                <TextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         VerticalAlignment="Top"
-                         AcceptsReturn="True"
-                         MaxWidth="400"
-                         Margin="0 30"
-                         materialDesign:HintAssist.Hint="Username"
-                         FontSize="12"
-                         Text="{Binding Username, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
 
-                <PasswordBox Name="PasswordBox"
-                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
+                <StackPanel Grid.Row="0" Grid.Column="1" 
+                            Grid.ColumnSpan="2" 
+                            HorizontalAlignment="Left" VerticalAlignment="Bottom" >
+                    <Label FontSize="36" FontWeight="Regular" Content="Login"/>
+                    <Label FontSize="16" Content="Enter your credentials to get started"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="1" 
+                            Margin="5 0 5 45" 
+                            VerticalAlignment="Bottom" >
+
+                    <TextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                              VerticalAlignment="Top"
-                             materialDesign:HintAssist.Hint="Password" FontSize="12"/>
+                             MaxWidth="400"
+                             Margin="0 30"
+                             materialDesign:HintAssist.Hint="Username"
+                             FontSize="12"
+                             Text="{Binding Username, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
 
-                <CheckBox Style="{StaticResource MaterialDesignDarkCheckBox}"
-                          Margin="0 30"
-                          IsChecked="False"
-                          Foreground="#FF6E6E6E" 
-                          Background="#FF4542CF" 
-                          BorderBrush="#FF4542CF"
-                          Content="Remember me"/>
-            </StackPanel>
+                    <PasswordBox Name="PasswordBox"
+                                 Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
+                                 VerticalAlignment="Top"
+                                 materialDesign:HintAssist.Hint="Password" FontSize="12"/>
 
-            <TextBlock Grid.Row="1" Grid.Column="1"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Bottom" 
-                       Margin="0 0 0 15" FontSize="14"
-                       Text ="Invalid Credentials. Please try again">
+                    <CheckBox Style="{StaticResource MaterialDesignDarkCheckBox}"
+                              Margin="0 30"
+                              IsChecked="False"
+                              Foreground="#FF6E6E6E" 
+                              Background="#FF4542CF" 
+                              BorderBrush="#FF4542CF"
+                              Content="Remember me"/>
+                </StackPanel>
 
-                <TextBlock.Style >
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Visibility" Value="Hidden" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding InvalidCredentials}" Value="True">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
+                <TextBlock Grid.Row="1" Grid.Column="1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Bottom" 
+                           Margin="0 0 0 15" FontSize="13"
+                           Text ="Invalid Credentials. Please try again">
 
-            </TextBlock>
+                    <TextBlock.Style >
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding InvalidCredentials}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+
+                </TextBlock>
 
 
-            <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}"
-                    Background="#FF585BBF" BorderBrush="#FF585BBF"
-                    Foreground="White"
-                    Grid.Row="2" Grid.Column="1"
-                    VerticalAlignment="Top"
-                    Margin ="5 0"
-                    Height="45"
-                    Cursor="Arrow"
-                    Content="Login"
-                    Command="{Binding Login}"
-                    CommandParameter="{Binding ElementName=PasswordBox}"/>
+                <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}"
+                        Background="#FF585BBF" BorderBrush="#FF585BBF"
+                        Foreground="White"
+                        Grid.Row="2" Grid.Column="1"
+                        VerticalAlignment="Top"
+                        Margin ="5 0"
+                        Height="45"
+                        Cursor="Arrow"
+                        Content="Login"
+                        IsDefault="True"
+                        Command="{Binding Login}"
+                        CommandParameter="{Binding ElementName=PasswordBox}"/>
+            </Grid>
         </Grid>
-    </Grid>
+    </materialDesign:TransitioningContent>
 </UserControl>
