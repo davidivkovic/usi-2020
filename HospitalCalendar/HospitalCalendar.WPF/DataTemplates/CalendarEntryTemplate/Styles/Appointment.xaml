@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate.Styles.Appointment"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate.Styles"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:models="clr-namespace:HospitalCalendar.Domain.Models;assembly=HospitalCalendar.Domain"
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="125">
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{Binding CalendarEntry.Status, Converter={StaticResource AppointmentStatusToBrushConverter}, ConverterParameter=true}" />
+                </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <materialDesign:PackIcon HorizontalAlignment="Right" Margin="0 3 3 0" Height="14"
+                                 Kind="{Binding CalendarEntry.Status, Converter = {StaticResource AppointmentStatusToMdPackIconConverter}}"
+                                 Foreground="{Binding CalendarEntry.Status, Converter={StaticResource AppointmentStatusToBrushConverter}, ConverterParameter=true}"/>
+        <StackPanel Margin="5 0 0 0">
+            <Grid>
+                <TextBlock Margin="0 5 0 0" FontSize="11" Width="55" HorizontalAlignment="Left"
+                           Text="{Binding CalendarEntry.StartDateTime, StringFormat=HH:mm}" 
+                           Foreground="{Binding CalendarEntry.Status, Converter={StaticResource AppointmentStatusToBrushConverter}, ConverterParameter=true}">
+                    <TextBlock.Style >
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CalendarEntry.Status}" Value="{x:Static models:AppointmentStatus.Cancelled}">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock Margin="0 5 0 0" FontSize="10" Text="CANCELLED" Width="55" HorizontalAlignment="Left"
+                           Foreground="{Binding CalendarEntry.Status, Converter={StaticResource AppointmentStatusToBrushConverter}, ConverterParameter=true}">
+                    <TextBlock.Style >
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CalendarEntry.Status}" Value="{x:Static models:AppointmentStatus.Cancelled}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+
+            <TextBlock FontWeight="Medium" FontSize="12" Text="Appointment"
+                       Foreground="{Binding CalendarEntry.Status, Converter={StaticResource AppointmentStatusToBrushConverter}, ConverterParameter=true}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
