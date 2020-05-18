@@ -17,7 +17,7 @@ namespace HospitalCalendar.Domain.Services
         Task<Room> Create(int floor, string number, RoomType type);
         Task<ICollection<Room>> GetAllByRoomType(RoomType roomType);
         Task<Room> AddItems(Room room, ICollection<EquipmentItem> equipment);
-        Task<Room> Update(Room entity, int floor, string number, RoomType roomType,ICollection<EquipmentItem> equimpent);
+        Task<Room> Update(Room entity, int floor, string number, RoomType roomType,ICollection<EquipmentItem> equipment);
         new Task<bool> Delete(Guid id);
 
     }
