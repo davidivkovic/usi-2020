@@ -2,10 +2,12 @@
 using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.WPF.Messages;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using HospitalCalendar.Domain.Services;
 
 namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 {
@@ -14,25 +16,21 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
         private readonly IEquipmentTypeService _equipmentTypeService;
         private readonly IEquipmentItemService _equipmentItemService;
 
-        public ObservableCollection<EquipmentTypeBindableViewModel> EquipmentTypeBindableViewModels { get; set; }
         public bool CanCreateEquipmentType { get; set; }
         public bool CanUpdateEquipmentType { get; set; }
         public int NumberOfEquipmentTypesChecked { get; set; }
+
+        public ObservableCollection<EquipmentTypeBindableViewModel> AllEquipmentTypes { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
 
         public EquipmentMenuViewModel(IEquipmentTypeService equipmentTypeService, IEquipmentItemService equipmentItemService)
         {
             _equipmentTypeService = equipmentTypeService;
             _equipmentItemService = equipmentItemService;
 
-            EquipmentTypeBindableViewModels = new ObservableCollection<EquipmentTypeBindableViewModel>();
-            LoadEquipmentTypes();
-
             MessengerInstance.Register<EquipmentTypeCreateSuccess>(this, HandleEquipmentTypeCreateSuccess);
             MessengerInstance.Register<EquipmentTypeUpdateSuccess>(this, HandleEquipmentTypeUpdateSuccess);
             MessengerInstance.Register<EquipmentTypeDeleteSuccess>(this, HandleEquipmentTypeDeleteSuccess);
             MessengerInstance.Register<EquipmentTypeBindableViewModelChecked>(this, HandleEquipmentTypeBindableViewModelChanged);
-
-            CanCreateEquipmentType = true;
         }
 
         private static void UiDispatch(Action action)
@@ -40,36 +38,48 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
             System.Windows.Application.Current.Dispatcher.Invoke(action);
         }
 
+        public void Initialize()
+        {
+            CanCreateEquipmentType = true;
+            LoadEquipmentTypes();
+        }
+
         private void LoadEquipmentTypes()
         {
             Task.Run(async () =>
             {
                 var equipmentTypes = (await _equipmentTypeService.GetAll()).ToList();
-                equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
-
+                //equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
+                UiDispatch(() => AllEquipmentTypes.Clear());
                 equipmentTypes.ForEach(async et =>
                 {
-                    int amount = (await _equipmentItemService.GetAllByType(et)).Count;
-                    UiDispatch(() => EquipmentTypeBindableViewModels.Add(new EquipmentTypeBindableViewModel(et, amount)));
+                    var amount = (await _equipmentItemService.GetAllByType(et)).Count;
+                    UiDispatch(() => AllEquipmentTypes.Add(new EquipmentTypeBindableViewModel(et, amount)));
                 });
             });
         }
 
         private void HandleEquipmentTypeCreateSuccess(EquipmentTypeCreateSuccess message)
         {
-            UiDispatch(() => EquipmentTypeBindableViewModels.Insert(0, new EquipmentTypeBindableViewModel(message.EquipmentType, message.Amount)));
+            UiDispatch(() => AllEquipmentTypes.Insert(0, new EquipmentTypeBindableViewModel(message.EquipmentType, message.Amount)));
         }
 
         private void HandleEquipmentTypeUpdateSuccess(EquipmentTypeUpdateSuccess message)
         {
-            UiDispatch(() => EquipmentTypeBindableViewModels.First(etbvm => etbvm.EquipmentType.ID == message.EquipmentType.ID).EquipmentType = message.EquipmentType);
-            UiDispatch(() => EquipmentTypeBindableViewModels.First(etbvm => etbvm.EquipmentType.ID == message.EquipmentType.ID).Amount = message.NewAmount);
+            UiDispatch(() =>
+            {
+                AllEquipmentTypes.First(etbvm => etbvm.EquipmentType.ID == message.EquipmentType.ID)
+                    .EquipmentType = message.EquipmentType;
+
+                AllEquipmentTypes.First(etbvm => etbvm.EquipmentType.ID == message.EquipmentType.ID)
+                    .Amount = message.NewAmount;
+            });
         }
 
         private void HandleEquipmentTypeDeleteSuccess(EquipmentTypeDeleteSuccess message)
         {
-            UiDispatch(() => EquipmentTypeBindableViewModels
-                .Remove(EquipmentTypeBindableViewModels
+            UiDispatch(() => AllEquipmentTypes
+                .Remove(AllEquipmentTypes
                     .First(etbvm => etbvm.EquipmentType.ID == message.EquipmentType.ID)));
             CanCreateEquipmentType = true;
         }
@@ -78,27 +88,28 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
         {
             Task.Run(() =>
             {
-                NumberOfEquipmentTypesChecked = EquipmentTypeBindableViewModels.Count(etbvm => etbvm.IsSelected);
+                NumberOfEquipmentTypesChecked = AllEquipmentTypes.Count(etbvm => etbvm.IsSelected);
 
-                if (NumberOfEquipmentTypesChecked == 0)
+                switch (NumberOfEquipmentTypesChecked)
                 {
-                    CanCreateEquipmentType = true;
-                    CanUpdateEquipmentType = false;
-                }
-                else if (NumberOfEquipmentTypesChecked == 1)
-                {
-                    CanCreateEquipmentType = false;
-                    CanUpdateEquipmentType = true;
+                    case 0:
+                        CanCreateEquipmentType = true;
+                        CanUpdateEquipmentType = false;
+                        break;
+                    case 1:
+                    {
+                        CanCreateEquipmentType = false;
+                        CanUpdateEquipmentType = true;
 
-                    var selectedEquipmentType = EquipmentTypeBindableViewModels
-                        .First(etbvm => etbvm.IsSelected);
+                        var selectedEquipmentType = AllEquipmentTypes.First(etbvm => etbvm.IsSelected);
 
-                    MessengerInstance.Send(new EquipmentTypeSelected(selectedEquipmentType.EquipmentType, selectedEquipmentType.Amount));
-                }
-                else
-                {
-                    CanCreateEquipmentType = false;
-                    CanUpdateEquipmentType = false;
+                        MessengerInstance.Send(new EquipmentTypeSelected(selectedEquipmentType.EquipmentType, selectedEquipmentType.Amount));
+                        break;
+                    }
+                    default:
+                        CanCreateEquipmentType = false;
+                        CanUpdateEquipmentType = false;
+                        break;
                 }
             });
         }
