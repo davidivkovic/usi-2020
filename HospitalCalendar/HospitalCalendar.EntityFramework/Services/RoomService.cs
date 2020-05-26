@@ -115,7 +115,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<Room> Create(int floor, string number, RoomType type)
         {
-            var existingRoom = GetByFloorAndNumber(floor, number).Result;
+            var existingRoom = await GetByFloorAndNumber(floor, number);
 
             if (existingRoom != null)
             {
