@@ -20,42 +20,12 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
         public List<User> Roles { get; set; }
         public ICommand RegisterUser { get; private set; }
 
-        [AlsoNotifyFor(nameof(FirstName), nameof(LastName), nameof(Username))]
+        //[AlsoNotifyFor(nameof(FirstName), nameof(LastName), nameof(Username))]
         public User UserToRegister { get; set; }
 
-        public string FirstName
-        {
-            get => UserToRegister?.FirstName;
-            set
-            {
-                if (UserToRegister.FirstName == value) return;
-                UserToRegister.FirstName = value;
-                RaisePropertyChanged(nameof(FirstName));
-            }
-        }
-
-        public string LastName
-        {
-            get => UserToRegister?.LastName;
-            set
-            {
-                if (UserToRegister.LastName == value) return;
-                UserToRegister.LastName = value;
-                RaisePropertyChanged(nameof(LastName));
-            }
-        }
-
-        public string Username
-        {
-            get => UserToRegister?.Username;
-            set
-            {
-                if (UserToRegister.Username == value) return;
-                UserToRegister.Username = value;
-                RaisePropertyChanged(nameof(Username));
-            }
-        }
-
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Username { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public bool ValidationError { get; set; }
