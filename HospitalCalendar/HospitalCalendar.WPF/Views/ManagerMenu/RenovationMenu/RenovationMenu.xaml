@@ -7,7 +7,6 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:calendar="clr-namespace:HospitalCalendar.WPF.DataTemplates.Calendar.Control"
       xmlns:vm="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu"
-      xmlns:temp="clr-namespace:HospitalCalendar.WPF.Views.ManagerView"
       xmlns:equipmentMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu"
       xmlns:sys="clr-namespace:System;assembly=System.Runtime"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
