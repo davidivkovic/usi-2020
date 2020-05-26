@@ -12,64 +12,61 @@ namespace HospitalCalendar.EntityFramework.Services
     public class GenericDataService<T> : IDataService<T> where T : DomainObject
     {
         protected readonly HospitalCalendarDbContextFactory ContextFactory;
+        protected readonly HospitalCalendarDbContext _context;
 
         public GenericDataService(HospitalCalendarDbContextFactory contextFactory)
         {
             ContextFactory = contextFactory;
+            _context = ContextFactory.CreateDbContext();
         }
 
         public async Task<T> Create(T entity)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                EntityEntry<T> createdResult = await context.Set<T>().AddAsync(entity);
-                await context.SaveChangesAsync();
+
+                EntityEntry<T> createdResult = await _context.Set<T>().AddAsync(entity);
+                await _context.SaveChangesAsync();
 
                 return createdResult.Entity;
-            }
+            
         }
 
         public async Task<bool> Delete(Guid id)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                T entity = await context.Set<T>().FirstOrDefaultAsync((e) => e.ID == id);
-                context.Set<T>().Remove(entity);
-                await context.SaveChangesAsync();
+
+                T entity = await _context.Set<T>().FirstOrDefaultAsync((e) => e.ID == id);
+                _context.Set<T>().Remove(entity);
+                await _context.SaveChangesAsync();
 
                 return true;
-            }
+
         }
 
         public async Task<T> Get(Guid id)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                T entity = await context.Set<T>().FirstOrDefaultAsync(e => e.ID == id && e.IsActive);
+
+                T entity = await _context.Set<T>().FirstOrDefaultAsync(e => e.ID == id && e.IsActive);
 
                 return entity;
-            }
+
         }
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                IEnumerable<T> entities = await context.Set<T>().Where(e => e.IsActive).ToListAsync();
+            IEnumerable<T> entities = await _context.Set<T>().Where(e => e.IsActive).ToListAsync();
 
-                return entities;
-            }
+            return entities;
         }
 
         public async Task<T> Update(T entity)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                context.Set<T>().Update(entity);
-                await context.SaveChangesAsync();
+
+                //context.Entry(entity).State = EntityState.Modified;
+                _context.Set<T>().Update(entity);
+                //context.Entry(await context.Set<T>().FirstOrDefaultAsync(T => T.ID == entity.ID)).CurrentValues.SetValues(entity); 
+                await _context.SaveChangesAsync();
 
                 return entity;
-            }
+
         }
     }
 }
