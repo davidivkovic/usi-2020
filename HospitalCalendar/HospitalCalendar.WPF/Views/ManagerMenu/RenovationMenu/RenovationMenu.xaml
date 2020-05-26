@@ -15,7 +15,7 @@
       FontFamily="{materialDesign:MaterialDesignFont}"
       d:DesignHeight="900" d:DesignWidth="1600"
       mc:Ignorable="d"
-      DataContext="{Binding Path=RenovationMenuViewModel, Source={StaticResource Locator}}">
+      d:DataContext="{Binding Path=RenovationMenuViewModel, Source={StaticResource Locator}}">
 
     <materialDesign:TransitioningContent>
         <materialDesign:TransitioningContent.OpeningEffects >
@@ -45,7 +45,7 @@
                         <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
                             <DatePicker x:Name="RenovationStartDate"
                                                     VerticalAlignment="Top" Margin="0 0 0 0"
-                                                    Width="140"
+                                                    Width="120"
                                                     materialDesign:HintAssist.Hint="Start Date"
                                                     DisplayDateStart="{x:Static sys:DateTime.Today}"
                                                     SelectedDate="{Binding RenovationStartDate}"
@@ -119,7 +119,7 @@
                         <StackPanel Orientation="Horizontal">
                             <DatePicker x:Name="RenovationEndDate"
                                             VerticalAlignment="Top" Margin="0 10 0 0"
-                                            Width="140"
+                                            Width="120"
                                             materialDesign:HintAssist.Hint="End Date"
                                             DisplayDateStart="{x:Static sys:DateTime.Today}"
                                             SelectedDate="{Binding RenovationEndDate}"
@@ -191,7 +191,8 @@
 
                                 <StackPanel Orientation="Horizontal">
                                     <local:RenovationEquipmentTypeList x:Name="FreeEquipmentTypes" Width="200" Height="200" Margin="0 0 10 0"
-                                                               SelectedItem="{Binding CurrentlySelectedFreeEquipmentType, Mode=TwoWay}"/>
+                                                                       ItemsSource="{Binding FreeEquipmentTypes}"
+                                                                       SelectedItem="{Binding CurrentlySelectedFreeEquipmentType, Mode=TwoWay}"/>
                                     <StackPanel VerticalAlignment="Center">
 
                                         <StackPanel>
@@ -213,7 +214,8 @@
 
                                     </StackPanel>
                                     <local:RenovationEquipmentTypeList x:Name="EquipmentTypesInRoom" Width="200" Height="200" Margin="10 0 0 0"
-                                                               SelectedItem="{Binding CurrentlySelectedEquipmentTypeInRoom, Mode=TwoWay}"/>
+                                                                       ItemsSource="{Binding EquipmentTypesInRoom}"
+                                                                       SelectedItem="{Binding CurrentlySelectedEquipmentTypeInRoom, Mode=TwoWay}"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0 10 0 0" Height="40">
