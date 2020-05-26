@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
@@ -29,7 +27,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu
         public DateTime? SearchEndTime { get; set; } = null;
         public bool SearchOccupiedRooms { get; set; } = false;
         public ICollection<EquipmentType> EquipmentTypesToSearchBy { get; set; } = new List<EquipmentType>();
-        public ObservableCollection<EquipmentTypeBindableViewModel> EquipmentTypeBindableViewModels { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
+        public ObservableCollection<EquipmentTypeBindableViewModel> AllEquipmentTypes { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
         public ICommand Search { get; set; }
         public List<Room> SearchResults { get; set; }
         public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels { get; set; } = new ObservableCollection<RoomBindableViewModel>();
@@ -41,7 +39,6 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu
             _equipmentItemService = equipmentItemService;
             Search = new RelayCommand(ExecuteSearch);
             MessengerInstance.Register<EquipmentTypeBindableViewModelChecked>(this, HandleEquipmentTypeBindableViewModelChanged);
-            LoadEquipmentTypes();
         }
 
         private static void UiDispatch(Action action)
@@ -49,24 +46,30 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu
             System.Windows.Application.Current.Dispatcher.Invoke(action);
         }
 
+        public void Initialize()
+        {
+            LoadEquipmentTypes();
+        }
+
         private void LoadEquipmentTypes()
         {
             Task.Run(async () =>
             {
                 var equipmentTypes = (await _equipmentTypeService.GetAll()).ToList();
-                equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
-
-                equipmentTypes.ForEach(async et =>
+                //equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
+                UiDispatch(() => AllEquipmentTypes.Clear());
+                equipmentTypes.ForEach( et =>
                 {
-                    int amount = (await _equipmentItemService.GetAllByType(et)).Count;
-                    UiDispatch(() => EquipmentTypeBindableViewModels.Add(new EquipmentTypeBindableViewModel(et, amount)));
+                    var amount = ( _equipmentItemService.GetAllByType(et)).GetAwaiter().GetResult().Count;
+                    UiDispatch(() => AllEquipmentTypes.Add(new EquipmentTypeBindableViewModel(et, amount)));
                 });
             });
+
         }
 
         private void HandleEquipmentTypeBindableViewModelChanged(EquipmentTypeBindableViewModelChecked obj)
         {
-            EquipmentTypesToSearchBy = EquipmentTypeBindableViewModels
+            EquipmentTypesToSearchBy = AllEquipmentTypes
                 .Where(etbvm => etbvm.IsSelected)
                 .Select(etbvm => etbvm.EquipmentType)
                 .ToList();
