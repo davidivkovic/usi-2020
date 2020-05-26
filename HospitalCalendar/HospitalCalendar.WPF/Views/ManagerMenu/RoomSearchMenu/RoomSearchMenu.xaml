@@ -13,8 +13,13 @@
              FontFamily="{materialDesign:MaterialDesignFont}"
              Height="900" Width="1600"
              d:DesignHeight="900" d:DesignWidth="1600"
-             DataContext="{Binding Path=RoomSearchViewModel, Source={StaticResource Locator}}">
-    <Grid Margin="20 0 0 0">
+             d:DataContext="{Binding Path=RoomSearchViewModel, Source={StaticResource Locator}}">
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+        <Grid Margin="20 0 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="8.3*"/>
@@ -33,7 +38,7 @@
             <Label FontSize="15" FontWeight="Regular" Content="Search rooms by equipment and availability" Padding="0" Margin="2 0 0 0"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Grid.Column="2" Margin="0 30 0 0" Width="300" HorizontalAlignment="Left">
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="440 50 0 0" Width="300" HorizontalAlignment="Left">
 
             <StackPanel Orientation="Horizontal">
                 <DatePicker x:Name="SearchStartDate"
@@ -106,19 +111,25 @@
                 </StackPanel.Style>
                 <CheckBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Margin="0 10 0 0" IsEnabled="True"
                           Content="Search Occupied Rooms" IsChecked="{Binding SearchOccupiedRooms}"/>
-                <Button Width="200" Margin="0 50 0 0" Command="{Binding Search}" Content="Search" Style="{DynamicResource MaterialDesignFlatMidBgButton}"/>
+                <Button Width="200" Margin="0 20 0 0" Command="{Binding Search}" Content="Search" Style="{DynamicResource MaterialDesignFlatMidBgButton}"/>
             </StackPanel>
         </StackPanel>
 
 
         <StackPanel Grid.Column="1" Grid.Row="1" Margin="0 20 0 0">
             <TextBlock Text="Select equipment to search by" FontSize="24"/>
-            <equipmentMenu:EquipmentTypeList  Width="400" HorizontalAlignment="Left" Margin="0 10 0 0"/>
-        </StackPanel>
+                <ScrollViewer Height="700" Width="400" HorizontalAlignment="Left" Margin="0 10 0 0" 
+                              VerticalScrollBarVisibility="Hidden">
 
-        <StackPanel Grid.Column="2" Grid.Row="1" Margin="100 20 0 0" Width="300">
+           
+            <equipmentMenu:EquipmentTypeList ItemsSource="{Binding AllEquipmentTypes}"/>
+                </ScrollViewer>
+            </StackPanel>
+
+        <StackPanel Grid.Column="2" Grid.Row="1" Margin="0 20 0 0" Width="300">
             <TextBlock Text="Search results" FontSize="28"/>
             <local:SearchRoomList ItemsSource="{Binding SearchResults}"/>
             </StackPanel> 
     </Grid>
+        </materialDesign:TransitioningContent>
 </UserControl>

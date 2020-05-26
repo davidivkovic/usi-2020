@@ -10,7 +10,7 @@
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="720" d:DesignWidth="1280"
              Width="1280" Height="720"
-             DataContext="{Binding Path=LoginViewModel, Source={StaticResource Locator}}" >
+             d:DataContext="{Binding Path=LoginViewModel, Source={StaticResource Locator}}" >
 
     <materialDesign:TransitioningContent>
         <materialDesign:TransitioningContent.OpeningEffects>
