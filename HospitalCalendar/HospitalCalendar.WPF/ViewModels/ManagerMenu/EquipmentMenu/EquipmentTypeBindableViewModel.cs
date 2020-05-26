@@ -15,7 +15,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
     {
         private bool _isSelected;
 
-        [AlsoNotifyFor(nameof(Name), nameof(Description))]
+        public int Amount { get; set; }
         public EquipmentType EquipmentType { get; set; }
 
         public bool IsSelected
@@ -38,6 +38,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
                 if (EquipmentType.Name == value) return;
                 EquipmentType.Name = value;
                 RaisePropertyChanged(nameof(Name));
+                RaisePropertyChanged(nameof(EquipmentType));
             }
         }
 
@@ -49,10 +50,9 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
                 if (EquipmentType.Description == value) return;
                 EquipmentType.Description = value;
                 RaisePropertyChanged(nameof(Description));
+                RaisePropertyChanged(nameof(EquipmentType));
             }
         }
-
-        public int Amount { get; set; }
 
         public EquipmentTypeBindableViewModel(EquipmentType equipmentType, int amount)
         {
