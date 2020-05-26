@@ -11,7 +11,7 @@
              Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="720" d:DesignWidth="1220"
-             DataContext="{Binding Path=EquipmentMenuViewModel, Source={StaticResource Locator}}">
+             d:DataContext="{Binding Path=EquipmentMenuViewModel, Source={StaticResource Locator}}">
 
     <materialDesign:TransitioningContent>
         <materialDesign:TransitioningContent.OpeningEffects >
@@ -53,15 +53,15 @@
             <ScrollViewer Grid.Row="1" Grid.Column="1"
                       VerticalAlignment="Top"
                       Padding="0 6 14 0" 
-                      Margin="0 55 0 0"
-                      Height="515"
+                      Margin="0 25 0 0"
+                      Height="715"
                       Width="400"
                       VerticalScrollBarVisibility="Hidden"
                       HorizontalAlignment="Left">
-                <local:EquipmentTypeList />
+                <local:EquipmentTypeList ItemsSource="{Binding AllEquipmentTypes}"/>
             </ScrollViewer>
 
-            <StackPanel Grid.Row="1" Grid.Column="2" Width="300" HorizontalAlignment="Left">
+            <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Width="300" HorizontalAlignment="Center" Margin="0 140 400 0">
                 <local:EquipmentTypeCreate/>
                 <StackPanel.Style >
                     <Style TargetType="{x:Type StackPanel}">
@@ -75,7 +75,7 @@
                 </StackPanel.Style>
             </StackPanel>
 
-            <StackPanel  Grid.Row="1" Grid.Column="2" Width="300" HorizontalAlignment="Left"> 
+            <StackPanel  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Width="300" HorizontalAlignment="Center" Margin="0 75 400 0"> 
                 <local:EquipmentTypeUpdate/>
                 <StackPanel.Style >
                     <Style TargetType="{x:Type StackPanel}">
