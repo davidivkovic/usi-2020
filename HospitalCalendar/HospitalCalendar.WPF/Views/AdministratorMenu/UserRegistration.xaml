@@ -39,7 +39,6 @@
                     Margin="32, 35, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding FirstName}"
                     materialDesign:HintAssist.Hint="First Name">
             </TextBox>
@@ -50,7 +49,6 @@
                     Margin="32, 25, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding LastName}"
                     materialDesign:HintAssist.Hint="Last Name"/>
 
@@ -60,7 +58,6 @@
                     Margin="32, 50, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding Username}"
                     materialDesign:HintAssist.Hint="Username"/>
 
@@ -70,7 +67,6 @@
                     Margin="32, 25, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding Password}"
                     materialDesign:HintAssist.Hint="Password"/>
 
@@ -80,7 +76,6 @@
                     Margin="32, 25, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding ConfirmPassword}"
                     materialDesign:HintAssist.Hint="Confirm Password"/>
 
