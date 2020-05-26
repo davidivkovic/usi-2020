@@ -83,15 +83,20 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             UserBindableViewModels = new ObservableCollection<UserBindableViewModel>();
             RoomBindableViewModels = new ObservableCollection<RoomBindableViewModel>();
 
-            LoadRooms();
             LoadUsers();
+            LoadRooms();
 
             MessengerInstance.Register<UserBindableViewModelChanged>(this, HandleUserBindableViewModelChanged);
             MessengerInstance.Register<RoomBindableViewModelChanged>(this, HandleRoomBindableViewModelChanged);
             MessengerInstance.Register<UserRegisterSuccess>(this, HandleUserRegisterSuccess);
             MessengerInstance.Register<RoomCreateSuccess>(this, HandleRoomCreateSuccess);
             MessengerInstance.Register<UserUpdateSuccess>(this, HandleUserUpdateSuccess);
-            MessengerInstance.Register<CurrentUser>(this, message => Administrator = message.User as Administrator);
+            MessengerInstance.Register<CurrentUser>(this, message =>
+            {
+                Administrator = message.User as Administrator;
+                //LoadUsers();
+            });
+
         }
 
         private static void UiDispatch(Action action)
@@ -101,7 +106,11 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
         private void HandleUserRegisterSuccess(UserRegisterSuccess message)
         {
-            UiDispatch(() => UserBindableViewModels.Insert(0, new UserBindableViewModel(message.User)));
+            UiDispatch(() =>
+            {
+                UserBindableViewModels.Insert(0, new UserBindableViewModel(message.User));
+                //UserBindableViewModels = new ObservableCollection<UserBindableViewModel>(UserBindableViewModels);
+            });
         }
 
         private void HandleRoomCreateSuccess(RoomCreateSuccess message)
@@ -116,13 +125,16 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
         private void HandleUserUpdateSuccess(UserUpdateSuccess message)
         {
             UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User = message.User);
+            //UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User.LastName = message.User.LastName);
+            //UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User.Username = message.User.Username);
+            //UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User.Username = message.User.Username);
         }
 
         private void LoadRooms()
         {
-            Task.Run(() =>
+            Task.Run(async() =>
             {
-                var rooms = _roomService.GetAll().Result.ToList();
+                var rooms = (await _roomService.GetAll()).ToList();
                 rooms.Sort((x, y) => x.Floor.CompareTo(y.Floor));
 
                 UiDispatch(() => rooms.ForEach(r => RoomBindableViewModels.Add(new RoomBindableViewModel(r))));
