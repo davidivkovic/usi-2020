@@ -12,61 +12,46 @@ namespace HospitalCalendar.EntityFramework.Services
     public class GenericDataService<T> : IDataService<T> where T : DomainObject
     {
         protected readonly HospitalCalendarDbContextFactory ContextFactory;
-        protected readonly HospitalCalendarDbContext _context;
+        protected readonly HospitalCalendarDbContext Context;
 
         public GenericDataService(HospitalCalendarDbContextFactory contextFactory)
         {
             ContextFactory = contextFactory;
-            _context = ContextFactory.CreateDbContext();
+            Context = ContextFactory.CreateDbContext();
         }
 
         public async Task<T> Create(T entity)
         {
-
-                EntityEntry<T> createdResult = await _context.Set<T>().AddAsync(entity);
-                await _context.SaveChangesAsync();
-
-                return createdResult.Entity;
-            
+            var createdResult = await Context.Set<T>().AddAsync(entity);
+            await Context.SaveChangesAsync();
+            return createdResult.Entity;
         }
 
         public async Task<bool> Delete(Guid id)
         {
-
-                T entity = await _context.Set<T>().FirstOrDefaultAsync((e) => e.ID == id);
-                _context.Set<T>().Remove(entity);
-                await _context.SaveChangesAsync();
-
-                return true;
-
+            var entity = await Context.Set<T>().FirstOrDefaultAsync((e) => e.ID == id);
+            Context.Set<T>().Remove(entity);
+            await Context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<T> Get(Guid id)
         {
-
-                T entity = await _context.Set<T>().FirstOrDefaultAsync(e => e.ID == id && e.IsActive);
-
-                return entity;
-
+            var entity = await Context.Set<T>().FirstOrDefaultAsync(e => e.ID == id && e.IsActive);
+            return entity;
         }
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            IEnumerable<T> entities = await _context.Set<T>().Where(e => e.IsActive).ToListAsync();
-
+            IEnumerable<T> entities = await Context.Set<T>().Where(e => e.IsActive).ToListAsync();
             return entities;
         }
 
         public async Task<T> Update(T entity)
         {
-
-                //context.Entry(entity).State = EntityState.Modified;
-                _context.Set<T>().Update(entity);
-                //context.Entry(await context.Set<T>().FirstOrDefaultAsync(T => T.ID == entity.ID)).CurrentValues.SetValues(entity); 
-                await _context.SaveChangesAsync();
-
-                return entity;
-
+            Context.Set<T>().Update(entity);
+            await Context.SaveChangesAsync();
+            return entity;
         }
     }
 }

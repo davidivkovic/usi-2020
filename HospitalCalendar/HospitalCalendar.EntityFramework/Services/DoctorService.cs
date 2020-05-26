@@ -20,14 +20,14 @@ namespace HospitalCalendar.EntityFramework.Services
         public new async Task<IEnumerable<Doctor>> GetAll()
         {
             //await using var context = ContextFactory.CreateDbContext();
-            return await _context.Doctors.Where(d => d.IsActive).Include(d => d.Specializations).ToListAsync();
+            return await Context.Doctors.Where(d => d.IsActive).Include(d => d.Specializations).ToListAsync();
 
         }
 
         public new async Task<Doctor> Get(Guid ID)
         {
             //await using var context = ContextFactory.CreateDbContext();
-            return await _context.Doctors.Include(d => d.Specializations).FirstOrDefaultAsync(d => d.IsActive);
+            return await Context.Doctors.Include(d => d.Specializations).FirstOrDefaultAsync(d => d.IsActive);
         }
     }
 }

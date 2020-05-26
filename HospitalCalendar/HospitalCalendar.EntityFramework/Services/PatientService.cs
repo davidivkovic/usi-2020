@@ -17,7 +17,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public new async Task<Patient> Get(Guid id)
         {
-            return await _context.Patients
+            return await Context.Patients
                 .Include(p => p.Anamnesis)
                     .ThenInclude(a => a.Entries)
                 .FirstOrDefaultAsync(p => p.ID == id);
