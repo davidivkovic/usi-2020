@@ -13,9 +13,11 @@
              d:DesignHeight="1000" d:DesignWidth="300"
              d:DataContext="{Binding Path=EquipmentMenuViewModel, Source={StaticResource Locator}}">
     <Grid>
-        <ListView ItemsSource="{Binding EquipmentTypeBindableViewModels}" x:Name="EquipmentListBox" SelectedItem="{Binding SelectedItem,
-         RelativeSource={RelativeSource AncestorType=UserControl}}" materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True" 
-                      Grid.IsSharedSizeScope="True">
+        <ListView x:Name="EquipmentListBox"
+                  ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                  materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True" 
+                  Grid.IsSharedSizeScope="True">
 
             <ListView.ItemTemplate>
                 
