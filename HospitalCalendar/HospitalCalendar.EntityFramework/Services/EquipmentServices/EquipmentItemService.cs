@@ -109,12 +109,11 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
 
         public async Task<bool> Remove(EquipmentType equipmentType, int amount)
         {
-
             await using var context = ContextFactory.CreateDbContext();
 
             var freeEquipmentItems = await GetAllFreeByType(equipmentType);
             freeEquipmentItems = freeEquipmentItems.Take(Math.Abs(amount)).ToList();
-            await Task.Factory.StartNew(async () =>
+            await Task.Run(async () =>
             {
                 context.EquipmentItems.RemoveRange(freeEquipmentItems);
                 await context.SaveChangesAsync();
