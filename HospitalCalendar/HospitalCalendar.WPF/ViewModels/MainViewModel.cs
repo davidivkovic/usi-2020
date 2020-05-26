@@ -6,10 +6,13 @@ using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.WPF.Messages;
 using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
+using HospitalCalendar.WPF.ViewModels.DoctorMenu;
 using HospitalCalendar.WPF.ViewModels.Login;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu;
+using HospitalCalendar.WPF.ViewModels.SecretaryMenu;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Extensions.DependencyInjection;
 using PropertyChanged;
 
 namespace HospitalCalendar.WPF.ViewModels
@@ -17,7 +20,6 @@ namespace HospitalCalendar.WPF.ViewModels
     public class MainViewModel : ViewModelBase
     {
         public User CurrentUser { get; set; }
-         
         public bool DarkModeIsEnabled { get; set; }
 
         public ICommand Logout { get; set; }
@@ -26,17 +28,16 @@ namespace HospitalCalendar.WPF.ViewModels
         public ViewModelBase CurrentViewModel { get; set; }
         public AdministratorViewModel AdministratorViewModel { get; set; }
         public ManagerMenuViewModel ManagerMenuViewModel { get; set; }
+        public DoctorMenuViewModel DoctorMenuViewModel { get; set; }
+        public SecretaryMenuViewModel SecretaryMenuViewModel { get; set; }
         public LoginViewModel LoginViewModel { get; set; }
 
-        public MainViewModel(AdministratorViewModel administratorViewModel, ManagerMenuViewModel managerMenuViewModel, LoginViewModel loginViewModel)
+        public MainViewModel(LoginViewModel loginViewModel)
         {
             DarkModeIsEnabled = false;
-
-            AdministratorViewModel = administratorViewModel;
-            ManagerMenuViewModel = managerMenuViewModel;
-            LoginViewModel = loginViewModel;
-
             ToggleDarkMode = new RelayCommand(ExecuteToggleDarkMode);
+
+            LoginViewModel = loginViewModel;
 
             CurrentUser = null;
             CurrentViewModel = LoginViewModel;
@@ -46,6 +47,7 @@ namespace HospitalCalendar.WPF.ViewModels
 
         private void ExecuteLogout()
         {
+            CurrentViewModel.Cleanup();
             if (DarkModeIsEnabled)
             {
                 DarkModeIsEnabled = false;
@@ -58,31 +60,35 @@ namespace HospitalCalendar.WPF.ViewModels
 
         private void ExecuteToggleDarkMode()
         {
-            var paletteHelper = new PaletteHelper();
-            //Retrieve the app's existing theme
-            ITheme theme = paletteHelper.GetTheme();
-
+            var paletteHelper = new PaletteHelper(); 
+            var theme = paletteHelper.GetTheme();
             theme.SetBaseTheme(DarkModeIsEnabled ? Theme.Dark : Theme.Light);
-
-            //Change the app's current theme
             paletteHelper.SetTheme(theme);
 
             MessengerInstance.Send(new DarkModeToggled());
         }
 
-        private void ExecuteLogin( UserLoginSuccess message)
+        private void ExecuteLogin(UserLoginSuccess message)
         {
             CurrentUser = message.User;
 
             switch (message.User)
             {
                 case Administrator administrator:
-                    CurrentViewModel = AdministratorViewModel;
+                    CurrentViewModel = new ViewModelLocator().AdministratorViewModel;
                     MessengerInstance.Send(new CurrentUser(administrator));
                     break;
                 case Manager manager:
-                    CurrentViewModel = ManagerMenuViewModel;
+                    CurrentViewModel = new ViewModelLocator().ManagerMenuViewModel;
                     MessengerInstance.Send(new CurrentUser(manager));
+                    break;
+                case Doctor doctor:
+                    CurrentViewModel = new ViewModelLocator().DoctorMenuViewModel;
+                    MessengerInstance.Send(new CurrentUser(doctor));
+                    break;
+                case Secretary secretary:
+                    CurrentViewModel = new ViewModelLocator().SecretaryMenuViewModel;
+                    MessengerInstance.Send(new CurrentUser(secretary));
                     break;
             }
         }
