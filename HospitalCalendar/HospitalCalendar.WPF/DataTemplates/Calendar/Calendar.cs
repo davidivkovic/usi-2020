@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
@@ -38,11 +40,7 @@ namespace HospitalCalendar.WPF.DataTemplates.Calendar
             }
 
             WeekStartDateTime = startWeekDateTime.AddDays(delta);
-
             CurrentWeek = new CalendarWeek(WeekStartDateTime);
-
-            //calendarEntries = SetCalendarEntriesStatus(calendarEntries);
-            //AddEvents(calendarEntries);
 
             var dayStart = new TimeSpan(0, 0, 0);
             var dayEnd = new TimeSpan(23, 59, 59);
@@ -188,14 +186,16 @@ namespace HospitalCalendar.WPF.DataTemplates.Calendar
             var startDateTime = calendarEntry.StartDateTime;
             var endDateTime = calendarEntry.EndDateTime;
 
-            UiDispatch(() =>
-            {
+            //await Task.Run(() =>
+            //{
                 // If a calendar entry spans across multiple days then we split it up by days
                 if (startDateTime.Date.CompareTo(endDateTime.Date) != 0)
                 {
                     var dateRanges = SplitCalendarEntryByDays(endDateTime, startDateTime);
 
-                    dateRanges.ForEach(dateTuple => CurrentWeek.TimeLines
+                    UiDispatch(() =>
+                    {
+                        dateRanges.ForEach(dateTuple => CurrentWeek.TimeLines
                         .FirstOrDefault(tl => tl.Day.Date.Equals(dateTuple.startDateTime.Date) && tl.Day.Date.Equals(dateTuple.endDateTime.Date))?
                         .Events
                         .Add(new TimeLineEvent
@@ -204,6 +204,7 @@ namespace HospitalCalendar.WPF.DataTemplates.Calendar
                             EndDate = dateTuple.endDateTime,
                             CalendarEntry = new CalendarEntryBindableViewModel(calendarEntry)
                         }));
+                    });
                 }
                 else
                 {
@@ -213,19 +214,24 @@ namespace HospitalCalendar.WPF.DataTemplates.Calendar
                         EndDate = endDateTime,
                         CalendarEntry = new CalendarEntryBindableViewModel(calendarEntry)
                     };
-
-                    CurrentWeek.TimeLines
+                    UiDispatch(() =>
+                    {
+                        CurrentWeek.TimeLines
                         .FirstOrDefault(tl => tl.Day.Date.Equals(startDateTime.Date))?
                         .Events
                         .Add(eventToAdd);
+                    });
                 }
-            });
+            //});
         }
 
         public void AddEvents(List<CalendarEntry> calendarEntries)
         {
-            calendarEntries = SetCalendarEntriesStatus(calendarEntries);
-            calendarEntries.ForEach(AddEvent);
+            //Task.Run(() =>
+            //{
+                calendarEntries = SetCalendarEntriesStatus(calendarEntries);
+                calendarEntries.ForEach(AddEvent);
+            //});
         }
 
         public void LoadCurrentWeek(List<CalendarEntry> calendarEntries)
