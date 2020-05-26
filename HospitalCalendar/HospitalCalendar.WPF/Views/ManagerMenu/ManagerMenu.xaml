@@ -10,7 +10,7 @@
              Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="900" d:DesignWidth="1600"
-             DataContext="{Binding Path=ManagerMenuViewModel, Source={StaticResource Locator}}">
+             d:DataContext="{Binding Path=ManagerMenuViewModel, Source={StaticResource Locator}}">
 
     <materialDesign:TransitioningContent>
         <materialDesign:TransitioningContent.OpeningEffects >
@@ -92,6 +92,7 @@
                                 <Button Style="{StaticResource MaterialDesignFlatButton}" 
                                         Background="{DynamicResource MaterialDesignBackground}"
                                         Foreground="{DynamicResource MaterialDesignBody}"
+                                        Command="{Binding ShowDoctorMenu}"
                                         HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
                                         HorizontalContentAlignment="Left">
 
