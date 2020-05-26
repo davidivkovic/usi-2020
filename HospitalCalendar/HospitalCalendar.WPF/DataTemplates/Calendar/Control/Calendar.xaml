@@ -11,7 +11,8 @@
              Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              mc:Ignorable="d" Width="1280" Height="800"
-             d:DesignHeight="720" d:DesignWidth="1280">
+             d:DesignHeight="720" d:DesignWidth="1280"
+             d:DataContext="{Binding Path=AppointmentScheduleViewModel, Source={StaticResource Locator}}">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -55,52 +56,52 @@
 
             <ItemsControl x:Name="Days" ItemsSource="{Binding Path=Calendar.CurrentWeek.TimeLines}" Margin="105 5 0 0" Height="2500"  Panel.ZIndex="1">
 
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Width="130" Margin="1 0 0 0" Opacity="{Binding Day, Converter={StaticResource DateTimeToOpacityConverter}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Width="130" Margin="1 0 0 0" Opacity="{Binding Day, Converter={StaticResource DateTimeToOpacityConverter}}">
                             <TextBlock HorizontalAlignment="Left" Text="{Binding Day, StringFormat=ddd}" FontSize="13"/>
                             <TextBlock HorizontalAlignment="Left" Text="{Binding Day.Day}" FontSize="30" FontWeight="Light"/>
                         </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
 
 
-        
 
-        <Button Margin="0 25 260 0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="26" Width="48"
+
+            <Button Margin="0 25 260 0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="26" Width="48"
                         Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
                         BorderBrush="{DynamicResource MaterialDesignBackground}" 
                         Command="{Binding NextWeek}" Content="{materialDesign:PackIcon Kind=ChevronRight}">
 
-                    <Button.Triggers>
-                        <EventTrigger RoutedEvent="Button.Click">
-                            <EventTrigger.Actions>
-                                <BeginStoryboard Storyboard="{StaticResource AnimateWeekChange}"/>
-                            </EventTrigger.Actions>
-                        </EventTrigger>
-                    </Button.Triggers>
-        </Button>
+                <Button.Triggers>
+                    <EventTrigger RoutedEvent="Button.Click">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard Storyboard="{StaticResource AnimateWeekChange}"/>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Button.Triggers>
+            </Button>
 
-        <Button Margin="11 25 0 0" Height="26" Width="48" VerticalAlignment="Top" HorizontalAlignment="Left"
+            <Button Margin="11 25 0 0" Height="26" Width="48" VerticalAlignment="Top" HorizontalAlignment="Left"
                 Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
                 BorderBrush="{DynamicResource MaterialDesignBackground}"
                 Command="{Binding PreviousWeek}" Content="{materialDesign:PackIcon Kind=ChevronLeft}">
-                    <Button.Triggers>
-                        <EventTrigger RoutedEvent="Button.Click">
-                            <EventTrigger.Actions>
-                                <BeginStoryboard Storyboard="{StaticResource AnimateWeekChange}"/>
-                            </EventTrigger.Actions>
-                        </EventTrigger>
-                    </Button.Triggers>
-        </Button>
+                <Button.Triggers>
+                    <EventTrigger RoutedEvent="Button.Click">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard Storyboard="{StaticResource AnimateWeekChange}"/>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Button.Triggers>
+            </Button>
 
         </Grid>
 
@@ -121,7 +122,7 @@
         </StackPanel>
 
         <ScrollViewer VerticalScrollBarVisibility="Hidden" Margin="0 5 0 0">
-                <Grid Margin="0 0 0 0">
+            <Grid Margin="0 0 0 0">
                 <ItemsControl Panel.ZIndex="1" Margin="0 0 0 0" x:Name="CurrentTimeTimeLine"
                               DataContext="{Binding Path=Calendar.CurrentTime}" ItemsSource="{Binding Path=Events}">
 
@@ -248,10 +249,9 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <!--CURRENT TIME-->
-                                                <materialDesign:ColorZone
-                                                    HorizontalContentAlignment="Stretch" Width="125"
-                                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                                    VerticalAlignment="Top" CornerRadius="7">
+                                                <materialDesign:ColorZone HorizontalContentAlignment="Stretch" Width="125"
+                                                                          materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                                          VerticalAlignment="Top" CornerRadius="7">
 
                                                     <materialDesign:ColorZone.Style>
                                                         <Style TargetType="{x:Type materialDesign:ColorZone}">
@@ -263,24 +263,67 @@
                                                         </Style>
                                                     </materialDesign:ColorZone.Style>
 
-                                                    <StackPanel>
-                                                        <!--Foreground="{DynamicResource MaterialDesignForeground}"-->
-                                                        <!--Text="{Binding CalendarEntry.StartDateTime, StringFormat=dd.MM.yyyy HH:mm-->
+                                                    <Border Panel.ZIndex="2" CornerRadius="7" Focusable="True"
+                                                            PreviewMouseLeftButtonDown="Border_PreviewMouseLeftButtonDown"
+                                                            PreviewMouseLeftButtonUp="Border_PreviewMouseLeftButtonUp"
+                                                            LostFocus="UIElement_OnLostFocus">
 
-                                                        <!--<TextBlock Margin="5 5 0 0" FontSize="11"
+                                                        <Border.Style>
+                                                            <Style TargetType="{x:Type Border}">
+                                                                <Setter Property="BorderThickness" Value="0.5"/>
+                                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsFocused"  Value="True">
+                                                                        <Setter Property="BorderBrush" Value="Orange"/>
+                                                                        <Setter Property="BorderThickness" Value="0.6"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="BorderBrush" Value="Orange"/>
+                                                                        <Setter Property="BorderThickness" Value="0.6"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+
+                                                        <Border.InputBindings>
+                                                            <MouseBinding MouseAction="LeftClick" Command="{Binding EventSelected}"/>
+                                                        </Border.InputBindings>
+
+                                                            <StackPanel Cursor="Hand" Background="Transparent" Focusable="True">
+
+                                                                <!--<StackPanel.Style>
+                                                                    <Style TargetType="{x:Type StackPanel}">
+                                                                        <Setter Property="Background" Value="Transparent"/>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsFocused"  Value="True">
+                                                                                <Setter Property="Background">
+                                                                                    <Setter.Value>
+                                                                                        <LinearGradientBrush>
+                                                                                            <GradientStop Color="Transparent" Offset="0"/>
+                                                                                            <GradientStop Color="Black" Offset="1"/>
+                                                                                        </LinearGradientBrush>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                                --><!--<Setter Property="Background" Value="White"/>--><!--
+                                                                                <Setter Property="Opacity" Value="1"/>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </StackPanel.Style>-->
+
+                                                                <!--Foreground="{DynamicResource MaterialDesignForeground}"-->
+                                                                <!--Text="{Binding CalendarEntry.StartDateTime, StringFormat=dd.MM.yyyy HH:mm-->
+
+                                                                <!--<TextBlock Margin="5 5 0 0" FontSize="11"
                                                                    Foreground="{Binding Path=CalendarEntry.Status, Converter={StaticResource CalendarEntryToBrushConverter}, ConverterParameter=true}" 
                                                                    Text="{Binding CalendarEntry.StartDateTime, StringFormat=HH:mm}"/>
 
                                                         <TextBlock FontWeight="Medium" FontSize="12" Margin="5 0 0 0" Text="Appointment"
                                                                    Foreground="{Binding Path=CalendarEntry.Status, Converter={StaticResource CalendarEntryToBrushConverter}, ConverterParameter=true}">
                                                         </TextBlock>-->
-    
-
-
-                                                        <ContentControl Content="{Binding Path=CalendarEntry}"
-                                                                        ContentTemplateSelector="{StaticResource CalendarEntryTemplateSelector}"
-                                                                      Foreground="Black"/>
-                                                    </StackPanel>
+                                                                <ContentControl Content="{Binding Path=CalendarEntry}" ContentTemplateSelector="{StaticResource CalendarEntryTemplateSelector}"/>
+                                                            </StackPanel>
+                                                    </Border>
 
                                                     <materialDesign:ColorZone.Margin>
                                                         <MultiBinding Converter="{StaticResource EventLengthConverter}">
