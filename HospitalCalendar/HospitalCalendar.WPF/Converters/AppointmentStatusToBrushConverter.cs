@@ -7,7 +7,6 @@ using System.Windows.Media;
 using HospitalCalendar.Domain.Models;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
-using Microsoft.Windows.Themes;
 
 namespace HospitalCalendar.WPF.Converters
 {
