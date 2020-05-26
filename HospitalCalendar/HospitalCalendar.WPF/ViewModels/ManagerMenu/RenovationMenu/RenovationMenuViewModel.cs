@@ -32,10 +32,10 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
         private readonly IRenovationService _renovationService;
         private RoomBindableViewModel _currentlySelectedRoom;
 
-        public DateTime? RenovationStartDate { get; set; } = null;
-        public DateTime? RenovationEndDate { get; set; } = null;
-        public DateTime? RenovationStartTime { get; set; } = null;
-        public DateTime? RenovationEndTime { get; set; } = null;
+        public DateTime? RenovationStartDate { get; set; }
+        public DateTime? RenovationEndDate { get; set; }
+        public DateTime? RenovationStartTime { get; set; }
+        public DateTime? RenovationEndTime { get; set; }
 
         public bool SplittingRoom { get; set; }
         public bool OtherRenovations { get; set; }
@@ -57,7 +57,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
         public ObservableCollection<RoomType> RoomTypes { get; set; }
         public RoomType? NewRoomType { get; set; }
 
-        public ObservableCollection<EquipmentTypeBindableViewModel> FreeEquipmentTypes = new ObservableCollection<EquipmentTypeBindableViewModel>();
+        public ObservableCollection<EquipmentTypeBindableViewModel> FreeEquipmentTypes { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
         public ObservableCollection<EquipmentTypeBindableViewModel> EquipmentTypesInRoom { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
         public List<EquipmentType> AddedEquipmentTypes { get; set; } = new List<EquipmentType>();
         public List<EquipmentType> RemovedEquipmentTypes { get; set; } = new List<EquipmentType>();
@@ -68,8 +68,9 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             get => _currentlySelectedRoom;
             set
             {
-                if (_currentlySelectedRoom == value)
+                if (_currentlySelectedRoom == value || value == null)
                     return;
+
                 _currentlySelectedRoom = value;
                 RaisePropertyChanged(nameof(CurrentlySelectedRoom));
                 RoomTypes = new ObservableCollection<RoomType>(Enum.GetValues(typeof(RoomType)).Cast<RoomType>().ToList());
@@ -93,11 +94,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             _equipmentItemService = equipmentItemService;
             _equipmentTypeService = equipmentTypeService;
 
-            var room = Task.Run(async () => await roomService.GetAll()).GetAwaiter().GetResult().ToList().First();
-            //Task.Run(async () => await userService.Register<Doctor>("David", "Ivkovic", "nuts", "deez")).GetAwaiter().GetResult();
-            //var doc = Task.Run(async () => await userService.GetAll()).GetAwaiter().GetResult().Where(u=> u.GetType() == typeof(Doctor)).ToList().First();
-
-            LoadRooms();
+            //LoadRooms();
             Calendar = new Calendar(DateTime.Today);
 
             NextWeek = new RelayCommand(ExecuteLoadNextCalendarWeek);
@@ -108,13 +105,18 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             ScheduleRenovation = new RelayCommand(ExecuteScheduleRenovation);
         }
 
+        public void Initialize()
+        {
+            LoadRooms();
+            CurrentlySelectedRoom = AllRooms.FirstOrDefault();
+        }
+
         private void LoadCurrentCalendarWeekForRoom()
         {
             Task.Run(async() =>
             {
                 var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
                 var entries = (await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom?.Room, weekStart, weekStart + TimeSpan.FromDays(7))).ToList();
-
                 Calendar.LoadCurrentWeek(entries);
             });
         }
@@ -124,7 +126,8 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             Task.Run(async () =>
             {
                 var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
-                var entries = (await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, weekStart - TimeSpan.FromDays(8), weekStart + TimeSpan.FromDays(1))).ToList();
+                var entries = (await _calendarEntryService
+                    .GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, weekStart - TimeSpan.FromDays(8), weekStart + TimeSpan.FromDays(1))).ToList();
                 Calendar.LoadPreviousWeek(entries);
             });
         }
@@ -134,7 +137,8 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             Task.Run(async () =>
             {
                 var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
-                var entries = (await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, weekStart + TimeSpan.FromDays(6), weekStart + TimeSpan.FromDays(15))).ToList();
+                var entries = (await _calendarEntryService
+                .GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, weekStart + TimeSpan.FromDays(6), weekStart + TimeSpan.FromDays(15))).ToList();
                 Calendar.LoadNextWeek(entries);
             });
         }
@@ -150,7 +154,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             {
                 var rooms = (await _roomService.GetAll()).ToList();
                 rooms.Sort((x, y) => x.Floor.CompareTo(y.Floor));
-
+                UiDispatch(() => AllRooms.Clear());
                 UiDispatch(() =>
                 {
                     rooms.ForEach(r => AllRooms.Add(new RoomBindableViewModel(r)));
@@ -327,7 +331,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
                     await _renovationService.Create(CurrentlySelectedRoom.Room, RoomToJoinTo.Room, renovationStartPeriod.Value, renovationEndPeriod.Value);
                 }
 
-                Calendar.AddEvent((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).FirstOrDefault());
+                Calendar.AddEvents((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).ToList());
                 RenovationStartDate = RenovationEndDate = RenovationStartTime = RenovationEndTime = null;
                 NewRoomType = null;
             });
