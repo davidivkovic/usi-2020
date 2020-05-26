@@ -13,6 +13,5 @@
 
     <Style x:Key="MaterialDesignClock" TargetType="{x:Type materialDesign:Clock}" BasedOn="{StaticResource {x:Type materialDesign:Clock}}">
         <Setter Property="Background" Value="{DynamicResource MaterialDesignBackground}" />
-        <Setter Property="Foreground" Value="Red" />
     </Style>
 </ResourceDictionary>
