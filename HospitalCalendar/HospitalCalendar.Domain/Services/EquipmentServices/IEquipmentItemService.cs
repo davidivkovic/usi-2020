@@ -11,7 +11,9 @@ namespace HospitalCalendar.Domain.Services.EquipmentServices
         Task<ICollection<EquipmentItem>> GetAllFreeByType(EquipmentType equipmentType);
         Task<ICollection<EquipmentItem>> GetAllInUseByType(EquipmentType equipmentType);
         Task<ICollection<EquipmentItem>> GetAllWithoutRoom();
+        Task<ICollection<EquipmentItem>> GetAllByRoom(Room room);
         Task<bool> Create(EquipmentType equipmentType, int count);
         Task<bool> Remove(EquipmentType equipmentType, int amount);
+        Task<ICollection<EquipmentItem>> GetAllByTypeInRoom(EquipmentType equipmentType, Room room);
     }
 }

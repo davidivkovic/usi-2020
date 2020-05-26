@@ -1,0 +1,257 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu.RenovationMenu"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:calendar="clr-namespace:HospitalCalendar.WPF.DataTemplates.Calendar.Control"
+      xmlns:vm="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu"
+      xmlns:temp="clr-namespace:HospitalCalendar.WPF.Views.ManagerView"
+      xmlns:equipmentMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu"
+      xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+      Background="{DynamicResource MaterialDesignBackground}"
+      FontFamily="{materialDesign:MaterialDesignFont}"
+      d:DesignHeight="900" d:DesignWidth="1600"
+      mc:Ignorable="d"
+      d:DataContext="{Binding Path=RenovationMenuViewModel, Source={StaticResource Locator}}">
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+
+        <Grid >
+            <StackPanel>
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" 
+                        Margin="105 35 0 5">
+                    <Label FontSize="34" FontWeight="Black" Content="Room Renovations" Padding="0"/>
+                    <Label FontSize="15" FontWeight="Regular" Content="View the schedule and appoint renovations for a room" Padding="0" Margin="2 0 0 0"/>
+                </StackPanel>
+
+                <Grid>
+                    <calendar:Calendar x:Name="RenovationCalendar" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0 0 0 0" Margin="0 6 0 0"/>
+
+
+                    <StackPanel HorizontalAlignment="Right" Margin="0 0 55 0">
+                        <TextBlock FontSize="20" FontWeight="Regular" Text="Choose Room" Margin="0 65 0 0"/>
+
+                        <local:RenovationRoomList x:Name="RoomList" Width="150" Margin="0 10 0 0" HorizontalAlignment="Left"
+                                                  ItemsSource="{Binding AllRooms}"  SelectedItem="{Binding CurrentlySelectedRoom}"
+                                                  ComboBoxSelectionChanged="RoomList_OnComboBoxSelectionChanged"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                            <DatePicker x:Name="RenovationStartDate"
+                                                    VerticalAlignment="Top" Margin="0 0 0 0"
+                                                    Width="120"
+                                                    materialDesign:HintAssist.Hint="Start Date"
+                                                    DisplayDateStart="{x:Static sys:DateTime.Today}"
+                                                    SelectedDate="{Binding RenovationStartDate}"
+                                                    Style="{StaticResource MaterialDesignOutlinedDatePicker}" 
+                                                    CalendarStyle="{StaticResource MaterialDesignCalendarPortrait}"/>
+
+                            <materialDesign:TimePicker Margin="10 0 0 0"
+                                                            Is24Hours="True"
+                                                            SelectedTime="{Binding RenovationStartTime}"
+                                                            Style="{StaticResource MaterialDesignFloatingHintTimePicker}"
+                                                            materialDesign:HintAssist.Hint="Start Time"
+                                                            x:Name="RenovationStartTime"
+                                                            Width="100"/>
+                        </StackPanel>
+
+
+                        <!--<materialDesign:DialogHost CloseOnClickAway="True" DialogTheme="Inherit">
+
+
+                                <materialDesign:DialogHost.DialogContent>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <materialDesign:ColorZone Height="121" Width="50" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource PrimaryHueMidBrush}"
+                                                              VerticalAlignment="Top" HorizontalAlignment="Center" Panel.ZIndex="1"/>
+
+                                        <materialDesign:ColorZone Height="50" Width="270" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource PrimaryHueMidBrush}"
+                                                                  VerticalAlignment="Top" HorizontalAlignment="Left" Panel.ZIndex="1"/>
+
+
+                                        <materialDesign:ColorZone Height="50" Width="556" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignBackground}"
+                                                                  VerticalAlignment="Bottom" HorizontalAlignment="Left" Panel.ZIndex="0"/>
+
+                                        <materialDesign:ColorZone Height="10" Width="556" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignBackground}"
+                                                                  VerticalAlignment="Bottom" HorizontalAlignment="Left" Panel.ZIndex="0"/>
+
+                                    <materialDesign:ColorZone Height="331" Width="5" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Background="{DynamicResource MaterialDesignBackground}"
+                                                                  VerticalAlignment="Bottom" HorizontalAlignment="Right" Panel.ZIndex="0"/>
+
+                                    <materialDesign:ColorZone Height="280" Width="5" Grid.Row="0" Grid.Column="1" Background="{DynamicResource MaterialDesignBackground}"
+                                                                  VerticalAlignment="Bottom" HorizontalAlignment="Left" Panel.ZIndex="1"/>
+
+                                    <materialDesign:ColorZone Height="331" Width="5" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Background="{DynamicResource MaterialDesignBackground}"
+                                                                  VerticalAlignment="Bottom" HorizontalAlignment="Left" Panel.ZIndex="1"/>
+
+                                    <Border Width="556" Height="121" Background="{DynamicResource PrimaryHueMidBrush}" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top"/>
+                                    <Calendar x:Name="RenovationStartDate" SelectedDate="{Binding RenovationStartDate}" Margin="-1 34 -1 0" Grid.Column="0" Grid.Row="0" Style="{StaticResource MaterialDesignCalendarPortrait}"/>
+                                    <materialDesign:Clock x:Name="RenovationStartTime" Time="{Binding RenovationStartTime}" DisplayAutomation="Cycle" Grid.Column="1" Grid.Row="0" Is24Hours="True" Style="{StaticResource MaterialDesignClock}"/>
+                                       
+                                        <StackPanel Grid.Row="1" Margin="8" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2">
+                                            <Button Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" CommandParameter="1" Style="{DynamicResource MaterialDesignFlatButton}">OK</Button>
+                                            <Button Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" CommandParameter="0" Style="{DynamicResource MaterialDesignFlatButton}">CANCEL</Button>
+                                        </StackPanel>
+
+                                    </Grid>
+                                </materialDesign:DialogHost.DialogContent>
+                            <Button Margin="8 0 0 0" Content="..."  Width="100"
+                                    Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}">
+                            </Button>
+                        </materialDesign:DialogHost>-->
+
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <DatePicker x:Name="RenovationEndDate"
+                                            VerticalAlignment="Top" Margin="0 10 0 0"
+                                            Width="120"
+                                            materialDesign:HintAssist.Hint="End Date"
+                                            DisplayDateStart="{x:Static sys:DateTime.Today}"
+                                            SelectedDate="{Binding RenovationEndDate}"
+                                            Style="{StaticResource MaterialDesignOutlinedDatePicker}" 
+                                            CalendarStyle="{StaticResource MaterialDesignCalendarPortrait}"/>
+
+                            <materialDesign:TimePicker Margin="10 15 0 0"        
+                                                            Is24Hours="True"
+                                                            SelectedTime="{Binding RenovationEndTime}"
+                                                            materialDesign:HintAssist.Hint="End Time"
+                                                            Style="{StaticResource MaterialDesignFloatingHintTimePicker}"
+                                                            x:Name="RenovationEndTime"
+                                                            Width="100"/>
+                        </StackPanel>
+
+                        <StackPanel x:Name="AllRenovationOptions">
+                            <StackPanel.Style >
+                                <Style TargetType="{x:Type StackPanel}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedDate, ElementName=RenovationStartDate}" Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding SelectedDate, ElementName=RenovationEndDate}" Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding SelectedTime, ElementName=RenovationStartTime}" Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding SelectedTime, ElementName=RenovationEndTime}" Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+
+                            <CheckBox x:Name="MakeRoomUnavailableRenovation" Content="Just make this room unavailable during the selected time" 
+                                      Padding="10" Margin="0 5 0 0" IsChecked="{Binding OtherRenovations}"/>
+
+                            <StackPanel x:Name="OtherRenovations">
+                                <StackPanel Width="470" >
+                                    <TextBlock Text="Change room purpose" FontWeight="Light" FontSize="20"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+
+                                        <ComboBox Style="{DynamicResource MaterialDesignDataGridComboBox}"
+                                                  ItemsSource="{Binding RoomTypes}"
+                                                  materialDesign:HintAssist.Hint="New room purpose"
+                                                  Foreground="{DynamicResource MaterialDesignBody}"
+                                                  Margin="0 0 0 0"
+                                                  Width ="120"
+                                                  SelectedItem="{Binding NewRoomType}">
+
+                                            <ComboBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel />
+                                                </ItemsPanelTemplate>
+                                            </ComboBox.ItemsPanel>
+                                        </ComboBox>
+
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <TextBlock Text="Equipment Transfer" FontWeight="Light" FontSize="20"/>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <local:RenovationEquipmentTypeList x:Name="FreeEquipmentTypes" Width="200" Height="200" Margin="0 0 10 0"
+                                                                       ItemsSource="{Binding FreeEquipmentTypes}"
+                                                                       SelectedItem="{Binding CurrentlySelectedFreeEquipmentType, Mode=TwoWay}"/>
+                                    <StackPanel VerticalAlignment="Center">
+
+                                        <StackPanel>
+
+                                            <Button Margin="0 0 0 10" x:Name="AddEquipmentToRoom" Command="{Binding AddEquipmentItemToRoom}"
+                                                    Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
+                                                    BorderBrush="{DynamicResource MaterialDesignBackground}" >
+                                                <materialDesign:PackIcon Kind="ChevronRight"/>
+                                            </Button>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <Button x:Name="RemoveEquipmentFromRoom" Command="{Binding RemoveEquipmentItemFromRoom}" 
+                                                    Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
+                                                    BorderBrush="{DynamicResource MaterialDesignBackground}" >
+                                                <materialDesign:PackIcon Kind="ChevronLeft"/>
+                                            </Button>
+                                        </StackPanel>
+
+                                    </StackPanel>
+                                    <local:RenovationEquipmentTypeList x:Name="EquipmentTypesInRoom" Width="200" Height="200" Margin="10 0 0 0"
+                                                                       ItemsSource="{Binding EquipmentTypesInRoom}"
+                                                                       SelectedItem="{Binding CurrentlySelectedEquipmentTypeInRoom, Mode=TwoWay}"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0 10 0 0" Height="40">
+                                    <StackPanel>
+                                        <CheckBox x:Name="RoomSplitCheckbox" Content="Split this room in two" IsChecked="{Binding SplittingRoom}"/>
+                                        <CheckBox x:Name="RoomJoinCheckBox" Content="Join this room to another" Command="{Binding LoadRoomsAvailableToJoinTo}"/>
+                                    </StackPanel>
+                                    <local:RenovationRoomList Width="200" Margin="0 0 0 0" x:Name="RoomsAvailableToJoinTo" HorizontalAlignment="Left" 
+                                                              ItemsSource="{Binding RoomsAvailableToJoinTo}" SelectedItem="{Binding RoomToJoinTo}"/>
+                                </StackPanel>
+                            </StackPanel>
+
+
+
+                            <Button 
+                                    Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
+                                    BorderBrush="{DynamicResource MaterialDesignBackground}" 
+                                    Margin="0 45 70 0"
+                                    FontSize="16" FontWeight="Light" Width="180"
+                                    Command="{Binding ScheduleRenovation}">
+                                <TextBlock Text="Schedule renovation"/>
+                            </Button>
+
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 200 125" Visibility="{Binding RoomAlreadyInUse, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="Room is already occupied during selected period"/>
+                    </StackPanel>
+
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 160 125" Visibility="{Binding InvalidTimeFrame, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="Invalid time frame. Please check renovation dates and times"/>
+                    </StackPanel>
+
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </materialDesign:TransitioningContent>
+</UserControl>

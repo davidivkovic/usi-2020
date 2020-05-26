@@ -9,123 +9,28 @@ using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.EntityFramework.Exceptions;
 using HospitalCalendar.WPF.Messages;
+using PropertyChanged;
 
 namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
     public class UserRegisterViewModel : ViewModelBase
     {
-        private User _userToRegister;
-        private string _password;
-        private string _confirmPassword;
-        private bool _validationError;
-        private bool _usernameAlreadyExists;
-        private bool _nonMatchingPasswords;
         private readonly IUserService _userService;
 
         public List<User> Roles { get; set; }
-
         public ICommand RegisterUser { get; private set; }
 
-        public User UserToRegister
-        {
-            get => _userToRegister;
-            set
-            {
-                _userToRegister = value;
-                RaisePropertyChanged(nameof(UserToRegister));
-                RaisePropertyChanged(nameof(FirstName));
-                RaisePropertyChanged(nameof(LastName));
-                RaisePropertyChanged(nameof(Username));
-            }
-        }
+        //[AlsoNotifyFor(nameof(FirstName), nameof(LastName), nameof(Username))]
+        public User UserToRegister { get; set; }
 
-        public string FirstName
-        {
-            get => _userToRegister?.FirstName;
-            set
-            {
-                if (_userToRegister.FirstName == value) return;
-                _userToRegister.FirstName = value;
-                RaisePropertyChanged(nameof(FirstName));
-            }
-        }
-
-        public string LastName
-        {
-            get => _userToRegister?.LastName;
-            set
-            {
-                if (_userToRegister.LastName == value) return;
-                _userToRegister.LastName = value;
-                RaisePropertyChanged(nameof(LastName));
-            }
-        }
-
-        public string Username
-        {
-            get => _userToRegister?.Username;
-            set
-            {
-                if (_userToRegister.Username == value) return;
-                _userToRegister.Username = value;
-                RaisePropertyChanged(nameof(Username));
-            }
-        }
-
-        public string Password
-        {
-            get => _password;
-            set
-            {
-                if (_password == value) return;
-                _password = value;
-                RaisePropertyChanged(nameof(Password));
-            }
-        }
-
-        public string ConfirmPassword
-        {
-            get => _confirmPassword;
-            set
-            {
-                if (_confirmPassword == value) return;
-                _confirmPassword = value;
-                RaisePropertyChanged(nameof(ConfirmPassword));
-            }
-        }
-
-        public bool ValidationError
-        {
-            get => _validationError;
-            set
-            {
-                if (_validationError == value) return;
-                _validationError = value;
-                RaisePropertyChanged(nameof(ValidationError));
-            }
-        }
-
-        public bool UsernameAlreadyExists
-        {
-            get => _usernameAlreadyExists;
-            set
-            {
-                if (_usernameAlreadyExists == value) return;
-                _usernameAlreadyExists = value;
-                RaisePropertyChanged(nameof(UsernameAlreadyExists));
-            }
-        }
-
-        public bool NonMatchingPasswords
-        {
-            get => _nonMatchingPasswords;
-            set
-            {
-                if (_nonMatchingPasswords == value) return;
-                _nonMatchingPasswords = value;
-                RaisePropertyChanged(nameof(NonMatchingPasswords));
-            }
-        }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+        public bool ValidationError { get; set; }
+        public bool UsernameAlreadyExists { get; set; }
+        public bool NonMatchingPasswords { get; set; }
 
         public UserRegisterViewModel(IUserService userService)
         {
@@ -143,7 +48,7 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
         private void ExecuteRegistration()
         {
-            string[] inputFields = {FirstName, LastName, Username, Password, ConfirmPassword};
+            var inputFields = new List<string>{FirstName, LastName, Username, Password, ConfirmPassword};
 
             ValidationError = false;
             UsernameAlreadyExists = false;

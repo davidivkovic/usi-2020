@@ -8,6 +8,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:vm="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+<<<<<<< HEAD
              Background="{DynamicResource MaterialDesignPaper}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="720" d:DesignWidth="1220"
@@ -37,10 +38,48 @@
                     Background="{DynamicResource MaterialDesignPaper}"
                     Height="30" Width="40" Padding="0"
                     Margin="10 0 0 0"
+=======
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             d:DesignHeight="720" d:DesignWidth="1220"
+             d:DataContext="{Binding Path=EquipmentMenuViewModel, Source={StaticResource Locator}}">
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+        <Grid Margin="20 0 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="8.3*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.7*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="8*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.Column="1" 
+                    HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                    Margin="0 0 0 0">
+                <Label FontSize="34" FontWeight="Black" Content="Equipment Management" Padding="0"/>
+                <Label FontSize="15" FontWeight="Regular" Content="Add, modify or delete hospital equipment" Padding="0" Margin="2 0 0 0"/>
+            </StackPanel>
+
+            <StackPanel Margin="8.3 20 0 0" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Top">
+
+                <!--<Button Style="{DynamicResource MaterialDesignFlatButton}" 
+                    Background="{DynamicResource MaterialDesignPaper}"
+                    Height="30" Width="25" Padding="0"
+                    Margin="0 0 0 0"
+>>>>>>> viewmodel-development
                     Command="{Binding Sort}">
                 <materialDesign:PackIcon HorizontalAlignment="Center"
                                          Foreground="{DynamicResource MaterialDesignBody}"
                                          Kind ="Sort" Height="23" Width="24"/>
+<<<<<<< HEAD
             </Button>
         </StackPanel>
 
@@ -84,4 +123,50 @@
         </StackPanel>
 
     </Grid>
+=======
+            </Button>-->
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" Grid.Column="1"
+                      VerticalAlignment="Top"
+                      Padding="0 6 14 0" 
+                      Margin="0 25 0 0"
+                      Height="715"
+                      Width="400"
+                      VerticalScrollBarVisibility="Hidden"
+                      HorizontalAlignment="Left">
+                <local:EquipmentTypeList ItemsSource="{Binding AllEquipmentTypes}"/>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Width="300" HorizontalAlignment="Center" Margin="0 140 400 0">
+                <local:EquipmentTypeCreate/>
+                <StackPanel.Style >
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CanCreateEquipmentType}" Value="False">
+                                <Setter Property="Visibility" Value="Hidden" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+            </StackPanel>
+
+            <StackPanel  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Width="300" HorizontalAlignment="Center" Margin="0 75 400 0"> 
+                <local:EquipmentTypeUpdate/>
+                <StackPanel.Style >
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Setter Property="Visibility" Value="Hidden" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CanUpdateEquipmentType}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+            </StackPanel>
+
+        </Grid>
+    </materialDesign:TransitioningContent>
+>>>>>>> viewmodel-development
 </UserControl>

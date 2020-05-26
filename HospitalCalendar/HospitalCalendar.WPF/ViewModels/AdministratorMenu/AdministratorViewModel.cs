@@ -14,19 +14,11 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
     public class AdministratorViewModel : ViewModelBase
     {
-        #region Properties
-        private bool _canRegisterUser;
-        private bool _canModifyUser;
-        private bool _canDeleteUser;
-        private bool _selectAllUsers;
-        private bool _canCreateRoom;
-
-        private bool _selectAllRooms;
-
-        private ObservableCollection<UserBindableViewModel> _userBindableViewModels;
-        private ObservableCollection<RoomBindableViewModel> _roomBindableViewModels;
         private readonly IUserService _userService;
         private readonly IRoomService _roomService;
+
+        private bool _selectAllUsers;
+        private bool _selectAllRooms;
 
         public int NumberOfUsersChecked { get; set; }
         public int NumberOfRoomsChecked { get; set; }
@@ -34,38 +26,10 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
         public ICommand DeleteUsers { get; set; }
         public ICommand DeleteRooms { get; set; }
 
-        public bool CanRegisterUser
-        {
-            get => _canRegisterUser;
-            set
-            {
-                if (_canRegisterUser == value) return;
-                _canRegisterUser = value;
-                RaisePropertyChanged(nameof(CanRegisterUser));
-            }
-        }
-
-        public bool CanModifyUser
-        {
-            get => _canModifyUser;
-            set
-            {
-                if (_canModifyUser == value) return;
-                _canModifyUser = value;
-                RaisePropertyChanged(nameof(CanModifyUser));
-            }
-        }
-
-        public bool CanDeleteUser
-        {
-            get => _canDeleteUser;
-            set
-            {
-                if (_canDeleteUser == value) return;
-                _canDeleteUser = value;
-                RaisePropertyChanged(nameof(CanDeleteUser));
-            }
-        }
+        public bool CanRegisterUser { get; set; }
+        public bool CanModifyUser { get; set; }
+        public bool CanDeleteUser { get; set; }
+        public bool CanCreateRoom { get; set; }
 
         public bool SelectAllUsers
         {
@@ -82,17 +46,6 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
                 }
 
                 RaisePropertyChanged(nameof(SelectAllUsers));
-            }
-        }
-
-        public bool CanCreateRoom
-        {
-            get => _canCreateRoom;
-            set
-            {
-                if (_canCreateRoom == value) return;
-                _canCreateRoom = value;
-                RaisePropertyChanged(nameof(CanCreateRoom));
             }
         }
 
@@ -114,28 +67,8 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             }
         }
 
-        public ObservableCollection<UserBindableViewModel> UserBindableViewModels
-        {
-            get => _userBindableViewModels;
-            set
-            {
-                if (_userBindableViewModels == value) return;
-                _userBindableViewModels = value;
-                RaisePropertyChanged(nameof(UserBindableViewModels));
-            }
-        }
-
-        public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels
-        {
-            get => _roomBindableViewModels;
-            set
-            {
-                if (_roomBindableViewModels == value) return;
-                _roomBindableViewModels = value;
-                RaisePropertyChanged(nameof(RoomBindableViewModels));
-            }
-        }
-        #endregion
+        public ObservableCollection<UserBindableViewModel> UserBindableViewModels { get; set; }
+        public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels { get; set; }
 
         public AdministratorViewModel(IUserService userService, IRoomService roomService)
         {
@@ -150,15 +83,20 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             UserBindableViewModels = new ObservableCollection<UserBindableViewModel>();
             RoomBindableViewModels = new ObservableCollection<RoomBindableViewModel>();
 
-            LoadRooms();
             LoadUsers();
+            LoadRooms();
 
             MessengerInstance.Register<UserBindableViewModelChanged>(this, HandleUserBindableViewModelChanged);
             MessengerInstance.Register<RoomBindableViewModelChanged>(this, HandleRoomBindableViewModelChanged);
             MessengerInstance.Register<UserRegisterSuccess>(this, HandleUserRegisterSuccess);
             MessengerInstance.Register<RoomCreateSuccess>(this, HandleRoomCreateSuccess);
             MessengerInstance.Register<UserUpdateSuccess>(this, HandleUserUpdateSuccess);
-            MessengerInstance.Register<CurrentUser>(this, message => Administrator = message.User as Administrator);
+            MessengerInstance.Register<CurrentUser>(this, message =>
+            {
+                Administrator = message.User as Administrator;
+                //LoadUsers();
+            });
+
         }
 
         private static void UiDispatch(Action action)
@@ -168,7 +106,11 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
         private void HandleUserRegisterSuccess(UserRegisterSuccess message)
         {
-            UiDispatch(() => UserBindableViewModels.Insert(0, new UserBindableViewModel(message.User)));
+            UiDispatch(() =>
+            {
+                UserBindableViewModels.Insert(0, new UserBindableViewModel(message.User));
+                //UserBindableViewModels = new ObservableCollection<UserBindableViewModel>(UserBindableViewModels);
+            });
         }
 
         private void HandleRoomCreateSuccess(RoomCreateSuccess message)
@@ -183,13 +125,16 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
         private void HandleUserUpdateSuccess(UserUpdateSuccess message)
         {
             UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User = message.User);
+            //UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User.LastName = message.User.LastName);
+            //UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User.Username = message.User.Username);
+            //UiDispatch(() => UserBindableViewModels.First(i => i.User.ID == message.User.ID).User.Username = message.User.Username);
         }
 
         private void LoadRooms()
         {
-            Task.Run(() =>
+            Task.Run(async() =>
             {
-                var rooms = _roomService.GetAll().Result.ToList();
+                var rooms = (await _roomService.GetAll()).ToList();
                 rooms.Sort((x, y) => x.Floor.CompareTo(y.Floor));
 
                 UiDispatch(() => rooms.ForEach(r => RoomBindableViewModels.Add(new RoomBindableViewModel(r))));

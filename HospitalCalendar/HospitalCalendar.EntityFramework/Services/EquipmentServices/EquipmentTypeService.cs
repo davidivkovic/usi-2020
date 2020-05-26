@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using HospitalCalendar.EntityFramework.Exceptions;
+using System.Collections.Generic;
 
 namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
 {
@@ -17,6 +18,8 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             _equipmentItemService = equipmentItemService;
         }
 
+
+
         public async Task<EquipmentType> GetByName(string name)
         {
             await using HospitalCalendarDbContext context = ContextFactory.CreateDbContext();
@@ -27,13 +30,13 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<EquipmentType> Create(string name, string description,int amount)
+        public async Task<EquipmentType> Create(string name, string description, int amount)
         {
             var existingEquipmentType = await GetByName(name);
 
             if (existingEquipmentType != null)
             {
-                throw new EquipmentTypeAlreadyExistsException(name); 
+                throw new EquipmentTypeAlreadyExistsException(name);
             }
 
             EquipmentType equipmentType = new EquipmentType()
@@ -42,7 +45,7 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
                 Description = description,
                 IsActive = true
             };
-            
+
             var createdEquipmentType = await Create(equipmentType);
             // Fire and forget
             await Task.Factory.StartNew(() => _equipmentItemService.Create(createdEquipmentType, amount));
@@ -59,7 +62,7 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             {
                 await Task.Factory.StartNew(() => _equipmentItemService.Remove(equipmentType, amountDelta));
             }
-            else if(amountDelta >= 0)
+            else
             {
                 await Task.Factory.StartNew(() => _equipmentItemService.Create(equipmentType, amountDelta));
             }
@@ -85,12 +88,26 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
                 .ForEachAsync(async ei =>
                 {
                     ei.IsActive = false;
-                    _ = await _equipmentItemService.Update(ei);
+                    await _equipmentItemService.Update(ei);
                 });
 
-            _ = await Update(equipmentType);
+            await Update(equipmentType);
 
             return true;
+        }
+
+        public async Task<List<EquipmentType>> GetAllByRoom(Room room)
+        {
+            await using HospitalCalendarDbContext context = ContextFactory.CreateDbContext();
+            return context.Rooms
+                    .Include(r => r.Equipment)
+                    .ThenInclude(e => e.EquipmentType)
+                    .First(r => r.IsActive && room.ID == r.ID)
+                    .Equipment
+                    .Select(e => e.EquipmentType)
+                    .GroupBy(et => et.Name)
+                    .Select(g => g.First())
+                    .ToList();
         }
     }
 }

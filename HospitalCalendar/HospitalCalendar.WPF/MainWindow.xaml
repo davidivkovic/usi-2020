@@ -7,164 +7,192 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:administratorMenu="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
         xmlns:managerMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu"
+        xmlns:renovationMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{materialDesign:MaterialDesignFont}"
-        
-        WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="720" Width="1280"
-
+        WindowStartupLocation="CenterScreen" Title="Hospital Calendar"
+        d:DesignHeight="720" d:DesignWidth="1280"
         DataContext="{Binding Path=MainViewModel, Source={StaticResource Locator}}"
         ResizeMode="NoResize">
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
 
     <WindowChrome.WindowChrome>
-        <WindowChrome ResizeBorderThickness="0" CaptionHeight="40" CornerRadius="0" UseAeroCaptionButtons="False"/>
+        <WindowChrome ResizeBorderThickness="1" CaptionHeight="25" CornerRadius="0" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
 
-    <Grid VerticalAlignment="Top" HorizontalAlignment="Right" Height="720" Width="1280">
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
 
-        <StackPanel Panel.ZIndex="100" Height="40"
+            <StackPanel Panel.ZIndex="100" Height="30"
                     WindowChrome.IsHitTestVisibleInChrome="True"
                     Orientation="Horizontal" HorizontalAlignment="Right" 
                     VerticalAlignment="Top">
 
-            <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
+                <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
                           ToolTip="Minimize"
                           Name="MinimizeButton"
                           Height="40"
                           Width="35"
                           Foreground="{DynamicResource MaterialDesignBody}">
-                <materialDesign:PackIcon
-                    Kind ="WindowMinimize" Height="12" Margin="0 16"
-                />
-            </ToggleButton>
+                    <materialDesign:PackIcon Kind ="WindowMinimize" Height="12" Margin="0 16"/>
+                </ToggleButton>
 
 
-            <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
+                <!-- SETTINGS TOGGLE BUTTON-->
+                <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
                           ToolTip="Client Settings"
                           x:Name="SettingsToggle"
+                          Checked="SettingsToggle_Checked"
                           Foreground="{DynamicResource MaterialDesignBody}"
                           Height="40"
                           Width="35">
-                <materialDesign:PackIcon Kind ="SettingsOutline"/>
-            </ToggleButton>
+                    <materialDesign:PackIcon Kind ="SettingsOutline"/>
 
-            <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
+                    <ToggleButton.Triggers>
+                        <EventTrigger RoutedEvent="ToggleButton.Checked">
+                            <BeginStoryboard Name="AnimateDarkModeMenuOpened">
+                                <Storyboard Name="AnimateDarkModeMenuOpenedStoryBoard">
+                                    <DoubleAnimation Storyboard.TargetName="DarkModeMenu" Storyboard.TargetProperty="Opacity" From="0"
+                                                 To="1" Duration="0:0:0.25"/>
+                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DarkModeMenu" Storyboard.TargetProperty="Visibility">
+                                        <DiscreteObjectKeyFrame KeyTime="0:0:0.01" Value="{x:Static Visibility.Visible}"/>
+                                    </ObjectAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                            <BeginStoryboard Name="AnimateDarkModeMenuClosed">
+                                <Storyboard >
+                                    <DoubleAnimation Storyboard.TargetName="DarkModeMenu" Storyboard.TargetProperty="Opacity"
+                                                 To="0" Duration="0:0:0.2"/>
+                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DarkModeMenu" Storyboard.TargetProperty="Visibility">
+                                        <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Hidden}"/>
+                                    </ObjectAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+
+                        <!--<EventTrigger RoutedEvent="ToggleButton.LostFocus">
+                        <StopStoryboard BeginStoryboardName="AnimateDarkModeMenuClosed"/>
+                        <StopStoryboard BeginStoryboardName="AnimateDarkModeMenuOpened"/>
+                    </EventTrigger>-->
+                    </ToggleButton.Triggers>
+                </ToggleButton>
+
+                <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
                           ToolTip="Exit"
                           Name="CloseButton"
                           Foreground="{DynamicResource MaterialDesignBody}"
                           Height="40"
                           Width="35">
-                <materialDesign:PackIcon Kind = "Close"/>
-            </ToggleButton>
+                    <materialDesign:PackIcon Kind = "Close"/>
+                </ToggleButton>
 
-        </StackPanel>
+            </StackPanel>
 
-        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right"
+            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right"
                     Margin="0 5 105 0" Height="30"
                     Panel.ZIndex="100" 
                     WindowChrome.IsHitTestVisibleInChrome="True"
                     Orientation="Horizontal">
 
-            <!--TextBlock Margin="0 8 8 0" Text="Firstname Lastname"/-->
+                <!--TextBlock Margin="0 8 8 0" Text="Firstname Lastname"/-->
 
-            <TextBlock Margin="0 9 8 0" FontWeight="Medium">
-                <TextBlock.Text>
-                    <MultiBinding StringFormat="{}{0} {1}">
-                        <Binding Path="CurrentUserFirstName"/>
-                        <Binding Path="CurrentUserLastName"/>
-                    </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
+                <TextBlock Margin="0 9 8 0" FontWeight="Medium">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} {1}">
+                            <Binding Path="CurrentUser.FirstName"/>
+                            <Binding Path="CurrentUser.LastName"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
 
-            <Button Width="60" Height="20"  Margin="0 0 0 0" 
+                <Button Width="60" Height="20"  Margin="0 0 0 0" 
                     Padding="0"
                     Style="{StaticResource MaterialDesignFlatMidBgButton}"
                     FontSize="11"
                     Content="Log out"
                     Command="{Binding Logout}">
-            </Button>
-
-            <StackPanel.Style>
-                <Style TargetType="{x:Type StackPanel}">
-                    <Setter Property="Visibility" Value="Visible" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding CurrentUser}" Value="{x:Null}">
-                            <Setter Property="Visibility" Value="Hidden" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Style>
-        </StackPanel>
-
-
-        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right"
-                    Margin="0 40 10 0"
-                    Panel.ZIndex="100" 
-                    Orientation="Horizontal">
-            <StackPanel>
-                <materialDesign:Card
-                    materialDesign:ShadowAssist.ShadowDepth="Depth1"
-                    Background="{DynamicResource PrimaryHueMidBrush}"
-                    Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
-                    Width="85"
-                    Height="75"
-                    Padding="8"
-                    UniformCornerRadius="6">
-                
-                    <StackPanel>
-                        <TextBlock
-                            TextWrapping="Wrap">
-                            Enable Dark mode
-                        </TextBlock>
-                        <ToggleButton Margin="0 15 0 0" Height="10" Command="{Binding ToggleDarkMode}" Background="{DynamicResource MaterialDesignDarkForeground}">
-                            <ToggleButton.Style>
-                                <Style TargetType="{x:Type ToggleButton}">
-                                    <Setter Property="IsChecked" Value="True" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding DarkModeIsEnabled}" Value="false">
-                                            <Setter Property="IsChecked" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-
-                                </Style>
-                            </ToggleButton.Style>
-                        </ToggleButton>
-                    </StackPanel>
-                </materialDesign:Card>
+                </Button>
 
                 <StackPanel.Style>
                     <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="IsEnabled" Value="True" />
+                        <Setter Property="Visibility" Value="Visible" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding CurrentUser}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False" />
+                                <Setter Property="Visibility" Value="Hidden" />
                             </DataTrigger>
                         </Style.Triggers>
-
                     </Style>
                 </StackPanel.Style>
             </StackPanel>
 
-            <StackPanel.Style>
-                <Style TargetType="StackPanel">
-                    <Setter Property="Visibility" Value="Visible" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsChecked, ElementName=SettingsToggle}" Value="true">
-                            <Setter Property="Visibility" Value="Hidden" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Style>
 
-        </StackPanel>
-        <!--views:Login/-->
-        <!--managerMenu:ManagerMenu /-->
-        <ContentControl Height="720" Width="1280" Panel.ZIndex="0" Content="{Binding CurrentViewModel}" />
+            <StackPanel x:Name="DarkModeMenu"
+                        VerticalAlignment="Top" HorizontalAlignment="Right"
+                        Margin="0 40 10 0"
+                        Panel.ZIndex="100" 
+                        Orientation="Horizontal"
+                        Visibility="{Binding IsChecked, ElementName=SettingsToggle, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-    </Grid>
+                <materialDesign:TransitioningContent>
+                    <materialDesign:TransitioningContent.OpeningEffect >
+                        <!--materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" /-->
+                        <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.300" />
+                    </materialDesign:TransitioningContent.OpeningEffect>
+                    <StackPanel>
+                        <materialDesign:Card
+                        materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                        Background="{DynamicResource PrimaryHueMidBrush}"
+                        Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                        Width="85"
+                        Height="75"
+                        Padding="8"
+                        UniformCornerRadius="6">
 
+                            <StackPanel>
+                                <TextBlock
+                                TextWrapping="Wrap">
+                                Enable Dark mode
 
+                                </TextBlock>
+                                <ToggleButton Margin="0 15 0 0" Height="12" x:Name="DarkModeToggle"
+                                          LostFocus="DarkModeToggle_OnLostFocus"
+                                          IsChecked="{Binding DarkModeIsEnabled, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                          Command="{Binding ToggleDarkMode}"
+                                          Background="{DynamicResource MaterialDesignDarkForeground}">
+                                </ToggleButton>
+                            </StackPanel>
+                        </materialDesign:Card>
+
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Setter Property="IsEnabled" Value="True" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentUser}" Value="{x:Null}">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                    </StackPanel>
+                </materialDesign:TransitioningContent>
+            </StackPanel>
+
+            <!--views:Login/-->
+            <!--<managerMenu:ManagerMenu />-->
+            <!--<renovationMenu:RenovationMenu/>-->
+            <ContentControl x:Name="ContentControl" Panel.ZIndex="0" Content="{Binding CurrentViewModel}" />
+
+        </Grid>
+    </materialDesign:TransitioningContent>
 </Window>

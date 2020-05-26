@@ -7,7 +7,7 @@ using HospitalCalendar.WPF.Messages;
 namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
 
-    public class RoomBindableViewModel : ViewModelBase, INotifyPropertyChanged
+    public class RoomBindableViewModel : ViewModelBase
     {
         #region Properties
         private bool _isSelected;

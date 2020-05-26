@@ -14,73 +14,15 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
     public class RoomCreateViewModel : ViewModelBase
     {
-        private string _number;
-        private int? _floor;
-        private RoomType? _type;
-        private bool _validationError;
-        private bool _roomAlreadyExistsError;
         private readonly IRoomService _roomService;
-
         public ICommand CreateRoom { get; set; }
-
         public IEnumerable<RoomType> RoomTypes { get; set; }
-
         public IEnumerable<int> Floors { get; set; }
-
-        public string Number
-        {
-            get => _number;
-            set
-            {
-                if (_number == value) return;
-                _number = value;
-                RaisePropertyChanged(nameof(Number));
-            }
-        }
-
-        public int? Floor
-        {
-            get => _floor;
-            set
-            {
-                if (_floor == value) return;
-                _floor = value;
-                RaisePropertyChanged(nameof(Floor));
-            }
-        }
-
-        public RoomType? Type
-        {
-            get => _type;
-            set
-            {
-                if (_type == value) return;
-                _type = value;
-                RaisePropertyChanged(nameof(Type));
-            }
-        }
-
-        public bool ValidationError
-        {
-            get => _validationError;
-            set
-            {
-                if (_validationError == value) return;
-                _validationError = value;
-                RaisePropertyChanged(nameof(ValidationError));
-            }
-        }
-
-        public bool RoomAlreadyExistsError
-        {
-            get => _roomAlreadyExistsError;
-            set
-            {
-                if (_roomAlreadyExistsError == value) return;
-                _roomAlreadyExistsError = value;
-                RaisePropertyChanged(nameof(RoomAlreadyExistsError));
-            }
-        }
+        public string Number { get; set; }
+        public int? Floor { get; set; }
+        public RoomType? Type { get; set; }
+        public bool ValidationError { get; set; }
+        public bool RoomAlreadyExistsError { get; set; }
 
         public RoomCreateViewModel(IRoomService roomService)
         {

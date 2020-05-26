@@ -14,6 +14,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 {
     public class EquipmentTypeCreateViewModel : ViewModelBase
     {
+<<<<<<< HEAD
         #region Properties
         private string _name;
         private string _description;
@@ -81,6 +82,17 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
             }
         }
         #endregion
+=======
+        private readonly IEquipmentTypeService _equipmentTypeService;
+
+        public ICommand CreateEquipmentType { get; set; }
+        public IEnumerable<int> AmountEnumerable { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int? Amount { get; set; }
+        public bool ValidationError { get; set; }
+        public bool EquipmentTypeAlreadyExistsError { get; set; }
+>>>>>>> viewmodel-development
 
         public EquipmentTypeCreateViewModel(IEquipmentTypeService equipmentTypeService)
         {
@@ -122,4 +134,8 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
             });
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> viewmodel-development

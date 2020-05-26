@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:administratorMenu="clr-namespace:HospitalCalendar.WPF.ViewModels.AdministratorMenu"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
+             Background="{DynamicResource MaterialDesignBackground}"
              mc:Ignorable="d" 
              d:DesignHeight="1000" d:DesignWidth="300"
              d:DataContext="{Binding Path=AdministratorViewModel, Source={StaticResource Locator}}">
@@ -21,12 +21,11 @@
                         Padding="8">
                         <Grid>
                             <StackPanel Orientation="Horizontal">
-
                                 <CheckBox VerticalAlignment="Top" Margin="0.3" IsChecked="{Binding IsSelected}">
 
                                     <StackPanel Margin="8 0 0 0">
 
-                                        <TextBlock Text="{Binding User, Converter={StaticResource UserObjectToRoleStringConverter}, ConverterParameter=true}" />
+                                        <TextBlock FontWeight="Medium" FontSize="14" Text="{Binding User, Converter={StaticResource UserObjectToRoleStringConverter}, ConverterParameter=true}" />
 
                                         <TextBlock FontWeight="Medium" FontSize="14">
                                             <TextBlock.Text>

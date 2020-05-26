@@ -2,14 +2,14 @@ namespace HospitalCalendar.Domain.Models
 {
     public enum Specializations
     {
-        Imunology,
+        Immunology,
         Anesthesiology,
         Dermatology,
         Radiology,
         Neurology,
         Gynecology,
-        Ophtamology,
-        Patology,
+        Ophthalmology,
+        Pathology,
         Pediatrics,
         Rehabilitation,
         Psychiatry,
@@ -17,7 +17,7 @@ namespace HospitalCalendar.Domain.Models
         Urology,
         NeurologicalSurgery,
         GeneralSurgery,
-        OrthopaedicSurgery,
+        OrthopedicSurgery,
         PediatricSurgery,
         CardiovascularSurgery,
         ORLSurgery
