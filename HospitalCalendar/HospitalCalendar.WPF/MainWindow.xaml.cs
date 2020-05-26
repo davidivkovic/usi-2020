@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using HospitalCalendar.WPF.ViewModels;
 
 namespace HospitalCalendar.WPF
 {
@@ -26,16 +27,10 @@ namespace HospitalCalendar.WPF
         public MainWindow()
         {
             InitializeComponent();
-
-            IsTabStopProperty.OverrideMetadata(typeof(Control), new FrameworkPropertyMetadata(false));
-            IsTabStopProperty.OverrideMetadata(typeof(TextBox), new FrameworkPropertyMetadata(true));
-
             SettingsToggle.Focusable = false;
 
             Loaded += (o, e) =>
             {
-                //Height = ContentControl.ActualHeight;
-                //Width = ContentControl.ActualWidth;
                 SizeToContent = SizeToContent.WidthAndHeight;
             };
 
