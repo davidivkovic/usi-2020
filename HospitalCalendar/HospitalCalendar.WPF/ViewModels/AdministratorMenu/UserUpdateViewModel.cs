@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -72,25 +73,23 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             UsernameAlreadyExists = false;
             NonMatchingPasswords = false;
 
-            Task.Run(() =>
+            if (Password != ConfirmPassword)
+            {
+                NonMatchingPasswords = true;
+                return;
+            }
+
+            Task.Run(async() =>
             {
                 try
                 {
-                    if (Password != ConfirmPassword)
-                    {
-                        throw new NonMatchingPasswordException(Password);
-                    }
-
-                    var updatedUser = _userService.Update(UserToUpdate, FirstName, LastName, Username, Password).GetAwaiter().GetResult();
+                    var userToUpdate = await _userService.Get(UserToUpdate.ID);
+                    var updatedUser = _userService.Update(userToUpdate, FirstName, LastName, Username, Password).GetAwaiter().GetResult();
                     MessengerInstance.Send(new UserUpdateSuccess(updatedUser));
                 }
                 catch (UsernameAlreadyExistsException)
                 {
                     UsernameAlreadyExists = true;
-                }
-                catch (NonMatchingPasswordException)
-                {
-                    NonMatchingPasswords = true;
                 }
             });
         }
