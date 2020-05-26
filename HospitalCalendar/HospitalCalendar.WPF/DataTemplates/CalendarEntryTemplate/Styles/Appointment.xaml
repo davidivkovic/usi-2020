@@ -53,6 +53,15 @@
 
             <TextBlock FontWeight="Medium" FontSize="12" Text="Appointment"
                        Foreground="{Binding CalendarEntry.Status, Converter={StaticResource AppointmentStatusToBrushConverter}, ConverterParameter=true}"/>
+
+            <TextBlock FontWeight="Regular" FontSize="11">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="Room {0}/{1}">
+                        <Binding Path="CalendarEntry.Room.Floor"/>
+                        <Binding Path="CalendarEntry.Room.Number"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
         </StackPanel>
     </Grid>
 </UserControl>
