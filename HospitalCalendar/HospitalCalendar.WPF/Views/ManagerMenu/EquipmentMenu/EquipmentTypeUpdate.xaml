@@ -11,8 +11,11 @@
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="570" d:DesignWidth="268"
              DataContext="{Binding Path=EquipmentTypeUpdateViewModel, Source={StaticResource Locator}}">
-    
-    <Grid>
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffect>
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.500"/>
+        </materialDesign:TransitioningContent.OpeningEffect>
+        <Grid>
         <StackPanel x:Name ="Modify" Margin="0 20 0 0">
 
             <TextBlock Margin="32 0 0 0" Text="Update equipment" FontSize="18" Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -85,7 +88,13 @@
                           Height="25"
                           ItemsSource="{Binding AmountEnumerable}"
                           IsEnabled="{Binding Path=IsChecked, ElementName=ChangeAmountCheckBox}"
-                          SelectedItem="{Binding NewAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                          SelectedItem="{Binding NewAmount}">
+
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
                 </ComboBox>
 
             </StackPanel>
@@ -160,4 +169,5 @@
             </TextBlock.Style>
         </TextBlock>
     </Grid>
+        </materialDesign:TransitioningContent>
 </UserControl>
