@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.WPF.Messages;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu.DoctorSpecializationsMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu;
@@ -26,33 +27,51 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu
         public EquipmentMenuViewModel EquipmentMenuViewModel { get; set; }
         public RenovationMenuViewModel RenovationMenuViewModel { get; set; }
         public RoomSearchViewModel RoomSearchViewModel { get; set; }
+        public DoctorSpecializationsViewModel DoctorSpecializationsViewModel { get; set; }
 
-
-        public ManagerMenuViewModel(EquipmentMenuViewModel equipmentMenuViewModel, RenovationMenuViewModel renovationMenuViewModel, RoomSearchViewModel roomSearchViewModel)
+        public ManagerMenuViewModel(EquipmentMenuViewModel equipmentMenuViewModel, RenovationMenuViewModel renovationMenuViewModel, 
+                                    RoomSearchViewModel roomSearchViewModel, DoctorSpecializationsViewModel doctorSpecializationsViewModel)
         {
             EquipmentMenuViewModel = equipmentMenuViewModel;
             RenovationMenuViewModel = renovationMenuViewModel;
             RoomSearchViewModel = roomSearchViewModel;
+            DoctorSpecializationsViewModel = doctorSpecializationsViewModel;
 
+            MessengerInstance.Register<CurrentUser>(this, message => Manager = message.User as Manager);
             ShowEquipmentMenu = new RelayCommand(ExecuteShowEquipmentMenu);
             ShowRenovationMenu = new RelayCommand(ExecuteShowRenovationMenu);
             ShowDoctorMenu = new RelayCommand(ExecuteShowDoctorMenu);
             ShowRoomSearchMenu = new RelayCommand(ExecuteShowRoomSearchMenu);
 
-            ExecuteShowEquipmentMenu();
-
-            MessengerInstance.Register<CurrentUser>(this, message => Manager = message.User as Manager);
+            ExecuteShowRenovationMenu();
         }
 
-        private void ExecuteShowRoomSearchMenu() => CurrentViewModel = RoomSearchViewModel;
-        private void ExecuteShowEquipmentMenu() => CurrentViewModel = EquipmentMenuViewModel;
-        private void ExecuteShowRenovationMenu() => CurrentViewModel = RenovationMenuViewModel;
+        private void ExecuteShowRoomSearchMenu()
+        {
+            if (CurrentViewModel == RoomSearchViewModel) return;
+            RoomSearchViewModel.Initialize();
+            CurrentViewModel = RoomSearchViewModel;
+        }
+
+        private void ExecuteShowEquipmentMenu()
+        {
+            if (CurrentViewModel == EquipmentMenuViewModel) return;
+            EquipmentMenuViewModel.Initialize();
+            CurrentViewModel = EquipmentMenuViewModel;
+        }
+
+        private void ExecuteShowRenovationMenu()
+        {
+            if (CurrentViewModel == RenovationMenuViewModel) return;
+            RenovationMenuViewModel.Initialize();
+            CurrentViewModel = RenovationMenuViewModel;
+        }
 
         private void ExecuteShowDoctorMenu()
         {
-            throw new NotImplementedException();
+            if (CurrentViewModel == DoctorSpecializationsViewModel) return;
+            DoctorSpecializationsViewModel.Initialize();
+            CurrentViewModel = DoctorSpecializationsViewModel;
         }
-
-
     }
 }
