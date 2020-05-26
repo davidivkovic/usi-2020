@@ -13,7 +13,8 @@
              d:DesignHeight="1000" d:DesignWidth="300"
              d:DataContext="{Binding Path=EquipmentMenuViewModel, Source={StaticResource Locator}}">
     <Grid>
-        <ItemsControl x:Name="EquipmentTypeItemsControl" ItemsSource="{Binding EquipmentTypeBindableViewModels}"
+        <ItemsControl x:Name="EquipmentTypeItemsControl"
+                      ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=UserControl}}"
                       Grid.IsSharedSizeScope="True">
 
             <ItemsControl.ItemTemplate>
