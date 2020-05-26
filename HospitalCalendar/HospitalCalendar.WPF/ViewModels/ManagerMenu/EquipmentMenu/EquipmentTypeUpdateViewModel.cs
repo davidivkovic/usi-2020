@@ -106,11 +106,11 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
         {
             // Positive if the user is adding items, negative if user is removing items
             int amountDelta = NewAmount - TotalAmount;
+            // Doesn't fire many times
             await _equipmentTypeService.Update(EquipmentTypeToUpdate, Name, Description, amountDelta);
-            MessengerInstance.Send(new EquipmentTypeUpdateSuccess(EquipmentTypeToUpdate, NewAmount));
+            MessengerInstance.Send(new EquipmentTypeUpdateSuccess(new EquipmentType { Name = Name, Description = Description, IsActive = true, ID = EquipmentTypeToUpdate.ID }, NewAmount));
         }
 
-        // Needs to be fixed, timings not working properly
         private void ExecuteDeleteEquipmentType()
         {
             Task.Run(async () =>
