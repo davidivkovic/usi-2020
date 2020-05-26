@@ -7,14 +7,6 @@
              mc:Ignorable="d"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-<<<<<<< HEAD
-             Background="{DynamicResource MaterialDesignPaper}"
-             FontFamily="{materialDesign:MaterialDesignFont}"
-             d:DesignHeight="570" d:DesignWidth="268"
-             DataContext="{Binding Path=EquipmentTypeUpdateViewModel, Source={StaticResource Locator}}">
-    
-    <Grid>
-=======
              Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="570" d:DesignWidth="268"
@@ -24,7 +16,6 @@
             <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.500"/>
         </materialDesign:TransitioningContent.OpeningEffect>
         <Grid>
->>>>>>> viewmodel-development
         <StackPanel x:Name ="Modify" Margin="0 20 0 0">
 
             <TextBlock Margin="32 0 0 0" Text="Update equipment" FontSize="18" Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -54,10 +45,7 @@
                 </CheckBox>
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
-<<<<<<< HEAD
-=======
                         materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
->>>>>>> viewmodel-development
                         Margin="32, 5, 32, 0"
                         VerticalAlignment="Top"
                         Height="40"
@@ -76,10 +64,7 @@
                 </CheckBox>
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
-<<<<<<< HEAD
-=======
                         materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
->>>>>>> viewmodel-development
                         Margin="32, 5, 32, 0"
                         VerticalAlignment="Top"
                         Height="100"
@@ -103,11 +88,7 @@
                           Height="25"
                           ItemsSource="{Binding AmountEnumerable}"
                           IsEnabled="{Binding Path=IsChecked, ElementName=ChangeAmountCheckBox}"
-<<<<<<< HEAD
-                          SelectedItem="{Binding NewAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-=======
                           SelectedItem="{Binding NewAmount}">
->>>>>>> viewmodel-development
 
                     <ComboBox.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -188,8 +169,5 @@
             </TextBlock.Style>
         </TextBlock>
     </Grid>
-<<<<<<< HEAD
-=======
         </materialDesign:TransitioningContent>
->>>>>>> viewmodel-development
 </UserControl>

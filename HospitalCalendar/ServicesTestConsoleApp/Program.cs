@@ -53,6 +53,7 @@ namespace ConsoleApp1
             RenovationService renovationService = new RenovationService(SimpleIoc.Default.GetInstance<HospitalCalendarDbContextFactory>());
 
 
+            var lel = SimpleIoc.Default.GetInstance<IEquipmentItemService>().GetAllByType(et).Result.ToList();
 
             /*Renovation renovation = new Renovation()
             {
@@ -68,10 +69,7 @@ namespace ConsoleApp1
 
 
             IEquipmentTypeService equipmentTypeService = SimpleIoc.Default.GetInstance<IEquipmentTypeService>();
-// IUserService userService = SimpleIoc.Default.GetInstance<IUserService>();
-
             IUserService userService = SimpleIoc.Default.GetInstance<IUserService>();
-            userService.Register<Administrator>("Petar", "Kupusarevic", "Kupus", "pw").GetAwaiter().GetResult();
 
             //equipmentTypeService.Create("Blyet", "suka desc", 5).GetAwaiter().GetResult();
 

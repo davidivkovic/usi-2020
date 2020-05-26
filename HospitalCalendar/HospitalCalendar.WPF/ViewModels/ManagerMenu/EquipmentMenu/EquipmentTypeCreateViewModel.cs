@@ -14,75 +14,6 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 {
     public class EquipmentTypeCreateViewModel : ViewModelBase
     {
-<<<<<<< HEAD
-        #region Properties
-        private string _name;
-        private string _description;
-        private int? _amount;
-        private bool _validationError;
-        private bool _equipmentTypeAlreadyExistsError;
-        private readonly IEquipmentTypeService _equipmentTypeService;
-
-        public ICommand CreateEquipmentType { get; set; }
-
-        public IEnumerable<int> AmountEnumerable { get; set; }
-
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                if (_name == value) return;
-                _name = value;
-                RaisePropertyChanged(nameof(Name));
-            }
-        }
-
-        public string Description
-        {
-            get => _description;
-            set
-            {
-                if (_description == value) return;
-                _description = value;
-                RaisePropertyChanged(nameof(Description));
-            }
-        }
-
-        public int? Amount
-        {
-            get => _amount;
-            set
-            {
-                if (_amount == value) return;
-                _amount = value;
-                RaisePropertyChanged(nameof(Amount));
-            }
-        }
-
-        public bool ValidationError
-        {
-            get => _validationError;
-            set
-            {
-                if (_validationError == value) return;
-                _validationError = value;
-                RaisePropertyChanged(nameof(ValidationError));
-            }
-        }
-
-        public bool EquipmentTypeAlreadyExistsError
-        {
-            get => _equipmentTypeAlreadyExistsError;
-            set
-            {
-                if (_equipmentTypeAlreadyExistsError == value) return;
-                _equipmentTypeAlreadyExistsError = value;
-                RaisePropertyChanged(nameof(EquipmentTypeAlreadyExistsError));
-            }
-        }
-        #endregion
-=======
         private readonly IEquipmentTypeService _equipmentTypeService;
 
         public ICommand CreateEquipmentType { get; set; }
@@ -92,7 +23,6 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
         public int? Amount { get; set; }
         public bool ValidationError { get; set; }
         public bool EquipmentTypeAlreadyExistsError { get; set; }
->>>>>>> viewmodel-development
 
         public EquipmentTypeCreateViewModel(IEquipmentTypeService equipmentTypeService)
         {
@@ -134,8 +64,4 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
             });
         }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> viewmodel-development

@@ -7,53 +7,6 @@
              mc:Ignorable="d"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-<<<<<<< HEAD
-             Background="{DynamicResource MaterialDesignPaper}"
-             FontFamily="{materialDesign:MaterialDesignFont}"
-             d:DesignHeight="720" d:DesignWidth="1280"
-             DataContext="{Binding Path=ManagerMenuViewModel, Source={StaticResource Locator}}">
-    <Grid>
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="22*"/>
-        </Grid.ColumnDefinitions>
-
-        <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
-
-            <Button Style="{StaticResource MaterialDesignFlatButton}" 
-                    Background="{DynamicResource MaterialDesignPaper}"
-                    Height="50" Padding="0"
-                    Command="{Binding ShowRenovationMenu}">
-                <materialDesign:PackIcon HorizontalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}" Kind ="HammerScrewdriver" Height="25" Width="25"/>
-            </Button>
-
-            <Button Style="{DynamicResource MaterialDesignFlatButton}" 
-                    Background="{DynamicResource MaterialDesignPaper}"
-                    Height="50" Padding="0"
-                    Command="{Binding ShowEquipmentMenu}">
-                <materialDesign:PackIcon HorizontalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}" Kind ="Needle" Height="25" Width="25"/>
-            </Button>
-
-            <Button Style="{DynamicResource MaterialDesignFlatButton}" 
-                    Background="{DynamicResource MaterialDesignPaper}"
-                    Height="50" Padding="0"
-                    Command="{Binding ShowDoctorMenu}">
-                <materialDesign:PackIcon HorizontalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}" Kind ="Stethoscope" Height="25" Width="25"/>
-            </Button>
-
-        </StackPanel>
-
-        <ContentControl Grid.Column="1"
-                        Panel.ZIndex="0"
-                        Margin="0 0 0 0"
-                        Content="{Binding CurrentViewModel}">
-        </ContentControl>
-
-
-
-    </Grid>
-=======
              Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="900" d:DesignWidth="1600"
@@ -200,5 +153,4 @@
             </ContentControl>
         </Grid>
     </materialDesign:TransitioningContent>
->>>>>>> viewmodel-development
 </UserControl>

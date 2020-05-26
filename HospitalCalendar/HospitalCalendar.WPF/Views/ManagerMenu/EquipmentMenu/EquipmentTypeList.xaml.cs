@@ -1,8 +1,5 @@
 ﻿using System;
-<<<<<<< HEAD
-=======
 using System.Collections;
->>>>>>> viewmodel-development
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -26,8 +23,6 @@ namespace HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu
         {
             InitializeComponent();
         }
-<<<<<<< HEAD
-=======
         public static DependencyProperty ItemsSourceProperty = DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable), typeof(EquipmentTypeList),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
@@ -36,6 +31,5 @@ namespace HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu
             get => (IEnumerable)GetValue(ItemsSourceProperty);
             set => SetValue(ItemsSourceProperty, value);
         }
->>>>>>> viewmodel-development
     }
 }

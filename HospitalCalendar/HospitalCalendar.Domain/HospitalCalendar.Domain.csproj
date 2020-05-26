@@ -13,8 +13,4 @@
     <Folder Include="Services\NotificationsServices\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\NotificationsServices\" />
-  </ItemGroup>
-
 </Project>
