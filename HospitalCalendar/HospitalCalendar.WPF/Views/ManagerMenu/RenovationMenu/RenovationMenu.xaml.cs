@@ -30,9 +30,6 @@ namespace HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu
         {
             InitializeComponent();
 
-            FreeEquipmentTypes.EquipmentListBox.ItemsSource = ((RenovationMenuViewModel)DataContext).FreeEquipmentTypes;
-            EquipmentTypesInRoom.EquipmentListBox.ItemsSource = ((RenovationMenuViewModel)DataContext).EquipmentTypesInRoom;
-
             AddEquipmentToRoom.IsEnabled = false;
             RemoveEquipmentFromRoom.IsEnabled = false;
             RoomsAvailableToJoinTo.IsEnabled = false;
@@ -106,7 +103,7 @@ namespace HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu
 
         private void RoomList_OnComboBoxSelectionChanged(object sender, MyComboBoxSelectionChangedEventArgs e)
         {
-            Storyboard?.Begin();
+            //Storyboard?.Begin();
         }
     }
 }
