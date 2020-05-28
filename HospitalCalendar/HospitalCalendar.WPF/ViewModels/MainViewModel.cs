@@ -1,115 +1,95 @@
 ﻿using System;
 using System.Windows.Input;
-using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.Domain.Models;
+using HospitalCalendar.WPF.Messages;
 using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
+using HospitalCalendar.WPF.ViewModels.DoctorMenu;
 using HospitalCalendar.WPF.ViewModels.Login;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu;
+using HospitalCalendar.WPF.ViewModels.SecretaryMenu;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Extensions.DependencyInjection;
+using PropertyChanged;
 
 namespace HospitalCalendar.WPF.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private ViewModelBase _currentViewModel;
-        private User _currentUser;
+        public User CurrentUser { get; set; }
+        public bool DarkModeIsEnabled { get; set; }
 
         public ICommand Logout { get; set; }
+        public ICommand ToggleDarkMode { get; }
 
-        public User CurrentUser
+        public ViewModelBase CurrentViewModel { get; set; }
+        public AdministratorViewModel AdministratorViewModel { get; set; }
+        public ManagerMenuViewModel ManagerMenuViewModel { get; set; }
+        public DoctorMenuViewModel DoctorMenuViewModel { get; set; }
+        public SecretaryMenuViewModel SecretaryMenuViewModel { get; set; }
+        public LoginViewModel LoginViewModel { get; set; }
+
+        public MainViewModel(LoginViewModel loginViewModel)
         {
-            get => _currentUser;
+            DarkModeIsEnabled = false;
+            ToggleDarkMode = new RelayCommand(ExecuteToggleDarkMode);
 
-            set
-            {
-                if (_currentUser == value)
-                    return;
-                _currentUser = value;
-                RaisePropertyChanged(nameof(CurrentUser));
-            }
+            LoginViewModel = loginViewModel;
 
-        }
-
-        public ViewModelBase CurrentViewModel
-        {
-            get => _currentViewModel;
-
-            set
-            {
-                if (_currentViewModel == value)
-                    return;
-                _currentViewModel = value;
-                RaisePropertyChanged(nameof(CurrentViewModel));
-                RaisePropertyChanged(nameof(CurrentUserFirstName));
-                RaisePropertyChanged(nameof(CurrentUserLastName));
-            }
-        }
-
-        public string CurrentUserFirstName
-        {
-            get => CurrentUser?.FirstName;
-
-            set
-            {
-                if (CurrentUser?.FirstName == value)
-                    return;
-                CurrentUser.FirstName = value;
-                RaisePropertyChanged(nameof(CurrentUserFirstName));
-            }
-        }
-
-        public string CurrentUserLastName
-        {
-            get => CurrentUser?.LastName;
-
-            set
-            {
-                if (CurrentUser?.LastName == value)
-                    return;
-                CurrentUser.LastName = value;
-                RaisePropertyChanged(nameof(CurrentUserLastName));
-            }
-        }
-
-
-        public MainViewModel()
-        {
             CurrentUser = null;
-            CurrentViewModel = SimpleIoc.Default.GetInstance<LoginViewModel>();
+            CurrentViewModel = LoginViewModel;
             MessengerInstance.Register<UserLoginSuccess>(this, ExecuteLogin);
             Logout = new RelayCommand(ExecuteLogout);
-
-            /*
-            var paletteHelper = new PaletteHelper();
-            //Retrieve the app's existing theme
-            ITheme theme = paletteHelper.GetTheme();
-
-            //Change the base theme to Dark
-            theme.SetBaseTheme(Theme.Dark);
-            //or theme.SetBaseTheme(Theme.Light);
-
-            //Change the app's current theme
-            paletteHelper.SetTheme(theme);
-            */
         }
 
         private void ExecuteLogout()
         {
+            CurrentViewModel.Cleanup();
+            if (DarkModeIsEnabled)
+            {
+                DarkModeIsEnabled = false;
+                ExecuteToggleDarkMode();
+            }
+
             CurrentUser = null;
-            CurrentViewModel = SimpleIoc.Default.GetInstance<LoginViewModel>();
+            CurrentViewModel = LoginViewModel;
         }
 
-        private void ExecuteLogin(UserLoginSuccess obj)
+        private void ExecuteToggleDarkMode()
         {
-            CurrentUser = obj.User;
+            var paletteHelper = new PaletteHelper(); 
+            var theme = paletteHelper.GetTheme();
+            theme.SetBaseTheme(DarkModeIsEnabled ? Theme.Dark : Theme.Light);
+            paletteHelper.SetTheme(theme);
 
-            if (obj.User is Administrator administrator)
+            MessengerInstance.Send(new DarkModeToggled());
+        }
+
+        private void ExecuteLogin(UserLoginSuccess message)
+        {
+            CurrentUser = message.User;
+
+            switch (message.User)
             {
-                CurrentViewModel = SimpleIoc.Default.GetInstance<AdministratorViewModel>();
-                MessengerInstance.Send(new CurrentUser(administrator));
+                case Administrator administrator:
+                    CurrentViewModel = new ViewModelLocator().AdministratorViewModel;
+                    MessengerInstance.Send(new CurrentUser(administrator));
+                    break;
+                case Manager manager:
+                    CurrentViewModel = new ViewModelLocator().ManagerMenuViewModel;
+                    MessengerInstance.Send(new CurrentUser(manager));
+                    break;
+                case Doctor doctor:
+                    CurrentViewModel = new ViewModelLocator().DoctorMenuViewModel;
+                    MessengerInstance.Send(new CurrentUser(doctor));
+                    break;
+                case Secretary secretary:
+                    CurrentViewModel = new ViewModelLocator().SecretaryMenuViewModel;
+                    MessengerInstance.Send(new CurrentUser(secretary));
+                    break;
             }
         }
     }

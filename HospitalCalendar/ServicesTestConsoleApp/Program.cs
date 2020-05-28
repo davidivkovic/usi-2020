@@ -10,6 +10,10 @@ using HospitalCalendar.EntityFramework.Services.EquipmentServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using HospitalCalendar.Domain.Services.CalendarEntryServices;
+using HospitalCalendar.EntityFramework.Services.CalendarEntryServices;
 
 namespace ConsoleApp1
 {
@@ -40,34 +44,37 @@ namespace ConsoleApp1
             SimpleIoc.Default.Register<IEquipmentTypeService, EquipmentTypeService>();
             SimpleIoc.Default.Register<IEquipmentItemService, EquipmentItemService>();
             SimpleIoc.Default.Register<IRoomService, RoomService>();
+            
+            var et = SimpleIoc.Default.GetInstance<IEquipmentTypeService>().GetByName("Bed").Result;
 
-            HospitalCalendarDbContextFactory dbContext = SimpleIoc.Default.GetInstance<HospitalCalendarDbContextFactory>();
-            HospitalCalendarDbContext hospitalCalendarDbContext = dbContext.CreateDbContext();
+            //var lmao = SimpleIoc.Default.GetInstance<IEquipmentItemService>().GetAllByType(et).Result;
+            
+            
+            RenovationService renovationService = new RenovationService(SimpleIoc.Default.GetInstance<HospitalCalendarDbContextFactory>());
 
 
-            IUserService userService = SimpleIoc.Default.GetInstance<IUserService>();
+            var lel = SimpleIoc.Default.GetInstance<IEquipmentItemService>().GetAllByType(et).Result.ToList();
 
-            var user = userService.Register<Patient>("Name", "Surname", "user", "pw").Result;
-            //Console.WriteLine(user.Username);
+            /*Renovation renovation = new Renovation()
+            {
+                //AddedEquipmentItems = lel
+            };*/
 
-            //Console.WriteLine(userService.GetByUsername("user1").Result);
-            //Console.WriteLine(userService.GetByUsername("user").Result.Username);
+            //renovationService.Create(renovation).Wait();
+            //var sum = renovationService.GetAll().Result.ToList().First();
+            //sum.AddedEquipmentItems = lel;
+            //renovationService.Update(sum).GetAwaiter().GetResult();
 
-            var result = userService.Update(user, "test", "test", "user", "         ").Result;
-            Console.WriteLine(userService.GetByUsername("user").Result.FirstName);
-
-            IAuthenticationService authenticationService = SimpleIoc.Default.GetInstance<IAuthenticationService>();
-
-            // Console.WriteLine(authenticationService.Login("user", "pwp").Result);
-            Console.WriteLine(authenticationService.Login("user", "pw").Result.Username);
+            var addedEquipmentItems = renovationService.GetAll().GetAwaiter().GetResult();
 
 
             IEquipmentTypeService equipmentTypeService = SimpleIoc.Default.GetInstance<IEquipmentTypeService>();
+            IUserService userService = SimpleIoc.Default.GetInstance<IUserService>();
 
+            //equipmentTypeService.Create("Blyet", "suka desc", 5).GetAwaiter().GetResult();
 
-
-
-
+            //equipmentTypeService.Create( "Syringe", "30ml medical syringe, nothing much to say here.",130).Wait();
+            // userService.Register<Administrator>("David", "Ivkovic", "admin", "pw").GetAwaiter().GetResult();
 
         }
     }

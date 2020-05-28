@@ -1,3 +1,6 @@
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace HospitalCalendar.Domain.Models
 {
     public class EquipmentItem : DomainObject

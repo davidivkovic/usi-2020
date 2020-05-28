@@ -1,0 +1,354 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.DataTemplates.Calendar.Control.Calendar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.DataTemplates.Calendar.Control"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:styles="clr-namespace:HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate.Styles"
+             xmlns:calendarEntryTemplate="clr-namespace:HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             mc:Ignorable="d" Width="1280" Height="800"
+             d:DesignHeight="720" d:DesignWidth="1280"
+             d:DataContext="{Binding Path=AppointmentScheduleViewModel, Source={StaticResource Locator}}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <DataTemplate x:Key="AppointmentTemplate">
+                <styles:Appointment/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="SurgeryTemplate">
+                <styles:Surgery/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="RenovationTemplate">
+                <styles:Renovation/>
+            </DataTemplate>
+
+            <calendarEntryTemplate:CalendarEntryTemplateSelector x:Key="CalendarEntryTemplateSelector" 
+                                                                 AppointmentTemplate="{StaticResource AppointmentTemplate}"
+                                                                 SurgeryTemplate="{StaticResource SurgeryTemplate}"
+                                                                 RenovationTemplate="{StaticResource RenovationTemplate}"/>
+
+            <Storyboard x:Key="AnimateWeekChange">
+                <DoubleAnimation Storyboard.TargetName="Days" Storyboard.TargetProperty="Opacity" From="0"
+                                 To="1" Duration="0:0:0.25"/>
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Days" Storyboard.TargetProperty="Visibility">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0.0001" Value="{x:Static Visibility.Visible}"/>
+                </ObjectAnimationUsingKeyFrames>
+
+                <DoubleAnimation Storyboard.TargetName="EventsTimeLine" Storyboard.TargetProperty="Opacity" From="0"
+                                 To="1" Duration="0:0:0.25"/>
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="EventsTimeLine" Storyboard.TargetProperty="Visibility">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0.0001" Value="{x:Static Visibility.Visible}"/>
+                </ObjectAnimationUsingKeyFrames>
+            </Storyboard>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+
+        <Grid Background="{DynamicResource MaterialDesignBackground}" Height="60" VerticalAlignment="Top" HorizontalAlignment="Stretch" Panel.ZIndex="1">
+
+            <ItemsControl x:Name="Days" ItemsSource="{Binding Path=Calendar.CurrentWeek.TimeLines}" Margin="105 5 0 0" Height="2500"  Panel.ZIndex="1">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Width="130" Margin="1 0 0 0" Opacity="{Binding Day, Converter={StaticResource DateTimeToOpacityConverter}}">
+                            <TextBlock HorizontalAlignment="Left" Text="{Binding Day, StringFormat=ddd}" FontSize="13"/>
+                            <TextBlock HorizontalAlignment="Left" Text="{Binding Day.Day}" FontSize="30" FontWeight="Light"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+
+
+
+
+            <Button Margin="0 25 260 0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="26" Width="48"
+                        Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
+                        BorderBrush="{DynamicResource MaterialDesignBackground}" 
+                        Command="{Binding NextWeek}" Content="{materialDesign:PackIcon Kind=ChevronRight}">
+
+                <Button.Triggers>
+                    <EventTrigger RoutedEvent="Button.Click">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard Storyboard="{StaticResource AnimateWeekChange}"/>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Button.Triggers>
+            </Button>
+
+            <Button Margin="11 25 0 0" Height="26" Width="48" VerticalAlignment="Top" HorizontalAlignment="Left"
+                Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
+                BorderBrush="{DynamicResource MaterialDesignBackground}"
+                Command="{Binding PreviousWeek}" Content="{materialDesign:PackIcon Kind=ChevronLeft}">
+                <Button.Triggers>
+                    <EventTrigger RoutedEvent="Button.Click">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard Storyboard="{StaticResource AnimateWeekChange}"/>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Button.Triggers>
+            </Button>
+
+        </Grid>
+
+        <StackPanel Width="160" Margin="0 0 65 0" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="1">
+
+            <StackPanel Orientation="Horizontal" DataContext="{Binding Path=Calendar.CurrentWeek}">
+                <TextBlock FontSize="19" FontWeight="Light" Text="{Binding Path=TimeLines[0].Day, StringFormat=MMM}"/>
+                <TextBlock FontSize="19" FontWeight="Light" Text="{Binding Path=TimeLines[6].Day, StringFormat={} - MMM}"
+                           Visibility="{Binding Path=SpansAcrossTwoMonths, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" DataContext="{Binding Path=Calendar.CurrentWeek}" >
+                <TextBlock FontSize="30" Text="{Binding Path=TimeLines[0].Day.Year}"/>
+                <TextBlock FontSize="40" Text="{Binding Path=TimeLines[6].Day.Year, StringFormat={} - {0}}"
+                           Visibility="{Binding Path=SpansAcrossTwoYears, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
+
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" Margin="0 5 0 0">
+            <Grid Margin="0 0 0 0">
+                <ItemsControl Panel.ZIndex="1" Margin="0 0 0 0" x:Name="CurrentTimeTimeLine"
+                              DataContext="{Binding Path=Calendar.CurrentTime}" ItemsSource="{Binding Path=Events}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate >
+                            <Grid x:Name="CurrentTimeContainer" Margin="0 0 0 0" Height="2500"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0 79 0 0">
+                                <Grid VerticalAlignment="Top" Height="30">
+
+                                    <Grid.Margin>
+                                        <MultiBinding Converter="{StaticResource EventLengthConverter}">
+                                            <Binding ElementName="CurrentTimeTimeLine" Path="DataContext.Duration"/>
+                                            <Binding Path="Start"/>
+                                            <Binding ElementName="CurrentTimeContainer" Path="ActualHeight"/>
+                                        </MultiBinding>
+                                    </Grid.Margin>
+
+                                    <materialDesign:Card ToolTip="Current Time"
+                                        Background="#212121" 
+                                        Panel.ZIndex="2" HorizontalAlignment="Left"
+                                                     Width="60" Margin="4 0 0 0" UniformCornerRadius="5"
+                                                     materialDesign:ShadowAssist.ShadowDepth="Depth0">
+
+                                        <TextBlock Foreground="{DynamicResource MaterialDesignDarkForeground}"
+                                                   VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                                   FontSize="17" FontWeight="Light" Text="{Binding Start, StringFormat=hh\\:mm}"/>
+                                    </materialDesign:Card>
+
+                                    <Rectangle Opacity="0.8" Stroke="#212121" Width="960" 
+                                               MinHeight="1" StrokeThickness="1" StrokeDashArray="1"
+                                               HorizontalAlignment="Left"
+                                           SnapsToDevicePixels="True" RadiusX="10" RadiusY="10" UseLayoutRounding="True" 
+                                           Margin="61 0 0 0">
+
+                                        <Rectangle.Height>
+                                            <MultiBinding Converter="{StaticResource EventLengthConverter}">
+                                                <Binding ElementName="CurrentTimeTimeLine" Path="DataContext.Duration"/>
+                                                <Binding Path="Duration"/>
+                                                <Binding ElementName="CurrentTimeContainer" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </Rectangle.Height>
+                                    </Rectangle>
+
+                                </Grid>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl Margin="10 0 0 0" x:Name="HoursTimeLine" DataContext="{Binding Path=Calendar.Hours}" ItemsSource="{Binding Path=Events}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate >
+                            <Grid x:Name="HoursContainer" Margin="0 0 0 0" Height="2500"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+
+                                <StackPanel.Margin>
+                                    <MultiBinding Converter="{StaticResource EventLengthConverter}">
+                                        <Binding ElementName="HoursTimeLine" Path="DataContext.Duration"/>
+                                        <Binding Path="Start"/>
+                                        <Binding ElementName="HoursContainer" Path="ActualHeight"/>
+                                    </MultiBinding>
+                                </StackPanel.Margin>
+
+                                <TextBlock Margin="0 65 0 5" Width="55" HorizontalAlignment="Left"
+                                           FontSize="20" FontWeight="Light" Text="{Binding Start, StringFormat=hh\\:mm}"/>
+
+                                <Rectangle Opacity="0.25" Stroke="{DynamicResource MaterialDesignBody}" Width="1010" 
+                                           MinHeight="1" StrokeThickness="1" StrokeDashArray="2 5" HorizontalAlignment="Left"
+                                           SnapsToDevicePixels="True" RadiusX="10" RadiusY="10" UseLayoutRounding="True" 
+                                           Margin="0 0 0 0">
+
+                                    <Rectangle.Height>
+                                        <MultiBinding Converter="{StaticResource EventLengthConverter}">
+                                            <Binding ElementName="HoursTimeLine" Path="DataContext.Duration"/>
+                                            <Binding Path="Duration"/>
+                                            <Binding ElementName="HoursContainer" Path="ActualHeight"/>
+                                        </MultiBinding>
+                                    </Rectangle.Height>
+                                </Rectangle>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+
+                <Grid x:Name="EventsTimeLine" Panel.ZIndex="1">
+
+
+                    <ItemsControl ItemsSource="{Binding Path=Calendar.CurrentWeek.TimeLines}" Margin="105 5 0 0" Height="2500">
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="130">
+                                    <!--<StackPanel Margin="5 0 0 0" Opacity="{Binding Day, Converter={StaticResource DateTimeToOpacityConverter}}">
+                                        <TextBlock HorizontalAlignment="Left" Text="{Binding Day, StringFormat=ddd}" FontSize="13"/>
+                                        <TextBlock HorizontalAlignment="Left" Text="{Binding Day.Day}" FontSize="30" FontWeight="Light"/>
+                                    </StackPanel>-->
+                                    <ItemsControl x:Name="TimeLine" ItemsSource="{Binding Path=Events}" Margin="0 92 0 0">
+
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate >
+                                                <Grid x:Name="EventContainer" Margin="0 0 5 0" Height="2500"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <!--CURRENT TIME-->
+                                                <materialDesign:ColorZone HorizontalContentAlignment="Stretch" Width="125"
+                                                                          materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                                          VerticalAlignment="Top" CornerRadius="7">
+
+                                                    <materialDesign:ColorZone.Style>
+                                                        <Style TargetType="{x:Type materialDesign:ColorZone}">
+                                                            <Setter Property="Background">
+                                                                <Setter.Value>
+                                                                    <Binding Path="CalendarEntry.Status" Converter="{StaticResource AppointmentStatusToBrushConverter}"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </materialDesign:ColorZone.Style>
+
+                                                    <Border Panel.ZIndex="2" CornerRadius="7" Focusable="True"
+                                                            PreviewMouseLeftButtonDown="Border_PreviewMouseLeftButtonDown"
+                                                            PreviewMouseLeftButtonUp="Border_PreviewMouseLeftButtonUp"
+                                                            LostFocus="UIElement_OnLostFocus">
+
+                                                        <Border.Style>
+                                                            <Style TargetType="{x:Type Border}">
+                                                                <Setter Property="BorderThickness" Value="0.5"/>
+                                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsFocused"  Value="True">
+                                                                        <Setter Property="BorderBrush" Value="Orange"/>
+                                                                        <Setter Property="BorderThickness" Value="0.6"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="BorderBrush" Value="Orange"/>
+                                                                        <Setter Property="BorderThickness" Value="0.6"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+
+                                                        <Border.InputBindings>
+                                                            <MouseBinding MouseAction="LeftClick" Command="{Binding EventSelected}"/>
+                                                        </Border.InputBindings>
+
+                                                            <StackPanel Cursor="Hand" Background="Transparent" Focusable="True">
+
+                                                                <!--<StackPanel.Style>
+                                                                    <Style TargetType="{x:Type StackPanel}">
+                                                                        <Setter Property="Background" Value="Transparent"/>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsFocused"  Value="True">
+                                                                                <Setter Property="Background">
+                                                                                    <Setter.Value>
+                                                                                        <LinearGradientBrush>
+                                                                                            <GradientStop Color="Transparent" Offset="0"/>
+                                                                                            <GradientStop Color="Black" Offset="1"/>
+                                                                                        </LinearGradientBrush>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                                --><!--<Setter Property="Background" Value="White"/>--><!--
+                                                                                <Setter Property="Opacity" Value="1"/>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </StackPanel.Style>-->
+
+                                                                <!--Foreground="{DynamicResource MaterialDesignForeground}"-->
+                                                                <!--Text="{Binding CalendarEntry.StartDateTime, StringFormat=dd.MM.yyyy HH:mm-->
+
+                                                                <!--<TextBlock Margin="5 5 0 0" FontSize="11"
+                                                                   Foreground="{Binding Path=CalendarEntry.Status, Converter={StaticResource CalendarEntryToBrushConverter}, ConverterParameter=true}" 
+                                                                   Text="{Binding CalendarEntry.StartDateTime, StringFormat=HH:mm}"/>
+
+                                                        <TextBlock FontWeight="Medium" FontSize="12" Margin="5 0 0 0" Text="Appointment"
+                                                                   Foreground="{Binding Path=CalendarEntry.Status, Converter={StaticResource CalendarEntryToBrushConverter}, ConverterParameter=true}">
+                                                        </TextBlock>-->
+                                                                <ContentControl Content="{Binding Path=CalendarEntry}" ContentTemplateSelector="{StaticResource CalendarEntryTemplateSelector}"/>
+                                                            </StackPanel>
+                                                    </Border>
+
+                                                    <materialDesign:ColorZone.Margin>
+                                                        <MultiBinding Converter="{StaticResource EventLengthConverter}">
+                                                            <Binding ElementName="TimeLine" Path="DataContext.Duration"/>
+                                                            <Binding Path="Start"/>
+                                                            <Binding ElementName="EventContainer" Path="ActualHeight"/>
+                                                        </MultiBinding>
+                                                    </materialDesign:ColorZone.Margin>
+                                                    <materialDesign:ColorZone.Height>
+                                                        <MultiBinding Converter="{StaticResource EventLengthConverter}">
+                                                            <Binding ElementName="TimeLine" Path="DataContext.Duration"/>
+                                                            <Binding Path="Duration"/>
+                                                            <Binding ElementName="EventContainer" Path="ActualHeight"/>
+                                                        </MultiBinding>
+                                                    </materialDesign:ColorZone.Height>
+                                                </materialDesign:ColorZone>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

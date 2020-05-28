@@ -4,6 +4,9 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon></ApplicationIcon>
+    <StartupObject>HospitalCalendar.WPF.App</StartupObject>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,9 +14,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="MaterialDesignTheme.Overrides.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="MaterialDesignTheme.Overrides.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IronPdf" Version="2020.3.2" />
     <PackageReference Include="log4net" Version="2.0.8" />
-    <PackageReference Include="MaterialDesignThemes" Version="3.1.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="3.1.2" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +44,21 @@
     <ApplicationDefinition Update="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\ManagerMenu\RenovationMenu\RenovationEquipmentTypeList.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\ManagerMenu\RenovationMenu\RenovationEquipmentTypeList.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\ManagerMenu\RoomSearchMenu\SearchRoomList.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

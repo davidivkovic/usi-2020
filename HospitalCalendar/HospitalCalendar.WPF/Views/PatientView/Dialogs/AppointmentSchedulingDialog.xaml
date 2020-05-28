@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.PatientView.Dialogs.AppointmentSchedulingDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.PatientView.Dialogs"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="360"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="16"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+             Background="White"
+             FontFamily="{DynamicResource MaterialDesignFont}">
+
+
+    <StackPanel>
+        <TextBlock Margin="0 36 0 0" Text="SCHEDULE AN APPOINTMENT" Foreground="DarkGray" HorizontalAlignment="Center"/>
+        <ComboBox materialDesign:HintAssist.Hint="Preferred Doctor"
+                  Margin="0 25 0 0"
+                  Width ="230">
+        </ComboBox>
+
+        <TextBlock Text="Furthest Date of Appointment" Width="230" Margin="0 40 0 8" Foreground="DarkGray"/>
+        <DatePicker
+                Name="DatePicker"
+                Width="230"
+                materialDesign:HintAssist.Hint="Date" FirstDayOfWeek="Monday"/>
+        
+        
+        <TextBlock Text="Preferred Time Slots (Range)" Width="230" Margin="0 40 0 8" Foreground="DarkGray"/>
+        <Grid Margin="65 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal"  Grid.Column="0">
+                <TextBlock Text="From" Padding="0 0 0 1" Grid.Column="0" Foreground="DarkGray" FontSize="16" VerticalAlignment="Center"/>
+                <Grid HorizontalAlignment="Right">
+                    <ComboBox materialDesign:HintAssist.Hint="00:00"
+                              materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                              BorderThickness="0"
+                              Width="62"
+                              Margin="5 1 0 0"
+                              ItemsSource="{Binding LongListToTestComboVirtualization}"
+                              SelectedValue="{Binding SelectedValueOne}">
+                        <ComboBox.SelectedItem>
+                            <Binding
+                                    Path="SelectedValueOne"
+                                    Mode="TwoWay"
+                                    UpdateSourceTrigger="PropertyChanged">
+                            </Binding>
+                        </ComboBox.SelectedItem>
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </ComboBox>
+                </Grid>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                <TextBlock Text="To" Grid.Column="0" Padding="0 0 0 1" Foreground="DarkGray" FontSize="16" VerticalAlignment="Center"/>
+                <Grid HorizontalAlignment="Right">
+                    <ComboBox materialDesign:HintAssist.Hint="00:00"
+                              materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                              BorderThickness="0"
+                              Width="62"
+                              Margin="5 1 0 0"
+                              ItemsSource="{Binding LongListToTestComboVirtualization}"
+                              SelectedValue="{Binding SelectedValueOne}">
+                        <ComboBox.SelectedItem>
+                            <Binding
+                                    Path="SelectedValueOne"
+                                    Mode="TwoWay"
+                                    UpdateSourceTrigger="PropertyChanged">
+                            </Binding>
+                        </ComboBox.SelectedItem>
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </ComboBox>
+                </Grid>
+            </StackPanel>
+        </Grid>
+
+        <ComboBox materialDesign:HintAssist.Hint="Priority"
+                  Margin="0 40 0 0"
+                  Width ="230">
+            <ComboBoxItem>Doctor</ComboBoxItem>
+            <ComboBoxItem>Date</ComboBoxItem>
+            <ComboBoxItem>Time</ComboBoxItem>
+        </ComboBox>
+
+        <StackPanel Orientation="Horizontal" Margin="0 50" HorizontalAlignment="Center">
+            <Button
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    ToolTip="Cancel"
+                    Margin="20 0"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                CANCEL
+            </Button>
+            <Button
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    ToolTip="Send request for appointment"
+                    Margin="20 0"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                SCHEDULE
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

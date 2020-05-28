@@ -7,100 +7,110 @@
              mc:Ignorable="d"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
+             Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="570" d:DesignWidth="268"
              DataContext="{Binding Path=UserModificationViewModel, Source={StaticResource Locator}}">
-    
-    <Grid>
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffect>
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.500" />
+        </materialDesign:TransitioningContent.OpeningEffect>
+        <Grid>
         <StackPanel x:Name ="Modify" Margin="0 20 0 0">
 
-            <TextBlock Margin="32 0 0 0" Text="Update user data" FontSize="18" Foreground="#FF323232"/>
+            <TextBlock Margin="32 0 0 0" Text="Update user data" FontSize="18" Foreground="{DynamicResource MaterialDesignBody}"/>
 
             <StackPanel Margin="0 20 0 0">
                 <CheckBox
-                        x:Name="MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox"
+                        x:Name="ChangeFirstName"
                         IsChecked="False"
                         Margin="32.2,0,0,8">
                     Change First Name
                 </CheckBox>
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                         Margin="32, 5, 32, 0"
                         VerticalAlignment="Top"
                         Height="40"
                         AcceptsReturn="True"
                         materialDesign:HintAssist.Hint="New First name"
-                        IsEnabled="{Binding Path=IsChecked, ElementName=MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox}"
+                        IsEnabled="{Binding Path=IsChecked, ElementName=ChangeFirstName}"
                         Text="{Binding FirstName}"/>
             </StackPanel>
 
             <StackPanel Margin="0 15 0 0">
                 <CheckBox
-                        x:Name="MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox1"
+                        x:Name="ChangeLastName"
                         IsChecked="False"
                         Margin="32.2,0,0,8">
                     Change Last name
                 </CheckBox>
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                         Margin="32, 5, 32, 0"
                         VerticalAlignment="Top"
                         Height="40"
                         AcceptsReturn="True"
                         materialDesign:HintAssist.Hint="New Last Name"
-                        IsEnabled="{Binding Path=IsChecked, ElementName=MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox1}" 
+                        IsEnabled="{Binding Path=IsChecked, ElementName=ChangeLastName}" 
                         Text="{Binding LastName}"/>
             </StackPanel>
 
 
             <StackPanel Margin="0 15 0 0">
                 <CheckBox
-                        x:Name="MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox2"
+                        x:Name="ChangeUsername"
                         IsChecked="False"
                         Margin="32.2,0,0,8">
                     Change Username
                 </CheckBox>
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                         Margin="32, 5, 32, 0"
                         VerticalAlignment="Top"
                         Height="40"
                         AcceptsReturn="True"
                         materialDesign:HintAssist.Hint="New Username"
-                        IsEnabled="{Binding Path=IsChecked, ElementName=MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox2}"
+                        IsEnabled="{Binding Path=IsChecked, ElementName=ChangeUsername}"
                         Text="{Binding Username}"/>
             </StackPanel>
 
 
             <StackPanel Margin="0 15 0 0">
                 <CheckBox
-                        x:Name="MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox3"
+                        x:Name="ChangePassword"
                         IsChecked="False"
                         Margin="32.2,0,0,8">
                     Change Password
                 </CheckBox>
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                         Margin="32, 5, 32, 0"
                         VerticalAlignment="Top"
                         Height="40"
                         AcceptsReturn="True"
                         materialDesign:HintAssist.Hint="New Password"
-                        IsEnabled="{Binding Path=IsChecked, ElementName=MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox3}" 
+                        IsEnabled="{Binding Path=IsChecked, ElementName=ChangePassword}" 
                         Text="{Binding Password}"/>
 
                 <TextBox
                         Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                         Margin="32, 20, 32, 0"
                         VerticalAlignment="Top"
                         Height="40"
                         AcceptsReturn="True"
                         materialDesign:HintAssist.Hint="Confirm Password"
-                        IsEnabled="{Binding Path=IsChecked, ElementName=MaterialDesignOutlinedTextFieldTextBoxEnabledComboBox3}"
+                        IsEnabled="{Binding Path=IsChecked, ElementName=ChangePassword}"
                         Text="{Binding ConfirmPassword}"/>
             </StackPanel>
 
+        <StackPanel>
             <Button
                     Style ="{StaticResource MaterialDesignFlatMidBgButton}"
                     FontWeight = "Regular"
@@ -111,6 +121,23 @@
                     VerticalContentAlignment="Center"
                     Command="{Binding UpdateUser}">
             </Button>
+
+            <StackPanel.Style >
+                <Style TargetType="{x:Type StackPanel}">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsChecked, ElementName=ChangeFirstName}" Value="false"/>
+                                <Condition Binding="{Binding IsChecked, ElementName=ChangeLastName}" Value="false"/>
+                                <Condition Binding="{Binding IsChecked, ElementName=ChangeUsername}" Value="false"/>
+                                <Condition Binding="{Binding IsChecked, ElementName=ChangePassword}" Value="false"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+        </StackPanel>
         </StackPanel>
 
         <TextBlock HorizontalAlignment="Center"
@@ -148,6 +175,6 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
-
-    </Grid>
+        </Grid>
+        </materialDesign:TransitioningContent>
 </UserControl>

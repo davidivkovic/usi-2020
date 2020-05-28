@@ -1,0 +1,173 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu.EquipmentTypeUpdate"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu"
+             mc:Ignorable="d"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             d:DesignHeight="570" d:DesignWidth="268"
+             DataContext="{Binding Path=EquipmentTypeUpdateViewModel, Source={StaticResource Locator}}">
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffect>
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.500"/>
+        </materialDesign:TransitioningContent.OpeningEffect>
+        <Grid>
+        <StackPanel x:Name ="Modify" Margin="0 20 0 0">
+
+            <TextBlock Margin="32 0 0 0" Text="Update equipment" FontSize="18" Foreground="{DynamicResource MaterialDesignBody}"/>
+
+            <TextBlock Margin="32 0 0 0"  FontSize="18" Foreground="{DynamicResource MaterialDesignBody}">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="{}Total: {0}">
+                    <Binding Path="TotalAmount"/>
+                </MultiBinding>
+            </TextBlock.Text>
+            </TextBlock>
+
+            <TextBlock Margin="32 0 0 0"  FontSize="18" Foreground="{DynamicResource MaterialDesignBody}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}In Use: {0}">
+                        <Binding Path="InUseAmount"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <StackPanel Margin="0 20 0 0">
+                <CheckBox
+                        x:Name="ChangeNameCheckBox"
+                        IsChecked="False"
+                        Margin="32.2,0,0,8">
+                        Change name
+                </CheckBox>
+                <TextBox
+                        Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
+                        Margin="32, 5, 32, 0"
+                        VerticalAlignment="Top"
+                        Height="40"
+                        AcceptsReturn="True"
+                        materialDesign:HintAssist.Hint="New Equipment name"
+                        IsEnabled="{Binding Path=IsChecked, ElementName=ChangeNameCheckBox}"
+                        Text="{Binding Name}"/>
+            </StackPanel>
+
+            <StackPanel Margin="0 15 0 0">
+                <CheckBox
+                        x:Name="ChangeDescriptionCheckBox"
+                        IsChecked="False"
+                        Margin="32.2,0,0,8">
+                    Change description
+                </CheckBox>
+                <TextBox
+                        Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                        materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
+                        Margin="32, 5, 32, 0"
+                        VerticalAlignment="Top"
+                        Height="100"
+                        AcceptsReturn="True"
+                        TextWrapping="Wrap"
+                        materialDesign:HintAssist.Hint="New Equipment description"
+                        IsEnabled="{Binding Path=IsChecked, ElementName=ChangeDescriptionCheckBox}" 
+                        Text="{Binding Description}"/>
+            </StackPanel>
+
+            <StackPanel Margin="0 15 0 0">
+                <CheckBox
+                        x:Name="ChangeAmountCheckBox"
+                        IsChecked="False"
+                        Margin="32.2,0,0,8">
+                    Change amount
+                </CheckBox>
+
+                <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" 
+                          Margin="32, 30, 32, 0" materialDesign:HintAssist.Hint="Amount"
+                          Height="25"
+                          ItemsSource="{Binding AmountEnumerable}"
+                          IsEnabled="{Binding Path=IsChecked, ElementName=ChangeAmountCheckBox}"
+                          SelectedItem="{Binding NewAmount}">
+
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+
+            </StackPanel>
+
+            <StackPanel>
+                <Button
+                        Style ="{StaticResource MaterialDesignFlatMidBgButton}"
+                        FontWeight = "Regular"
+                        Margin="0 35 0 0"
+                        Width="235"
+                        Height="35"
+                        Content="Update equipment"
+                        VerticalContentAlignment="Center"
+                        Command="{Binding UpdateEquipmentType}">
+                </Button>
+
+                <StackPanel.Style >
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsChecked, ElementName=ChangeNameCheckBox}" Value="false"/>
+                                    <Condition Binding="{Binding IsChecked, ElementName=ChangeDescriptionCheckBox}" Value="false"/>
+                                    <Condition Binding="{Binding IsChecked, ElementName=ChangeAmountCheckBox}" Value="false"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+            </StackPanel>
+
+            <StackPanel>
+                <Button Width="235" Margin="0 10 0 0"
+                        Height="35"
+                        Padding="0"
+                        Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                        FontSize="12"
+                        Content="Delete equipment type"
+                        Command="{Binding DeleteEquipmentType}">
+                </Button>
+
+                <StackPanel.Style >
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Setter Property="Visibility" Value="Hidden" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CanDeleteEquipmentType}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+            </StackPanel>
+
+        </StackPanel>
+
+        <TextBlock HorizontalAlignment="Center"
+                   Margin="0 335 0 0" FontSize="12"
+                   Foreground="#FF3C3C3C"
+                   Text ="Equipment type already exists"
+                   Height="20">
+
+            <TextBlock.Style >
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding EquipmentTypeAlreadyExists}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+    </Grid>
+        </materialDesign:TransitioningContent>
+</UserControl>

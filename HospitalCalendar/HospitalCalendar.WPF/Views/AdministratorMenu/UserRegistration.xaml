@@ -7,19 +7,24 @@
              mc:Ignorable="d"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignPaper}"
+             Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
              d:DesignHeight="570" d:DesignWidth="268"
              DataContext="{Binding Path=RegistrationViewModel, Source={StaticResource Locator}}">
-    
-    <Grid>
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffect>
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.500"/>
+        </materialDesign:TransitioningContent.OpeningEffect>
+
+        <Grid>
         <StackPanel>
-            <TextBlock Margin="32 20 0 0" Text="Register a new user" FontSize="18"/>
+            <TextBlock Margin="32 20 0 0" Text="Register a new user" FontSize="18" />
 
             <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" 
                           Margin="32, 30, 32, 0" materialDesign:HintAssist.Hint="Role"
                           ItemsSource="{Binding Path=Roles}"
-                          SelectedItem="{Binding SelectedRole, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                          SelectedItem="{Binding UserToRegister, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -30,47 +35,47 @@
 
             <TextBox
                     Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                     Margin="32, 35, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding FirstName}"
                     materialDesign:HintAssist.Hint="First Name">
             </TextBox>
 
             <TextBox
                     Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                     Margin="32, 25, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding LastName}"
                     materialDesign:HintAssist.Hint="Last Name"/>
 
             <TextBox
                     Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                     Margin="32, 50, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding Username}"
                     materialDesign:HintAssist.Hint="Username"/>
 
             <TextBox
                     Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                     Margin="32, 25, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding Password}"
                     materialDesign:HintAssist.Hint="Password"/>
 
             <TextBox
                     Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    materialDesign:HintAssist.Background="{DynamicResource MaterialDesignBackground}"
                     Margin="32, 25, 32, 0"
                     VerticalAlignment="Top"
                     Height="37"
-                    AcceptsReturn="True"
                     Text="{Binding ConfirmPassword}"
                     materialDesign:HintAssist.Hint="Confirm Password"/>
 
@@ -142,4 +147,5 @@
             </TextBlock.Style>
         </TextBlock>
     </Grid>
+    </materialDesign:TransitioningContent>
 </UserControl>

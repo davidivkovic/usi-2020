@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.DoctorMenu.AnamnesisUpdate"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.DoctorMenu"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"            
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             d:DesignHeight="900" d:DesignWidth="1600">
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+
+        <Grid >
+            <StackPanel>
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" 
+                        Margin="105 35 0 5">
+                    <Label FontSize="34" FontWeight="Black" Content="Appointment Schedule" Padding="0"/>
+                    <Label FontSize="15" FontWeight="Regular" Content="View the schedule and appoint appointments for patients" Padding="0" Margin="2 0 0 0"/>
+                </StackPanel>
+
+            </StackPanel>
+        </Grid>
+    </materialDesign:TransitioningContent>
+</UserControl>

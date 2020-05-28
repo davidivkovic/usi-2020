@@ -1,0 +1,156 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.ManagerMenu.ManagerMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu"
+             mc:Ignorable="d"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             d:DesignHeight="900" d:DesignWidth="1600"
+             d:DataContext="{Binding Path=ManagerMenuViewModel, Source={StaticResource Locator}}">
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+
+        <Grid Width="1600" Height="900">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <materialDesign:DialogHost HorizontalAlignment="Left" Width="1600"  Margin="0 0 0 0" Identifier="RootDialog" Panel.ZIndex="10">
+                <materialDesign:DrawerHost IsLeftDrawerOpen="False" x:Name="Drawer" >
+                    <materialDesign:DrawerHost.LeftDrawerContent>
+                        <DockPanel Background="{DynamicResource MaterialDesignBackground}">
+
+                            <ToggleButton VerticalAlignment="Top" HorizontalAlignment="Right" Margin="16"
+                                          DockPanel.Dock="Top"
+                                          Style="{StaticResource MaterialDesignFlatToggleButton}"
+                                          Background="{DynamicResource MaterialDesignBackground}"
+                                          Foreground="{DynamicResource MaterialDesignBody}"
+                                          IsChecked="False"
+                                          Click="MenuToggleButton_OnClick" Padding="0" Width="30" Height="30">
+                                <materialDesign:PackIcon Kind="ArrowRight" Width="30" Height="30"/>
+                            </ToggleButton>
+
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Top" Panel.ZIndex="1">
+
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                        Background="{DynamicResource MaterialDesignBackground}"
+                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                        HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
+                                        Command="{Binding ShowRenovationMenu}"
+                                        HorizontalContentAlignment="Left">
+
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
+                                        <materialDesign:PackIcon Kind="HammerWrench" Foreground="{DynamicResource MaterialDesignBody}" Width="28" Height="30" Margin="5" VerticalAlignment="Center"/>
+                                        <StackPanel Margin="12 0 0 0">
+                                            <TextBlock Text="Renovations" FontSize="13" FontWeight="Medium" Margin="0 4 0 2" HorizontalAlignment="Left" />
+                                            <TextBlock Text="Schedule room renovations" FontSize="12" HorizontalAlignment="Left" Opacity="0.8"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                        Background="{DynamicResource MaterialDesignBackground}"
+                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                        HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
+                                        HorizontalContentAlignment="Left"
+                                        Command="{Binding ShowEquipmentMenu}">
+
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
+                                        <materialDesign:PackIcon Kind="Stethoscope" Foreground="{DynamicResource MaterialDesignBody}" Width="28" Height="30" Margin="5" VerticalAlignment="Center"/>
+                                        <StackPanel Margin="12 0 0 0">
+                                            <TextBlock Text="Equipment" FontSize="13" FontWeight="Medium" Margin="0 4 0 2" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="Add, update or delete equipment" FontSize="12" HorizontalAlignment="Left" Opacity="0.8" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                        Background="{DynamicResource MaterialDesignBackground}"
+                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                        Command="{Binding ShowRoomSearchMenu}"
+                                        HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
+                                        HorizontalContentAlignment="Left">
+
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
+                                        <materialDesign:PackIcon Kind="HomeSearch" Foreground="{DynamicResource MaterialDesignBody}" Width="28" Height="30" Margin="5" VerticalAlignment="Center"/>
+                                        <StackPanel Margin="12 0 0 0">
+                                            <TextBlock Text="Room Lookup" FontSize="13" FontWeight="Medium" Margin="0 4 0 2" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="Search rooms using custom criteria" FontSize="12" HorizontalAlignment="Left" Opacity="0.8" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                        Background="{DynamicResource MaterialDesignBackground}"
+                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                        Command="{Binding ShowDoctorMenu}"
+                                        HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
+                                        HorizontalContentAlignment="Left">
+
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
+                                        <materialDesign:PackIcon Kind="Doctor" Foreground="{DynamicResource MaterialDesignBody}" Width="28" Height="30" Margin="5" VerticalAlignment="Center"/>
+                                        <StackPanel Margin="12 0 0 0">
+                                            <TextBlock Text="Doctors" FontSize="13" FontWeight="Medium" Margin="0 4 0 2" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="Update doctor information" FontSize="12" HorizontalAlignment="Left" Opacity="0.8"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                        Background="{DynamicResource MaterialDesignBackground}"
+                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                        HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
+                                        HorizontalContentAlignment="Left">
+
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
+                                        <materialDesign:PackIcon Kind="Printer" Foreground="{DynamicResource MaterialDesignBody}" Width="28" Height="30" Margin="5" VerticalAlignment="Center"/>
+                                        <StackPanel Margin="12 0 0 0">
+                                            <TextBlock Text="Reports" FontSize="13" FontWeight="Medium" Margin="0 4 0 2" HorizontalAlignment="Left" />
+                                            <TextBlock Text="Generate CSV or PDF reports" FontSize="12" HorizontalAlignment="Left" Opacity="0.8" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </DockPanel>
+                    </materialDesign:DrawerHost.LeftDrawerContent>
+
+                    <DockPanel>
+                        <DockPanel >
+                            <ToggleButton x:Name="MenuToggleButton" VerticalAlignment="Top" Margin="80 55 0 0" 
+                                              Style="{StaticResource MaterialDesignFlatToggleButton}"
+                                              Background="{DynamicResource MaterialDesignBackground}"
+                                              Foreground="{DynamicResource MaterialDesignBody}"
+                                    IsChecked="False"
+                                    Click="MenuToggleButton_OnClick" Padding="0" Width="30" Height="30">
+                                <materialDesign:PackIcon Kind="ArrowLeft" Width="30" Height="30"/>
+                            </ToggleButton>
+
+                        </DockPanel>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        </Grid>
+                    </DockPanel>
+                </materialDesign:DrawerHost>
+            </materialDesign:DialogHost>
+
+            <ContentControl
+                        Panel.ZIndex="0"
+                        Margin="20 0 0 0"
+                        Content="{Binding CurrentViewModel}">
+            </ContentControl>
+        </Grid>
+    </materialDesign:TransitioningContent>
+</UserControl>
