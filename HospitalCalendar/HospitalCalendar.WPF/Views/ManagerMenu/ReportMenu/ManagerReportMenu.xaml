@@ -1,0 +1,192 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.ManagerMenu.ReportMenu.ManagerReportMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.ReportMenu"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:controls="clr-namespace:MaterialDesignExtensions.Controls;assembly=MaterialDesignExtensions"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             d:DesignHeight="900" d:DesignWidth="1600"
+             mc:Ignorable="d"
+             xmlns:lottieCore="clr-namespace:LottieSharp;assembly=LottieCore"
+             xmlns:enums="clr-namespace:HospitalCalendar.Domain.Enums;assembly=HospitalCalendar.Domain"
+             d:DataContext="{Binding Path=ManagerReportMenuViewModel, Source={StaticResource Locator}}">
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="8.3*"/>
+            </Grid.RowDefinitions>
+
+
+            <StackPanel Grid.Row="0" 
+                        HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                        Margin="125 0 0 0">
+                <Label FontSize="34" FontWeight="Black" Content="Reports Menu" Padding="0"/>
+                <Label FontSize="15" FontWeight="Regular" Content="Generate room usage and doctor busyness reports" Padding="0" Margin="2 0 0 0"/>
+            </StackPanel>
+
+            <materialDesign:Card Grid.Row="1" HorizontalAlignment="Center" UniformCornerRadius="7" Padding="10" Height="260" Width="400"
+                                 Margin="0 0 50 40"
+                                 Background="{DynamicResource MaterialDesignBackground}">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" Margin="0 13 20 0" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <RadioButton Margin="0 0 5 0"
+                                     FontSize="12"
+                                     IsChecked="{Binding SelectedFileFormat, Converter={StaticResource ComparisonToBoolConverter},
+                                                ConverterParameter={x:Static enums:FileFormat.Pdf}}"
+                                     VerticalContentAlignment="Bottom"
+                                     Content="PDF"/>
+                        <RadioButton 
+                                     FontSize="12"
+                                     IsChecked="{Binding SelectedFileFormat, Converter={StaticResource ComparisonToBoolConverter}, 
+                                                ConverterParameter={x:Static enums:FileFormat.Csv}}"
+                                     VerticalContentAlignment="Bottom"
+                                     Content="CSV" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10 10 10 0">
+
+                        <ComboBox Width="135" Style="{StaticResource MaterialDesignDataGridComboBox}"
+                                  SelectedItem="{Binding SelectedReportType}"
+                                  ItemsSource="{Binding AvailableReportTypes}"
+                                  FontSize="20"
+                                  HorizontalAlignment="Left">
+
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource DomainObjectNameToStringConverter}, StringFormat='{}{0} report'}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+
+                        </ComboBox>
+
+
+                        <!--<TextBlock Text="Room report" FontSize="20" Width="150" HorizontalAlignment="Left"/>-->
+                        <TextBlock TextWrapping="Wrap" FontWeight="Normal" Margin="2 2 0 0" FontSize="12"
+                                   Text="A report will be generated for the all rooms or doctor for the chosen period." />
+
+                        <TextBlock Text="Date period :" Margin="0 20 0 10" VerticalAlignment="Center" FontSize="14"/>
+                        <StackPanel Margin="2 0 0 0" Orientation="Horizontal">
+                            <DatePicker Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                        SelectedDate="{Binding ReportStartDateTime}"
+                                        x:Name="ReportStartDate"
+                                        Width="120"
+                                        Height="60"
+                                        FontWeight="Light"
+                                        VerticalAlignment="Center"
+                                        materialDesign:HintAssist.Hint="Start date" FirstDayOfWeek="Monday"/>
+
+
+                            <DatePicker x:Name="ReportEndDate"
+                                        Margin="10 0 0 0"
+                                        Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                        SelectedDate="{Binding ReportEndDateTime}"
+                                        Height="60"
+                                        Width="120"
+                                        FontWeight="Light"
+                                        VerticalAlignment="Center"
+                                        materialDesign:HintAssist.Hint="End date" FirstDayOfWeek="Monday"/>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <StackPanel.Style >
+                                <Style TargetType="{x:Type StackPanel}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedDate, ElementName=ReportStartDate}" Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding SelectedDate, ElementName=ReportEndDate}" Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Command="{Binding GenerateReport}" 
+                                    IsEnabled="{Binding IsLoading, Converter={StaticResource BoolToInverseConverter}}"
+                                    FontSize="14"
+                                    Padding="40 0 40 0"
+                                    Margin="10 20 10 0"
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    Content="GENERATE REPORT"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+
+                <materialDesign:Card.Style>
+                    <Style TargetType="{x:Type materialDesign:Card}">
+                        <Setter Property="IsEnabled" Value="True" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding FilePath}" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </materialDesign:Card.Style>
+            </materialDesign:Card>
+
+
+
+            <materialDesign:DialogHost Grid.RowSpan="2" Grid.Row="0" Name="MdDialog" Identifier="DirectoryDialog" 
+                                       DialogTheme="Inherit" CloseOnClickAway="True">
+                <materialDesign:DialogHost.DialogContent>
+                    <controls:OpenDirectoryControl Height="auto" MaxHeight="600" VerticalAlignment="Center"
+                                                  Margin="0 0 0 0" Width="900" 
+                                                  Cancel="FileSystemControl_OnCancel" 
+                                                  DirectorySelected="OpenDirectoryControl_OnDirectorySelected"/>
+                </materialDesign:DialogHost.DialogContent>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="92 105 0 0">
+                    <TextBlock VerticalAlignment="Center" Text="Please choose file directory" Margin="35 0 0 0" FontSize="16"/>
+                    <StackPanel Orientation="Horizontal" >
+                    <!--<Button Content="Change file directory" Width="200" Command="{Binding ChooseDirectory}" 
+                        Style="{StaticResource MaterialDesignFlatMidBgButton}"/>-->
+                    <!--<Button Content="Change file directory" Width="200" 
+                        Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                        Style="{StaticResource MaterialDesignFlatMidBgButton}"/>-->
+                    
+                    
+                    <Button Content="Change file directory" Width="160" 
+                            Margin="10 0 0 0"
+                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                            Style="{StaticResource MaterialDesignFlatButton}"/>
+                    <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" FontSize="14"
+                               Text="{Binding FilePath, Converter={StaticResource FilePathStringToPrettyStringConverter}}"/>
+                </StackPanel>
+                </StackPanel>
+
+            </materialDesign:DialogHost>
+
+            <!--<lottieCore:LottieAnimationView
+                Grid.Row="1" x:Name="LottieAnimationView" 
+                Height="100"
+                DefaultCacheStrategy="Strong" 
+                FileName="C:\Projects\usi-2020\HospitalCalendar\HospitalCalendar.WPF\Views\Login\lf30_editor_ltumqQ.json" AutoPlay="True" 
+                VerticalAlignment="Center" 
+                FrameRate="60"
+                HorizontalAlignment="Center"/>-->
+
+            <materialDesign:Snackbar HorizontalContentAlignment="Left" Grid.Row="1" MinWidth="1605" HorizontalAlignment="Center"
+                                     Background="{DynamicResource PrimaryHueMidBrush}" Foreground="White"
+                                     ActionButtonPlacement="Inline"
+                                     ActionButtonStyle="{StaticResource MaterialDesignSnackbarActionButton}"
+                                     MessageQueue="{Binding MaterialDesignMessageQueue}"/>
+        </Grid>
+    </materialDesign:TransitioningContent>
+</UserControl>
