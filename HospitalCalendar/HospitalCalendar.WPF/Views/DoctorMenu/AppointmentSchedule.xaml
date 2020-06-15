@@ -42,6 +42,121 @@
 
         <Grid >
 
+            <Expander ExpandDirection="Left" Height="860" VerticalAlignment="Bottom" HorizontalAlignment="Right" Panel.ZIndex="2" 
+                      Visibility="{Binding AnamnesisIsEditable, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Background="{DynamicResource MaterialDesignBackground}">
+                <Expander.Header>
+                    <TextBlock
+                        Text="Anamnesis"
+                        FontSize="14"
+                        RenderTransformOrigin=".5,.5">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform
+                                Angle="90" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                </Expander.Header>
+                <StackPanel Width="1450" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="8 60 16 24">
+
+                    <TextBlock FontSize="22" Margin="0 0 0 -10">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Anamnesis for {0} {1}">
+                                <Binding Path="CurrentlySelectedPatient.FirstName"/>
+                                <Binding Path="CurrentlySelectedPatient.LastName"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <Grid >
+
+                        <ListView Width="Auto" ItemsSource="{Binding Anamnesis}" Margin="0 0 0 0" Height="700" Panel.ZIndex="3"
+                              MinWidth="300" MaxWidth="300" HorizontalAlignment="Left" SelectedItem="{Binding CurrentlySelectedEntry}">
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <!--<Border Padding="8" ToolTip="{Binding Description}">-->
+                                    <Border Padding="5">
+
+<Grid>
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<CheckBox VerticalAlignment="Top" Margin="0.3" IsChecked="{Binding IsSelected}">-->
+
+                                                <StackPanel Margin="8 0 0 0">
+
+                                                    <StackPanel Orientation="Horizontal">
+                                                    <TextBlock FontWeight="Medium" FontSize="14" 
+                                                               Text="{Binding Appointment, Converter={StaticResource DomainObjectNameToStringConverter}}" />
+                                                    <TextBlock Margin="5 1 0 0" Text="{Binding Appointment.Type.SingleSpecialization}"/>
+                                                    </StackPanel>
+
+                                                    <TextBlock Text="{Binding Appointment.StartDateTime, StringFormat=dd.MM.yyyy. - HH:mm}" />
+
+                                                    <TextBlock>
+                                                        <TextBlock.Text>
+                                                            <MultiBinding StringFormat="{}{0} {1}">
+                                                                <Binding Path="Appointment.Doctor.FirstName"/>
+                                                                <Binding Path="Appointment.Doctor.LastName"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+
+                                                    <!--<TextBlock Text="{Binding Description}" />-->
+
+
+                                                </StackPanel>
+
+
+                                            <!--</CheckBox>-->
+
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                        <TextBlock Margin="310 25 0 0" Text="{Binding CurrentlySelectedEntry.Description}" Opacity=".88" FontSize="12" TextWrapping="Wrap" MaxWidth="1100"/>
+
+                        <StackPanel Margin="315 250 0 0">
+
+                            <StackPanel Orientation="Horizontal">
+
+                                <TextBlock Margin="30 0 0 20" Text="Add a new entry to this anamnesis" FontSize="18"/>
+
+
+                                <ComboBox ItemsSource="{Binding Doctor.Specializations}" Style="{StaticResource MaterialDesignDataGridComboBox}" Width="200"
+                                          Margin="0 -12 0 0" SelectedItem="{Binding AppointmentSpecialization}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid MaxHeight="50">
+                                                <TextBlock Text="{Binding Path=SingleSpecialization}" Margin="15" FontSize="14"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                            </StackPanel>
+
+                            <TextBox Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                                 AcceptsReturn="True"  Width="1100" Height="400"
+                                 TextWrapping="Wrap"
+                                 FontSize="12" Text="{Binding EntryText}"/>
+
+
+
+                        <Button Content="Add entry" Width="200" Margin="0 20 15 0" 
+                                Foreground="{DynamicResource MaterialDesignBody}" 
+                                Background="{DynamicResource MaterialDesignBackground}" 
+                                BorderBrush="{DynamicResource MaterialDesignBackground}"
+                                Command="{Binding SaveEntry}"/>
+
+                        </StackPanel>
+
+
+                    </Grid>
+
+                </StackPanel>
+            </Expander>
+
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 130 0" Panel.ZIndex="1"
                         Visibility="{Binding CurrentlySelectedCalendarEntry, Converter={StaticResource NullableToVisibilityConverter}}">
                 <materialDesign:TransitioningContent >
@@ -53,6 +168,7 @@
                                     Height="400" />
                     
                 </materialDesign:TransitioningContent>
+
             </StackPanel>
 
             <StackPanel>
@@ -64,14 +180,6 @@
                 <Grid>
                     <control:Calendar x:Name="AppointmentCalendar" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0 0 0 0" Margin="100 6 0 0"/>
 
-
-                    <!--<StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 200 125" Visibility="{Binding RoomAlreadyInUse, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBlock Text="Room is already occupied during selected period"/>
-                    </StackPanel>
-
-                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 160 125" Visibility="{Binding InvalidTimeFrame, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBlock Text="Invalid time frame. Please check renovation dates and times"/>
-                    </StackPanel>-->
 
                 </Grid>
             </StackPanel>
