@@ -1,16 +1,10 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight;
+using HospitalCalendar.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Threading;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
-using HospitalCalendar.Domain.Models;
-using HospitalCalendar.WPF.Messages;
-using PropertyChanged;
 
 namespace HospitalCalendar.WPF.DataTemplates.Calendar
 {
@@ -20,11 +14,7 @@ namespace HospitalCalendar.WPF.DataTemplates.Calendar
         public TimeLine Hours { get; set; }
         public TimeLine CurrentTime { get; set; }
         public CalendarWeek CurrentWeek { get; set; }
-
-        private static void UiDispatch(Action action)
-        {
-            System.Windows.Application.Current.Dispatcher.Invoke(action);
-        }
+        public bool WorkingHoursSet { get; set; }
 
         public Calendar(DateTime startWeekDateTime)
         {
@@ -159,7 +149,7 @@ namespace HospitalCalendar.WPF.DataTemplates.Calendar
 
         private static List<(DateTime startDateTime, DateTime endDateTime)> SplitCalendarEntryByDays(DateTime endDateTime, DateTime startDateTime)
         {
-            TimeSpan delta = endDateTime - startDateTime;
+            var delta = endDateTime - startDateTime;
 
             var dateRanges = Enumerable.Range(0, delta.Days + 2)
                 .Select(d =>
@@ -188,50 +178,81 @@ namespace HospitalCalendar.WPF.DataTemplates.Calendar
 
             //await Task.Run(() =>
             //{
-                // If a calendar entry spans across multiple days then we split it up by days
-                if (startDateTime.Date.CompareTo(endDateTime.Date) != 0)
-                {
-                    var dateRanges = SplitCalendarEntryByDays(endDateTime, startDateTime);
+            // If a calendar entry spans across multiple days then we split it up by days
+            if (startDateTime.Date.CompareTo(endDateTime.Date) != 0)
+            {
+                var dateRanges = SplitCalendarEntryByDays(endDateTime, startDateTime);
 
-                    UiDispatch(() =>
-                    {
-                        dateRanges.ForEach(dateTuple => CurrentWeek.TimeLines
-                        .FirstOrDefault(tl => tl.Day.Date.Equals(dateTuple.startDateTime.Date) && tl.Day.Date.Equals(dateTuple.endDateTime.Date))?
-                        .Events
-                        .Add(new TimeLineEvent
-                        {
-                            StartDate = dateTuple.startDateTime,
-                            EndDate = dateTuple.endDateTime,
-                            CalendarEntry = new CalendarEntryBindableViewModel(calendarEntry)
-                        }));
-                    });
-                }
-                else
+                //UiDispatch(() =>
+                //{
+                dateRanges.ForEach(dateTuple => CurrentWeek.TimeLines
+                .FirstOrDefault(tl => tl.Day.Date.Equals(dateTuple.startDateTime.Date) && tl.Day.Date.Equals(dateTuple.endDateTime.Date))?
+                .Events
+                .Add(new TimeLineEvent
                 {
-                    var eventToAdd = new TimeLineEvent
-                    {
-                        StartDate = startDateTime,
-                        EndDate = endDateTime,
-                        CalendarEntry = new CalendarEntryBindableViewModel(calendarEntry)
-                    };
-                    UiDispatch(() =>
-                    {
-                        CurrentWeek.TimeLines
-                        .FirstOrDefault(tl => tl.Day.Date.Equals(startDateTime.Date))?
-                        .Events
-                        .Add(eventToAdd);
-                    });
-                }
+                    StartDate = dateTuple.startDateTime,
+                    EndDate = dateTuple.endDateTime,
+                    CalendarEntry = new CalendarEntryBindableViewModel(calendarEntry)
+                }));
+                //});
+            }
+            else
+            {
+                var eventToAdd = new TimeLineEvent
+                {
+                    StartDate = startDateTime,
+                    EndDate = endDateTime,
+                    CalendarEntry = new CalendarEntryBindableViewModel(calendarEntry)
+                };
+                //UiDispatch(() =>
+                //{
+                CurrentWeek.TimeLines
+                .FirstOrDefault(tl => tl.Day.Date.Equals(startDateTime.Date))?
+                .Events
+                .Add(eventToAdd);
+                //});
+            }
             //});
+        }
+
+        public void SetWorkingHours(TimeSpan start, TimeSpan end)
+        {
+            if (WorkingHoursSet) return;
+
+            if (start.Minutes == 0)
+            {
+                Hours.Events.First(e => e.StartDate == DateTime.MinValue + start).IsWorkingHoursStartOrEnd = true;
+            }
+            else
+            {
+                Hours.Events.Add(new TimeLineEvent
+                {
+                    StartDate = DateTime.MinValue + start,
+                    EndDate = DateTime.MinValue + start + TimeSpan.FromSeconds(1),
+                    IsWorkingHoursStartOrEnd = true
+                });
+            }
+
+            if (end.Minutes == 0)
+            {
+                Hours.Events.First(e => e.StartDate == DateTime.MinValue + end).IsWorkingHoursStartOrEnd = true;
+            }
+            else
+            {
+                Hours.Events.Add(new TimeLineEvent
+                {
+                    StartDate = DateTime.MinValue + end,
+                    EndDate = DateTime.MinValue + end + TimeSpan.FromSeconds(1),
+                    IsWorkingHoursStartOrEnd = true
+                });
+                WorkingHoursSet = true;
+            }
         }
 
         public void AddEvents(List<CalendarEntry> calendarEntries)
         {
-            //Task.Run(() =>
-            //{
-                calendarEntries = SetCalendarEntriesStatus(calendarEntries);
-                calendarEntries.ForEach(AddEvent);
-            //});
+            calendarEntries = SetCalendarEntriesStatus(calendarEntries);
+            calendarEntries.ForEach(AddEvent);
         }
 
         public void LoadCurrentWeek(List<CalendarEntry> calendarEntries)
