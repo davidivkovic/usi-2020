@@ -1,8 +1,5 @@
-﻿using System;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.WPF.Messages;
 using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
@@ -10,10 +7,8 @@ using HospitalCalendar.WPF.ViewModels.DoctorMenu;
 using HospitalCalendar.WPF.ViewModels.Login;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu;
 using HospitalCalendar.WPF.ViewModels.SecretaryMenu;
-using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
-using Microsoft.Extensions.DependencyInjection;
-using PropertyChanged;
+using System.Windows.Input;
 
 namespace HospitalCalendar.WPF.ViewModels
 {
@@ -21,10 +16,9 @@ namespace HospitalCalendar.WPF.ViewModels
     {
         public User CurrentUser { get; set; }
         public bool DarkModeIsEnabled { get; set; }
-
         public ICommand Logout { get; set; }
         public ICommand ToggleDarkMode { get; }
-
+        public ViewModelLocator ViewModelLocator { get; set; }
         public ViewModelBase CurrentViewModel { get; set; }
         public AdministratorViewModel AdministratorViewModel { get; set; }
         public ManagerMenuViewModel ManagerMenuViewModel { get; set; }
@@ -34,15 +28,17 @@ namespace HospitalCalendar.WPF.ViewModels
 
         public MainViewModel(LoginViewModel loginViewModel)
         {
-            DarkModeIsEnabled = false;
+            ViewModelLocator = new ViewModelLocator();
+            Logout = new RelayCommand(ExecuteLogout);
             ToggleDarkMode = new RelayCommand(ExecuteToggleDarkMode);
 
-            LoginViewModel = loginViewModel;
-
             CurrentUser = null;
+            DarkModeIsEnabled = false;
+
+            LoginViewModel = loginViewModel;
             CurrentViewModel = LoginViewModel;
+
             MessengerInstance.Register<UserLoginSuccess>(this, ExecuteLogin);
-            Logout = new RelayCommand(ExecuteLogout);
         }
 
         private void ExecuteLogout()
@@ -60,7 +56,7 @@ namespace HospitalCalendar.WPF.ViewModels
 
         private void ExecuteToggleDarkMode()
         {
-            var paletteHelper = new PaletteHelper(); 
+            var paletteHelper = new PaletteHelper();
             var theme = paletteHelper.GetTheme();
             theme.SetBaseTheme(DarkModeIsEnabled ? Theme.Dark : Theme.Light);
             paletteHelper.SetTheme(theme);
@@ -75,19 +71,19 @@ namespace HospitalCalendar.WPF.ViewModels
             switch (message.User)
             {
                 case Administrator administrator:
-                    CurrentViewModel = new ViewModelLocator().AdministratorViewModel;
+                    CurrentViewModel = ViewModelLocator.AdministratorViewModel;
                     MessengerInstance.Send(new CurrentUser(administrator));
                     break;
                 case Manager manager:
-                    CurrentViewModel = new ViewModelLocator().ManagerMenuViewModel;
+                    CurrentViewModel = ViewModelLocator.ManagerMenuViewModel;
                     MessengerInstance.Send(new CurrentUser(manager));
                     break;
                 case Doctor doctor:
-                    CurrentViewModel = new ViewModelLocator().DoctorMenuViewModel;
+                    CurrentViewModel = ViewModelLocator.DoctorMenuViewModel;
                     MessengerInstance.Send(new CurrentUser(doctor));
                     break;
                 case Secretary secretary:
-                    CurrentViewModel = new ViewModelLocator().SecretaryMenuViewModel;
+                    CurrentViewModel = ViewModelLocator.SecretaryMenuViewModel;
                     MessengerInstance.Send(new CurrentUser(secretary));
                     break;
             }
