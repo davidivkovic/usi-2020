@@ -1,15 +1,14 @@
-﻿using HospitalCalendar.Domain.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
+using HospitalCalendar.Domain.Models;
 
-namespace HospitalCalendar.Domain.Services
+namespace HospitalCalendar.Domain.Services.UserServices
 {
     public interface IUserService : IDataService<User>
     {
         Task<User> GetByUsername(string username);
         Task<User> GetInactiveByUsername(string username);
-        Task<User> Register<T>(string firstName, string lastName, string username, string password) where T : User, new();
+        Task<User> Register(Type userType, string firstName, string lastName, string username, string password);
 
         /// <summary>
         /// Update the data of a user in the database.
