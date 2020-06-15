@@ -1,13 +1,17 @@
-﻿using HospitalCalendar.Domain.Models;
+﻿using HandlebarsDotNet;
+using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
-using Microsoft.EntityFrameworkCore;
+using HospitalCalendar.Domain.Services.CalendarEntryServices;
+using IronPdf;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System;
-using HospitalCalendar.Domain.Services.CalendarEntryServices;
-using IronPdf;
+using System.Xml;
+using HospitalCalendar.Domain.Enums;
+using HospitalCalendar.Domain.Services.UserServices;
 
 namespace HospitalCalendar.EntityFramework.Services
 {
@@ -35,7 +39,7 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<TimeSpan> AverageDailyOccupiedTimeByRoom(DateTime start, DateTime end, Room room)
         {
-            var numberOfDays = (start - end).Days;
+            var numberOfDays = (end - start).Days;
             var totalTimeOccupied = await TimeOccupiedByRoom(start, end, room);
             return TimeSpan.FromMinutes(totalTimeOccupied.TotalMinutes / numberOfDays);
         }
@@ -44,27 +48,30 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             var allRooms = (await _roomService.GetAll()).ToList();
             var totalTimeOccupied = TimeSpan.Zero;
-            allRooms.ForEach(async room => totalTimeOccupied += await TimeOccupiedByRoom(start, end, room));
+            var tasks = allRooms.Select(room => TimeOccupiedByRoom(start, end, room));
+            var results = await Task.WhenAll(tasks);
+            results.ToList().ForEach(ts => totalTimeOccupied += ts);
             return totalTimeOccupied;
         }
 
+
         public async Task<TimeSpan> AverageDailyOccupiedTimeForAllRooms(DateTime start, DateTime end)
         {
-            var numberOfDays = (start - end).Days;
+            var numberOfDays = (end - start).Days;
             var totalTimeOccupied = await TotalTimeOccupiedForAllRooms(start, end);
             return TimeSpan.FromMinutes(totalTimeOccupied.TotalMinutes / numberOfDays);
         }
 
         public async Task<TimeSpan> TimeOccupiedByDoctor(DateTime start, DateTime end, Doctor doctor)
         {
-            var appointmentsInTimeFrame = (await _appointmentService.GetAllByTimeFrame(start, end)).Where(a => a.Doctor.ID == doctor.ID).ToList();
-            var totalTimeOccupied = appointmentsInTimeFrame.Aggregate(TimeSpan.Zero, (ts, ce) => ts.Add(ce.EndDateTime - ce.StartDateTime));
+            var appointmentsInTimeFrame = (await _appointmentService.GetAllByTimeFrame(start, end)).Where(appointment => appointment.Doctor.ID == doctor.ID).ToList();
+            var totalTimeOccupied = appointmentsInTimeFrame.Aggregate(TimeSpan.Zero, (timeSpan, appointment) => timeSpan.Add(appointment.EndDateTime - appointment.StartDateTime));
             return totalTimeOccupied;
         }
 
         public async Task<TimeSpan> AverageDailyOccupiedTimeByDoctor(DateTime start, DateTime end, Doctor doctor)
         {
-            var numberOfDays = (start - end).Days;
+            var numberOfDays = (end - start).Days;
             var totalTimeOccupied = await TimeOccupiedByDoctor(start, end, doctor);
             return TimeSpan.FromMinutes(totalTimeOccupied.TotalMinutes / numberOfDays);
         }
@@ -73,55 +80,162 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             var allDoctors = (await _doctorService.GetAll()).ToList();
             var totalTimeOccupied = TimeSpan.Zero;
-            allDoctors.ForEach(async doctor => totalTimeOccupied += await TimeOccupiedByDoctor(start, end, doctor));
+            var tasks = allDoctors.Select(doctor => TimeOccupiedByDoctor(start, end, doctor));
+            var results = await Task.WhenAll(tasks);
+            results.ToList().ForEach(ts => totalTimeOccupied += ts);
             return totalTimeOccupied;
         }
 
         public async Task<TimeSpan> AverageDailyOccupiedTimeForAllDoctors(DateTime start, DateTime end)
         {
-            var numberOfDays = (start - end).Days;
+            var numberOfDays = (end - start).Days;
             var totalTimeOccupied = await TotalTimeOccupiedForAllDoctors(start, end);
             return TimeSpan.FromMinutes(totalTimeOccupied.TotalMinutes / numberOfDays);
         }
 
-        public async Task GenerateRoomReport(DateTime start, DateTime end)
+        public async Task GenerateRoomReport(DateTime start, DateTime end, string directory, FileFormat format)
         {
-            var rowTemplate = "<ul><li>[[FLOOR]]</li><li>[[NUMBER]]</li><li>[[PURPOSE]]</li><li>[[TOTAL]]</li><li>[[AVERAGE]]</li></ul> ";
-            var outputHTML = "";
             var allRooms = (await _roomService.GetAll()).ToList();
-            foreach (var room in allRooms)
-            {
-                var totalTime = await TimeOccupiedByRoom(start, end, room);
-                var averageTime = await AverageDailyOccupiedTimeByRoom(start, end, room);
-                outputHTML += rowTemplate.Replace("[[FLOOR]]", room.Floor.ToString()).Replace("[[NUMBER]]", room.Number.ToString()).Replace("[[PURPOSE]]", room.GetType().ToString()).Replace("[[TOTAL]]", new DateTime(totalTime.Ticks).ToString("HH:mm")).Replace("[[AVERAGE]]", new DateTime(averageTime.Ticks).ToString("HH:mm"));
-            }
-            var html = File.ReadAllText("room.html");
+            var outputHtml = await InsertRoomDataIntoHtml(start, end, allRooms);
+            var html = await File.ReadAllTextAsync(@"Services\Assets\room.html");
             var totalTimeAll = await TotalTimeOccupiedForAllRooms(start, end);
             var averageTimeAll = await AverageDailyOccupiedTimeForAllRooms(start, end);
-            html = html.Replace("[[STARTDATE]]", start.ToString("yyyy/MM/dd")).Replace("[[ENDDATE]]", end.ToString("yyyy/MM/dd")).Replace("[[TOTAL]]", new DateTime(totalTimeAll.Ticks).ToString()).Replace("[[AVERAGE_OVERALL]]", new DateTime(averageTimeAll.Ticks).ToString()).Replace("<!--CONTENT-->", outputHTML);
-            var Renderer = new IronPdf.HtmlToPdf();
-            var PDF = Renderer.RenderHtmlAsPdf(html);
-            PDF.SaveAs("RoomReport.pdf");
+
+            var headerData = new
+            {
+                startDate = start.ToString("dd.MM.yyyy."),
+                endDate = end.ToString("dd.MM.yyyy."),
+                total = CustomTimeSpanFormat(totalTimeAll),
+                averageOverall = CustomTimeSpanFormat(averageTimeAll)
+            };
+
+            var stringBuilder = new StringBuilder(html);
+
+            html = stringBuilder.Replace("{{startDate}}", headerData.startDate)
+                .Replace("{{endDate}}", headerData.endDate)
+                .Replace("{{total}}", headerData.total)
+                .Replace("{{averageOverall}}", headerData.averageOverall)
+                .Replace("<!--CONTENT-->", outputHtml)
+                .ToString();
+
+            var renderer = new HtmlToPdf
+            {
+                PrintOptions = {MarginTop = 0, MarginBottom = 0, MarginLeft = 0, MarginRight = 0}
+            };
+
+            await Task.Run(() => {
+                switch (format)
+                {
+                    case FileFormat.Pdf:
+                        var pdf = renderer.RenderHtmlAsPdf(html);
+                        pdf.SaveAs(directory + @"\RoomReport.pdf");
+                        break;
+                    case FileFormat.Csv:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(format), format, null);
+                }
+            });
         }
 
-        public async Task GenerateDoctorReport(DateTime start, DateTime end)
+        private async Task<string> InsertRoomDataIntoHtml(DateTime start, DateTime end, IReadOnlyCollection<Room> allRooms)
         {
-            var rowTemplate = "<ul><li>[[NAME]]</li><li>[[LNAME]]</li><li>[[TOTAL]]</li><li>[[AVERAGE]]</li></ul> ";
-            var outputHTML = "";
-            var allDoctors = (await _doctorService.GetAll()).ToList();
-            foreach (var doctor in allDoctors)
+            const string rowTemplate = "<ul><li>{{floor}}</li><li>{{number}}</li><li>{{purpose}}</li><li>{{total}}</li><li>{{average}}</li></ul>";
+            var template = Handlebars.Compile(rowTemplate);
+            var outputHtml = string.Empty;
+
+            await Task.Run(async () =>
             {
-                var totalTime = await TimeOccupiedByDoctor(start, end, doctor);
-                var averageTime = await TimeOccupiedByDoctor(start, end, doctor);
-                outputHTML += rowTemplate.Replace("[[NAME]]", doctor.FirstName).Replace("[[LNAME]]", doctor.LastName).Replace("[[TOTAL]]", new DateTime(totalTime.Ticks).ToString()).Replace("[[AVERAGE]]", new DateTime(averageTime.Ticks).ToString());
-            }
-            var html = File.ReadAllText("doctors.html");
+                foreach (var room in allRooms)
+                {
+                    var totalTime = await TimeOccupiedByRoom(start, end, room);
+                    var averageTime = await AverageDailyOccupiedTimeByRoom(start, end, room);
+
+                    var data = new
+                    {
+                        floor = room.Floor.ToString(),
+                        number = room.Number,
+                        purpose = room.Type.ToString(),
+                        total = CustomTimeSpanFormat(totalTime),
+                        average = CustomTimeSpanFormat(averageTime)
+                    };
+                    outputHtml += template(data);
+                }
+            });
+            return outputHtml;
+        }
+
+        public async Task GenerateDoctorReport(DateTime start, DateTime end, string directory, FileFormat format)
+        {
+            var allDoctors = (await _doctorService.GetAll()).ToList();
+            var outputHtml = await InsertDoctorDataIntoHtml(start, end, allDoctors);
+
+            var html = await File.ReadAllTextAsync(@"Services\Assets\doctor.html");
             var totalTimeAll = await TotalTimeOccupiedForAllDoctors(start, end);
             var averageTimeAll = await AverageDailyOccupiedTimeForAllDoctors(start, end);
-            html = html.Replace("[[STARTDATE]]", start.ToString("yyyy/MM/dd")).Replace("[[ENDDATE]]", end.ToString("yyyy/MM/dd")).Replace("[[TOTAL]]", new DateTime(totalTimeAll.Ticks).ToString()).Replace("[[AVERAGE_OVERALL]]", new DateTime(averageTimeAll.Ticks).ToString()).Replace("<!--CONTENT-->", outputHTML);
-            var Renderer = new IronPdf.HtmlToPdf();
-            var PDF = Renderer.RenderHtmlAsPdf(html);
-            PDF.SaveAs("DoctorReport.pdf");
+
+            var headerData = new
+            {
+                startDate = start.ToString("dd.MM.yyyy."),
+                endDate = end.ToString("dd.MM.yyyy."),
+                total = CustomTimeSpanFormat(totalTimeAll),
+                averageOverall = CustomTimeSpanFormat(averageTimeAll)
+            };
+
+            var stringBuilder = new StringBuilder(html);
+
+            html = stringBuilder.Replace("{{startDate}}", headerData.startDate)
+                .Replace("{{endDate}}", headerData.endDate)
+                .Replace("{{total}}", headerData.total)
+                .Replace("{{averageOverall}}", headerData.averageOverall)
+                .Replace("<!--CONTENT-->", outputHtml)
+                .ToString();
+
+            var renderer = new HtmlToPdf
+            {
+                PrintOptions = { MarginTop = 0, MarginBottom = 0, MarginLeft = 0, MarginRight = 0 }
+            };
+
+            await Task.Run(() => {
+                switch (format)
+                {
+                    case FileFormat.Pdf:
+                        var pdf = renderer.RenderHtmlAsPdf(html);
+                        pdf.SaveAs(directory + @"\DoctorReport.pdf");
+                        break;
+                    case FileFormat.Csv:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(format), format, null);
+                }
+            });
         }
+
+        private async Task<string> InsertDoctorDataIntoHtml(DateTime start, DateTime end, IReadOnlyCollection<Doctor> allDoctors)
+        {
+            const string rowTemplate = "<ul><li>{{firstName}}</li><li>{{lastName}}</li><li>{{total}}</li><li>{{average}}</li></ul>";
+            var template = Handlebars.Compile(rowTemplate);
+            var outputHtml = string.Empty;
+            await Task.Run(async () =>
+            {
+                foreach (var doctor in allDoctors)
+                {
+                    var totalTime = await TimeOccupiedByDoctor(start, end, doctor);
+                    var averageTime = await AverageDailyOccupiedTimeByDoctor(start, end, doctor);
+
+                    var data = new
+                    {
+                        firstName = doctor.FirstName,
+                        lastName = doctor.LastName,
+                        total = CustomTimeSpanFormat(totalTime),
+                        average = CustomTimeSpanFormat(averageTime)
+                    };
+                    outputHtml += template(data);
+                }
+            });
+            return outputHtml;
+        }
+
+        private static string CustomTimeSpanFormat(TimeSpan input) => $"{(int) input.TotalHours:D2}H {(int) (input.TotalMinutes % 60):D2}m";
     }
 }
