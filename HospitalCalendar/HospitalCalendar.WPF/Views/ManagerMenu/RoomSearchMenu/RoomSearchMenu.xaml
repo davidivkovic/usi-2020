@@ -19,7 +19,7 @@
             <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
             <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
         </materialDesign:TransitioningContent.OpeningEffects>
-        <Grid Margin="20 0 0 0">
+        <Grid Margin="40 0 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="8.3*"/>
