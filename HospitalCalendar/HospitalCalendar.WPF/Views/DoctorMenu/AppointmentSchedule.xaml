@@ -120,7 +120,7 @@
 
                             <StackPanel Orientation="Horizontal">
 
-                                <TextBlock Margin="30 0 0 20" Text="Add a new entry to this anamnesis" FontSize="18"/>
+                                <TextBlock Margin="18 0 0 20" Text="Add a new entry to this anamnesis" FontSize="18"/>
 
 
                                 <ComboBox ItemsSource="{Binding Doctor.Specializations}" Style="{StaticResource MaterialDesignDataGridComboBox}" Width="200"
@@ -144,6 +144,7 @@
 
 
                         <Button Content="Add entry" Width="200" Margin="0 20 15 0" 
+                                HorizontalAlignment="Right"
                                 Foreground="{DynamicResource MaterialDesignBody}" 
                                 Background="{DynamicResource MaterialDesignBackground}" 
                                 BorderBrush="{DynamicResource MaterialDesignBackground}"
