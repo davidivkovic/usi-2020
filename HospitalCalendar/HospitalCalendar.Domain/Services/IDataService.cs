@@ -11,6 +11,7 @@ namespace HospitalCalendar.Domain.Services
         Task<T> Get(Guid id);
         Task<T> Create(T entity);
         Task<T> Update(T entity);
+        Task<T> Update(T entity, params Expression<Func<T, object>>[] navigation);
         Task<bool> Delete(Guid id);
     }
 }
