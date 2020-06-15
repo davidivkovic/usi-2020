@@ -1,8 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
-using HospitalCalendar.Domain.Models;
+﻿using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.Domain.Services.AuthenticationServices;
 using HospitalCalendar.Domain.Services.CalendarEntryServices;
@@ -19,11 +15,16 @@ using HospitalCalendar.WPF.ViewModels.ManagerMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.DoctorSpecializationsMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu.ReportMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu;
 using HospitalCalendar.WPF.ViewModels.SecretaryMenu;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System;
+using HospitalCalendar.Domain.Services.NotificationsServices;
+using HospitalCalendar.Domain.Services.UserServices;
+using HospitalCalendar.EntityFramework.Services.NotificationServices;
 
 
 namespace HospitalCalendar.WPF.ViewModels
@@ -40,9 +41,6 @@ namespace HospitalCalendar.WPF.ViewModels
         private IServiceProvider CreateServiceProvider()
         {
             IServiceCollection services = new ServiceCollection();
-
-            //SimpleIoc.Default.Unregister<IMessenger>();
-            //SimpleIoc.Default.Register(() => Messenger.Default);
 
             // Password hasher dependencies
             services.AddScoped<IOptions<PasswordHasherOptions>, OptionsWrapper<PasswordHasherOptions>>();
@@ -64,6 +62,8 @@ namespace HospitalCalendar.WPF.ViewModels
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ISurgeryService, SurgeryService>();
             services.AddScoped<IPatientService, PatientService>();
+            services.AddScoped<IAnamnesisService, AnamnesisService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<HospitalCalendarDbContextFactory>();
 
             // Register ViewModels here
@@ -80,11 +80,13 @@ namespace HospitalCalendar.WPF.ViewModels
             services.AddScoped<EquipmentTypeCreateViewModel>();
             services.AddScoped<EquipmentTypeUpdateViewModel>();
             services.AddScoped<RenovationMenuViewModel>();
+            services.AddScoped<ManagerReportMenuViewModel>();
             services.AddScoped<RoomSearchViewModel>();
             services.AddScoped<DoctorSpecializationsViewModel>();
             services.AddScoped<AppointmentScheduleViewModel>();
             services.AddScoped<AppointmentCreateViewModel>();
             services.AddScoped<AnamnesisUpdateViewModel>();
+            services.AddScoped<DoctorReportMenuViewModel>();
 
             return services.BuildServiceProvider();
         }
@@ -107,5 +109,7 @@ namespace HospitalCalendar.WPF.ViewModels
         public AppointmentCreateViewModel AppointmentCreateViewModel => ServiceProvider.GetRequiredService<AppointmentCreateViewModel>();
         public AnamnesisUpdateViewModel AnamnesisUpdateViewModel => ServiceProvider.GetRequiredService<AnamnesisUpdateViewModel>();
         public SecretaryMenuViewModel SecretaryMenuViewModel => ServiceProvider.GetRequiredService<SecretaryMenuViewModel>();
+        public ManagerReportMenuViewModel ManagerReportMenuViewModel => ServiceProvider.GetRequiredService<ManagerReportMenuViewModel>();
+        public DoctorReportMenuViewModel DoctorReportMenuViewModel => ServiceProvider.GetRequiredService<DoctorReportMenuViewModel>();
     }
 }
