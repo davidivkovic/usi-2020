@@ -54,7 +54,11 @@ namespace HospitalCalendar.WPF.ViewModels.DoctorMenu
         private async void ExecuteSaveEntry()
         {
             var appointment = (Appointment) CurrentlySelectedCalendarEntry;
-            appointment.Type = AppointmentSpecialization;
+            appointment.Type = new Specialization
+            {
+                IsActive = true,
+                SingleSpecialization = AppointmentSpecialization.SingleSpecialization
+            };
             var createdEntry = await _anamnesisService.AddEntry(appointment, EntryText, DateTime.Now);
             EntryText = string.Empty;
             Anamnesis.Add(createdEntry);
