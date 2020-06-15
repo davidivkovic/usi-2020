@@ -1,11 +1,11 @@
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services.EquipmentServices;
+using HospitalCalendar.EntityFramework.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HospitalCalendar.EntityFramework.Exceptions;
-using System.Collections.Generic;
 
 namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
 {

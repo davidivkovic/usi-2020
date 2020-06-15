@@ -1,7 +1,7 @@
 ﻿using HospitalCalendar.Domain.Models;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using HospitalCalendar.Domain.Enums;
 
 namespace HospitalCalendar.Domain.Services
 {
@@ -15,5 +15,7 @@ namespace HospitalCalendar.Domain.Services
         Task<TimeSpan> AverageDailyOccupiedTimeByDoctor(DateTime start, DateTime end, Doctor doctor);
         Task<TimeSpan> TotalTimeOccupiedForAllDoctors(DateTime start, DateTime end);
         Task<TimeSpan> AverageDailyOccupiedTimeForAllDoctors(DateTime start, DateTime end);
+        Task GenerateRoomReport(DateTime start, DateTime end, string directory, FileFormat format);
+        Task GenerateDoctorReport(DateTime start, DateTime end, string directory, FileFormat format);
     }
 }

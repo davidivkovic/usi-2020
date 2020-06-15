@@ -73,7 +73,7 @@
                                     </StackPanel>
                                 </Button>
 
-                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                <!--<Button Style="{StaticResource MaterialDesignFlatButton}" 
                                         Background="{DynamicResource MaterialDesignBackground}"
                                         Foreground="{DynamicResource MaterialDesignBody}"
                                         HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
@@ -87,7 +87,7 @@
                                             <TextBlock Text="Update a patient's anamnesis" FontSize="12" HorizontalAlignment="Left" Opacity="0.8" />
                                         </StackPanel>
                                     </StackPanel>
-                                </Button>
+                                </Button>-->
 
                                 <Button Style="{StaticResource MaterialDesignFlatButton}" 
                                         Background="{DynamicResource MaterialDesignBackground}"

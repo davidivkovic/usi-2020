@@ -1,0 +1,99 @@
+<html>
+  <head>
+      <style>
+          body {
+              margin: 0;
+              font-family: Saira Condensed, Helvetica, Verdana, sans-serif;
+              font-size: 1rem;
+              line-height: 1.5;
+              color: #333;
+              overflow-x: hidden;
+          }
+
+          .page-title {
+              color: white;
+              background-color: #fb6376;
+              font-size: 1.3rem;
+              width: auto;
+              margin: 0 auto 0 auto;
+              text-align: center;
+              display: block;
+              float:center;
+          }
+
+          .page-title h1 {
+              padding: 20px 0 0 0;
+              margin:0;
+          }
+
+          .page-title p {
+              padding: 0 0 20px 0;
+              font-size: 16px;
+              margin: 0;
+          }
+
+          .stats {
+              margin: 0 auto 0 auto;
+              text-align: center;
+              color: #333;
+          }
+
+          .average-overall-hours {
+              float: left;
+              width: 50%;
+              background-color: #fcb1a6;
+          }
+
+          .overall-hours {
+              float: right;
+              width: 50%;
+              background-color: #ffdccc;
+          }
+
+          .content {
+              width: 100%;
+              height: auto;
+          }
+
+          ul {
+              display: block;
+              margin:0;
+              padding:0;
+          }
+
+          li {
+              background-color: #fff9ec;
+              display: inline;
+              width: 25%;
+              padding:10px 0 5px 0;
+              float:left;
+              list-style:none;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="page-title">
+      <h1>Doctor report</h1>
+      <p>From {{startDate}} to {{endDate}}</p>
+    </div>
+    <div class="stats">
+      <div class="average-overall-hours">
+        <h3>Average hours for all doctors</h3>
+        <h4>{{averageOverall}}</h4>
+      </div>
+      <div class="overall-hours">
+        <h3>Total hours for all doctors</h3>
+        <h4>{{total}}</h4>
+      </div>
+    </div>
+    <div class="content">
+      <ul>
+        <li>First Name</li>
+        <li>Last Name</li>
+        <li>Total hours booked</li>
+        <li>Average hours booked</li>
+      </ul>
+      <!--CONTENT-->
+    </div>
+  </body>
+</html>

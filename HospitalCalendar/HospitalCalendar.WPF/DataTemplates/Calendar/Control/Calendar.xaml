@@ -72,10 +72,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-
-
-
-
             <Button Margin="0 25 260 0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="26" Width="48"
                         Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
                         BorderBrush="{DynamicResource MaterialDesignBackground}" 
@@ -198,9 +194,20 @@
                                 </StackPanel.Margin>
 
                                 <TextBlock Margin="0 65 0 5" Width="55" HorizontalAlignment="Left"
-                                           FontSize="20" FontWeight="Light" Text="{Binding Start, StringFormat=hh\\:mm}"/>
+                                           FontSize="20" FontWeight="Light" Text="{Binding Start, StringFormat=hh\\:mm}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsWorkingHoursStartOrEnd}" Value="True">
+                                                    <Setter Property="ToolTip" Value="Working Hours"/>
+                                                </DataTrigger>
 
-                                <Rectangle Opacity="0.25" Stroke="{DynamicResource MaterialDesignBody}" Width="1010" 
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <Rectangle  Width="1010" 
                                            MinHeight="1" StrokeThickness="1" StrokeDashArray="2 5" HorizontalAlignment="Left"
                                            SnapsToDevicePixels="True" RadiusX="10" RadiusY="10" UseLayoutRounding="True" 
                                            Margin="0 0 0 0">
@@ -212,6 +219,21 @@
                                             <Binding ElementName="HoursContainer" Path="ActualHeight"/>
                                         </MultiBinding>
                                     </Rectangle.Height>
+
+                                    <Rectangle.Style>
+                                        <Style TargetType="{x:Type Rectangle}">
+                                            <Setter Property="Stroke" Value="{DynamicResource MaterialDesignBody}"/>
+                                            <Setter Property="Opacity" Value="0.25"/>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsWorkingHoursStartOrEnd}" Value="True">
+                                                    <Setter Property="Stroke" Value="Orange"/>
+                                                    <Setter Property="Opacity" Value="0.6"/>
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Rectangle.Style>
                                 </Rectangle>
 
                             </StackPanel>
@@ -223,7 +245,7 @@
                 <Grid x:Name="EventsTimeLine" Panel.ZIndex="1">
 
 
-                    <ItemsControl ItemsSource="{Binding Path=Calendar.CurrentWeek.TimeLines}" Margin="105 5 0 0" Height="2500">
+                    <ItemsControl VirtualizingStackPanel.IsVirtualizing="True" ItemsSource="{Binding Path=Calendar.CurrentWeek.TimeLines}" Margin="105 5 0 0" Height="2500">
 
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>

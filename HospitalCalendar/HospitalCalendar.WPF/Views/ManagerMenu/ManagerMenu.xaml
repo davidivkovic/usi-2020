@@ -108,6 +108,7 @@
                                 <Button Style="{StaticResource MaterialDesignFlatButton}" 
                                         Background="{DynamicResource MaterialDesignBackground}"
                                         Foreground="{DynamicResource MaterialDesignBody}"
+                                        Command="{Binding ShowReportMenu}"
                                         HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
                                         HorizontalContentAlignment="Left">
 
@@ -148,7 +149,7 @@
 
             <ContentControl
                         Panel.ZIndex="0"
-                        Margin="20 0 0 0"
+                        Margin="00 0 0 0"
                         Content="{Binding CurrentViewModel}">
             </ContentControl>
         </Grid>

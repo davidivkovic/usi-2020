@@ -14,10 +14,19 @@
              d:DataContext="{Binding Path=EquipmentMenuViewModel, Source={StaticResource Locator}}">
     <Grid>
         <ListView x:Name="EquipmentListBox"
+                    Style="{StaticResource MaterialDesignListView}"
                   ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=UserControl}}"
                   SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                   materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True" 
                   Grid.IsSharedSizeScope="True">
+<!--<ListView.Style>
+                <Style TargetType="{x:Type ListView}">
+                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
+                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="{DynamicResource MaterialDesignBackground}" />
+                </Style>
+            </ListView.Style>-->
 
             <ListView.ItemTemplate>
                 
@@ -29,7 +38,7 @@
                             </ToolTip>
                         </Border.ToolTip>
 
-                        <Grid VerticalAlignment="Center">
+                        <Grid VerticalAlignment="Center" Height="30">
 
                             <StackPanel Orientation="Horizontal">
                                 <!--<CheckBox Margin="0.3" IsChecked="{Binding IsSelected}">-->

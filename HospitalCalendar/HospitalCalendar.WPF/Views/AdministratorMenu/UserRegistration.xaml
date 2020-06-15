@@ -24,13 +24,14 @@
             <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" 
                           Margin="32, 30, 32, 0" materialDesign:HintAssist.Hint="Role"
                           ItemsSource="{Binding Path=Roles}"
-                          SelectedItem="{Binding UserToRegister, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                          SelectedItem="{Binding UserToRegister, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          DisplayMemberPath="Name">
 
-                <ComboBox.ItemTemplate>
+                <!--<ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Converter={StaticResource UserObjectToRoleStringConverter}}"/>
+                            <TextBlock Text="{Binding Converter={StaticResource DomainObjectNameToStringConverter}}"/>
                     </DataTemplate>
-                </ComboBox.ItemTemplate>
+                </ComboBox.ItemTemplate>-->
             </ComboBox>
 
             <TextBox

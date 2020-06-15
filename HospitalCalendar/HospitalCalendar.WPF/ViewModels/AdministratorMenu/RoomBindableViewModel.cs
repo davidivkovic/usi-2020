@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.WPF.Messages;
 

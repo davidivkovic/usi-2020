@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Windows.Data;
-using System.Windows.Markup;
-using HospitalCalendar.Domain.Models;
 
 namespace HospitalCalendar.WPF.Converters
 {
@@ -19,7 +16,7 @@ namespace HospitalCalendar.WPF.Converters
             }
 
             var enumElement = value as Enum;
-            
+
             if (upperCase != null)
             {
                 if ((string)upperCase == "true")

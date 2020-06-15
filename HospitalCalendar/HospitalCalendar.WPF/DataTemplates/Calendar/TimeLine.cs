@@ -1,6 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight;
+using System;
 using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight;
 
 namespace HospitalCalendar.WPF.DataTemplates.Calendar
 {

@@ -8,7 +8,8 @@ namespace HospitalCalendar.EntityFramework
         public HospitalCalendarDbContext CreateDbContext(string[] args = null)
         {
             var options = new DbContextOptionsBuilder<HospitalCalendarDbContext>();
-            options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HospitalCalendarDb;Trusted_connection=True");
+            options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HospitalCalendarDb;Trusted_connection=True;Connection Timeout=30;");
+            options.EnableSensitiveDataLogging();
 
             return new HospitalCalendarDbContext(options.Options);
         }

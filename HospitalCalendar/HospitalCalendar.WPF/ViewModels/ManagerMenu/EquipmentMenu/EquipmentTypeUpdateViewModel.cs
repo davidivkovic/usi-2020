@@ -1,16 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.EntityFramework.Exceptions;
-using HospitalCalendar.WPF.Exceptions;
 using HospitalCalendar.WPF.Messages;
+using PropertyChanged;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System;
-using PropertyChanged;
 
 namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 {
@@ -65,61 +63,51 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
             MessengerInstance.Register<EquipmentTypeSelected>(this, HandleEquipmentTypeSelected);
         }
 
-        // This method needs refactoring - low maintainability
-        private void HandleEquipmentTypeSelected(EquipmentTypeSelected message)
+        private async void HandleEquipmentTypeSelected(EquipmentTypeSelected message)
         {
-            Task.Run(async () =>
+            EquipmentTypeToUpdate = message.EquipmentType;
+            TotalAmount = message.Amount;
+            NewAmount = TotalAmount;
+            CanDeleteEquipmentType = false;
+
+            InUseAmount = await _equipmentItemService.CountInUseByType(EquipmentTypeToUpdate);
+
+            AmountEnumerable = Enumerable.Range(InUseAmount, 10000 - InUseAmount);
+            if (InUseAmount == 0)
             {
-                EquipmentTypeToUpdate = message.EquipmentType;
-                TotalAmount = message.Amount;
-                NewAmount = TotalAmount;
-
-                CanDeleteEquipmentType = false;
-
-                InUseAmount = (await _equipmentItemService.GetAllInUseByType(EquipmentTypeToUpdate)).Count;
-                //InUseAmount = 1;
-                AmountEnumerable = Enumerable.Range(InUseAmount, 10000 - InUseAmount);
-                if (InUseAmount == 0)
-                {
-                    CanDeleteEquipmentType = true;
-                }
-            });
+                CanDeleteEquipmentType = true;
+            }
         }
 
-        private void ExecuteUpdateEquipmentType()
+        private async void ExecuteUpdateEquipmentType()
         {
-            Task.Run(async () =>
+            try
             {
-                try
-                {
-                    EquipmentTypeAlreadyExists = false;
-                    await TryToUpdateEquipmentType();
-                }
-                catch (EquipmentTypeAlreadyExistsException)
-                {
-                    EquipmentTypeAlreadyExists = true;
-                }
-            });
+                EquipmentTypeAlreadyExists = false;
+                await TryToUpdateEquipmentType();
+            }
+            catch (EquipmentTypeAlreadyExistsException)
+            {
+                EquipmentTypeAlreadyExists = true;
+            }
         }
 
         private async Task TryToUpdateEquipmentType()
         {
             // Positive if the user is adding items, negative if user is removing items
-            int amountDelta = NewAmount - TotalAmount;
+            var amountDelta = NewAmount - TotalAmount;
             // Doesn't fire many times
             await _equipmentTypeService.Update(EquipmentTypeToUpdate, Name, Description, amountDelta);
-            MessengerInstance.Send(new EquipmentTypeUpdateSuccess(new EquipmentType { Name = Name, Description = Description, IsActive = true, ID = EquipmentTypeToUpdate.ID }, NewAmount));
+            MessengerInstance.Send(new EquipmentTypeUpdateSuccess(EquipmentTypeToUpdate, NewAmount));
         }
 
-        private void ExecuteDeleteEquipmentType()
+        private async void ExecuteDeleteEquipmentType()
         {
-            Task.Run(async () =>
-            {
-                await _equipmentItemService.Remove(EquipmentTypeToUpdate, TotalAmount);
-                await _equipmentTypeService.PhysicalDelete(EquipmentTypeToUpdate.ID);
-                MessengerInstance.Send(new EquipmentTypeDeleteSuccess(EquipmentTypeToUpdate));
-                MessengerInstance.Send(new EquipmentTypeBindableViewModelChecked());
-            });
+            await _equipmentItemService.Remove(EquipmentTypeToUpdate, TotalAmount);
+            await _equipmentTypeService.PhysicalDelete(EquipmentTypeToUpdate.ID);
+            MessengerInstance.Send(new EquipmentTypeDeleteSuccess(EquipmentTypeToUpdate));
+            MessengerInstance.Send(new EquipmentTypeBindableViewModelChecked());
+
         }
     }
 }

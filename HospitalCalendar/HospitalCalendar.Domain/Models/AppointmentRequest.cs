@@ -10,5 +10,6 @@ namespace HospitalCalendar.Domain.Models
         public Patient Patient { get; set; }
         public Doctor Requester { get; set; }
         public Doctor ProposedDoctor { get; set; }
+        public Room Room { get; set; }
     }
 }

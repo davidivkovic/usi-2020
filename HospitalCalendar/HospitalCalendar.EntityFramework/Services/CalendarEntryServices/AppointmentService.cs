@@ -1,48 +1,57 @@
-﻿using HospitalCalendar.Domain.Models;
-using HospitalCalendar.Domain.Services.CalendarEntryServices;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
-using System.Collections.Immutable;
+using HospitalCalendar.Domain.Enums;
+using HospitalCalendar.Domain.Models;
+using HospitalCalendar.Domain.Services;
+using HospitalCalendar.Domain.Services.CalendarEntryServices;
+using HospitalCalendar.Domain.Services.NotificationsServices;
+using HospitalCalendar.Domain.Services.UserServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 {
     public class AppointmentService : GenericDataService<Appointment>, IAppointmentService
     {
-        public AppointmentService(HospitalCalendarDbContextFactory contextFactory) : base(contextFactory)
+        private readonly INotificationService _notificationService;
+        private readonly IRoomService _roomService;
+        private readonly IDoctorService _doctorService;
+
+
+        public AppointmentService(HospitalCalendarDbContextFactory contextFactory, INotificationService notificationService,
+            IRoomService roomService, IDoctorService doctorService) : base(contextFactory)
         {
+            _notificationService = notificationService;
+            _roomService = roomService;
+            _doctorService = doctorService;
         }
 
         public async Task<ICollection<Appointment>> GetAllByTimeFrame(DateTime start, DateTime end)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                return await context.Appointments
-                                    .Include(a => a.Room)
-                                    .Where(a => a.IsActive)
-                                    .Where(a => (a.StartDateTime >= start && a.StartDateTime <= end) ||
-                                                         (a.EndDateTime >= start && a.EndDateTime <= end) ||
-                                                         (a.StartDateTime >= start && a.EndDateTime <= end))
-                                    .ToListAsync();
-            }
+            await using var context = ContextFactory.CreateDbContext();
+            return await context.Appointments
+                .Include(a => a.Room)
+                .Include(a => a.Doctor)
+                .Where(a => a.IsActive)
+                .Where(a => (a.StartDateTime >= start && a.StartDateTime <= end) ||
+                            (a.EndDateTime >= start && a.EndDateTime <= end) ||
+                            (a.StartDateTime >= start && a.EndDateTime <= end))
+                .ToListAsync();
         }
 
         public async Task<ICollection<Appointment>> GetAllByStatus(AppointmentStatus status)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                return await context.Appointments
-                                    .Where(a => a.IsActive)
-                                    .Where(a => a.Status == status)
-                                    .ToListAsync();
-            }
+            await using var context = ContextFactory.CreateDbContext();
+            return await context.Appointments
+                .Where(a => a.IsActive)
+                .Where(a => a.Status == status)
+                .ToListAsync();
         }
 
         public async Task<ICollection<Appointment>> GetAllByDoctor(Doctor doctor)
         {
-            await using HospitalCalendarDbContext context = ContextFactory.CreateDbContext();
+            await using var context = ContextFactory.CreateDbContext();
             return await context.Appointments
                 .Include(a => a.Patient)
                 .Include(a => a.Doctor)
@@ -55,41 +64,150 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 
         public async Task<ICollection<Appointment>> GetAllByPatient(Patient patient)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                return await context.Appointments
-                                    .Where(a => a.IsActive)
-                                    .Where(a => a.Patient.ID == patient.ID)
-                                    .ToListAsync();
-            }
+            await using var context = ContextFactory.CreateDbContext();
+            return await context.Appointments
+                .Where(a => a.IsActive)
+                .Where(a => a.Patient.ID == patient.ID)
+                .ToListAsync();
         }
 
         public async Task<ICollection<Appointment>> GetAllByRoom(Room room)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                return await context.Appointments
-                                    .Where(a => a.IsActive)
-                                    .Where(a => a.Room.ID == room.ID)
-                                    .ToListAsync();
-            }
+            await using var context = ContextFactory.CreateDbContext();
+            return await context.Appointments
+                .Where(a => a.IsActive)
+                .Where(a => a.Room.ID == room.ID)
+                .ToListAsync();
         }
 
-        public async Task<Appointment> Create(DateTime start, DateTime end, Patient patient, Doctor doctor, Specialization type)
+        public async Task<Appointment> Create(DateTime start, DateTime end, Doctor doctor, Patient patient,Room room)
         {
-            Appointment appointment = new Appointment()
+            var appointment = new Appointment();
+            appointment = await Create(appointment);
+            appointment.IsActive = true;
+            appointment.StartDateTime = start;
+            appointment.EndDateTime = end;
+            appointment.Doctor = doctor;
+            appointment.Patient = patient;
+            appointment.Room = room;
+            appointment.Status = AppointmentStatus.Scheduled;
+            appointment.Type = doctor.Specializations.FirstOrDefault();
+
+            return await Update(appointment);
+        }
+
+        public async Task<Appointment> UpdateOnPatientRequest(DateTime newStart, Appointment appointment)
+        {
+            var newEnd = newStart + (appointment.EndDateTime - appointment.StartDateTime);
+
+            // The room and doctor are not available in the selected period
+            if ((await _roomService.GetAllFree(newStart, newEnd)).ToList().All(room => room.ID != appointment.Room.ID) ||
+                !await _doctorService.IsDoctorFreeInTimeSpan(newStart, newEnd, appointment.Doctor))
             {
-                StartDateTime = start,
-                EndDateTime = end,
-                Status = AppointmentStatus.Scheduled,
+                return null;
+            }
+
+            appointment.StartDateTime = newStart;
+            appointment.EndDateTime = newEnd;
+            await Update(appointment);
+            return appointment;
+        }
+
+        public async Task<Appointment> CreateOnPatientRequest(DateTime preferredDate, DateTime latestAcceptableDate, Patient requestingPatient, Doctor requestedDoctor, AppointmentPriority priority)
+        {
+            Room room;
+            Doctor doctor;
+            DateTime start;
+
+            var (freeRoom, timeSlotStart) = await _roomService.GetFirstFreeByTimeSlotAndDoctor(preferredDate, latestAcceptableDate, requestedDoctor);
+
+            // The doctor is free in the requested time frame and a room with a free slot has been found
+            if ((freeRoom, timeSlotStart) != (null, null))
+            {
+                doctor = requestedDoctor;
+                room = freeRoom;
+                start = timeSlotStart.Value;
+            }
+
+            else
+            {
+                switch (priority)
+                {
+                    case AppointmentPriority.Urgent:
+                        var currentTime = DateTime.Now;
+                        doctor = (await _doctorService.GetAllFree(currentTime, currentTime + TimeSpan.FromDays(1))).FirstOrDefault();
+                        (freeRoom, timeSlotStart) = await _roomService.GetFirstFreeByTimeSlotAndDoctor(currentTime, currentTime + TimeSpan.FromDays(1), doctor);
+                        room = freeRoom;
+                        start = timeSlotStart.Value;
+                        break;
+
+                    case AppointmentPriority.SelectedTime:
+                        (freeRoom, timeSlotStart) = await _roomService.GetFirstFreeByTimeSlotAndDoctor(latestAcceptableDate, latestAcceptableDate + TimeSpan.FromDays(7), requestedDoctor);
+                        doctor = requestedDoctor;
+                        room = freeRoom;
+                        start = timeSlotStart.Value;
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(priority), priority, null);
+                }
+            }
+
+            var appointment = new Appointment();
+            appointment = await Create(appointment);
+            appointment.IsActive = true;
+            appointment.StartDateTime = start;
+            appointment.EndDateTime = start + TimeSpan.FromMinutes(30);
+            appointment.Doctor = doctor;
+            appointment.Patient = requestingPatient;
+            appointment.Room = room;
+            appointment.Status = AppointmentStatus.Scheduled;
+            appointment.Type = doctor.Specializations.FirstOrDefault();
+
+            return await Update(appointment);
+        }
+
+        public async Task<AppointmentRequest> CreateAppointmentRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, DateTime timestamp, Room room)
+        {
+            var appointmentRequest = new AppointmentRequest
+            {
+                IsActive = true,
+                Room = room,
+                StartDate = start,
+                EndDate = end,
+                IsApproved = false,
                 Patient = patient,
-                Doctor = doctor,
-                Type = type
+                Requester = requester,
+                ProposedDoctor = proposedDoctor
             };
 
-            await Create(appointment);
+            await using var context = ContextFactory.CreateDbContext();
+            var createdAppointmentRequest = (await context.AppointmentRequests.AddAsync(appointmentRequest)).Entity;
 
-            return appointment;
+            await _notificationService.PublishAppointmentRequestNotification(createdAppointmentRequest, timestamp, string.Empty);
+
+            return createdAppointmentRequest;
+        }
+
+        public async Task<AppointmentChangeRequest> CreateAppointmentChangeRequest(DateTime start, DateTime end, Appointment appointment, DateTime timestamp, string message)
+        {
+            var appointmentChangeRequest = new AppointmentChangeRequest
+            {
+                IsActive = true,
+                IsApproved = false,
+                NewStartDateTime = start,
+                NewEndDateTime = end,
+                Appointment = appointment,
+                PreviousStartDateTime = appointment.StartDateTime,
+                PreviousEndDateTime = appointment.EndDateTime
+            };
+
+            await using var context = ContextFactory.CreateDbContext();
+            var createdAppointmentChangeRequest = (await context.AppointmentChangeRequests.AddAsync(appointmentChangeRequest)).Entity;
+
+            await _notificationService.PublishAppointmentChangeRequestNotification(appointmentChangeRequest, timestamp, message);
+
+            return createdAppointmentChangeRequest;
         }
 
         public async Task<Appointment> Update(Appointment appointment, DateTime start, DateTime end, Patient patient, Doctor doctor, Specialization type, AppointmentStatus status)
@@ -102,7 +220,6 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             appointment.Status = status;
 
             await Update(appointment);
-
             return appointment;
         }
     }

@@ -1,33 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using HospitalCalendar.Domain.Services.UserServices;
 
 namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.DoctorSpecializationsMenu
 {
     public class DoctorSpecializationsViewModel : ViewModelBase
     {
         private readonly IDoctorService _doctorService;
-
         public ObservableCollection<Doctor> AllDoctors { get; set; } = new ObservableCollection<Doctor>();
         public ObservableCollection<Specializations> AllSpecializations { get; set; }
         public ObservableCollection<Specialization> DoctorsSpecializations { get; set; } = new ObservableCollection<Specialization>();
         public Doctor CurrentlySelectedDoctor { get; set; }
-
         public DateTime? WorkingHoursStart { get; set; }
         public DateTime? WorkingHoursEnd { get; set; }
-
         public Specializations CurrentlySelectedSpecialization { get; set; }
         public bool CanAddSpecialization { get; set; }
         public bool CanRemoveSpecialization { get; set; }
-
         public ICommand AddSpecializationToDoctor { get; set; }
         public ICommand RemoveSpecializationFromDoctor { get; set; }
         public ICommand UpdateDoctorData { get; set; }
@@ -49,18 +45,13 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.DoctorSpecializationsMenu
 
         private void OnCurrentlySelectedDoctorChanged()
         {
-            Task.Run(() =>
-            {
-                UiDispatch(() =>
-                {
-                    DoctorsSpecializations = new ObservableCollection<Specialization>();
-                    if (CurrentlySelectedDoctor != null)
-                        CurrentlySelectedDoctor?.Specializations.ToList().ForEach(s => DoctorsSpecializations.Add(s));
-                });
-                OnCurrentlySelectedSpecializationChanged();
-                WorkingHoursStart = DateTime.MinValue + CurrentlySelectedDoctor?.WorkingHoursStart;
-                WorkingHoursEnd = DateTime.MinValue + CurrentlySelectedDoctor?.WorkingHoursEnd;
-            });
+
+            DoctorsSpecializations = new ObservableCollection<Specialization>();
+            CurrentlySelectedDoctor?.Specializations.ToList().ForEach(s => DoctorsSpecializations.Add(s));
+
+            OnCurrentlySelectedSpecializationChanged();
+            WorkingHoursStart = DateTime.MinValue + CurrentlySelectedDoctor?.WorkingHoursStart;
+            WorkingHoursEnd = DateTime.MinValue + CurrentlySelectedDoctor?.WorkingHoursEnd;
         }
 
         public DoctorSpecializationsViewModel(IDoctorService doctorService)
@@ -79,33 +70,40 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.DoctorSpecializationsMenu
             LoadDoctors();
         }
 
-        private void ExecuteUpdateDoctorData()
+        private async void ExecuteUpdateDoctorData()
         {
-            Task.Run(async () =>
+            if (WorkingHoursStart == null || WorkingHoursEnd == null) return;
+
+            var doctorToUpdate = await _doctorService.Get(CurrentlySelectedDoctor.ID);
+
+            doctorToUpdate.WorkingHoursStart = WorkingHoursStart.Value.TimeOfDay;
+            doctorToUpdate.WorkingHoursEnd = WorkingHoursEnd.Value.TimeOfDay;
+
+            doctorToUpdate.Specializations.Clear();
+
+            DoctorsSpecializations.ToList().ForEach(specialization =>
             {
-                if (WorkingHoursStart == null || WorkingHoursEnd == null) return;
-
-                CurrentlySelectedDoctor.WorkingHoursStart = WorkingHoursStart.Value.TimeOfDay;
-                CurrentlySelectedDoctor.WorkingHoursEnd = WorkingHoursEnd.Value.TimeOfDay;
-                CurrentlySelectedDoctor.Specializations = DoctorsSpecializations.Select(s => s).ToList();
-
-                await _doctorService.Update(CurrentlySelectedDoctor);
-                LoadDoctors();
+                doctorToUpdate.Specializations.Add(specialization);
             });
+
+            await _doctorService.Update(doctorToUpdate, doctor => doctor.Specializations);
+            LoadDoctors();
         }
 
         private void ExecuteRemoveSpecializationFromDoctor()
         {
-            UiDispatch(() => DoctorsSpecializations.Remove(DoctorsSpecializations.First(s => s.SingleSpecialization == CurrentlySelectedSpecialization)));
+            //UiDispatch(() => 
+            DoctorsSpecializations.Remove(DoctorsSpecializations.First(s => s.SingleSpecialization == CurrentlySelectedSpecialization));
+                //);
             OnCurrentlySelectedSpecializationChanged();
         }
 
         private void ExecuteAddSpecializationToDoctor()
         {
-            UiDispatch(() =>
-            {
+            //UiDispatch(() =>
+            //{
                 DoctorsSpecializations.Add(new Specialization { SingleSpecialization = CurrentlySelectedSpecialization, IsActive = true });
-            });
+            //});
             OnCurrentlySelectedSpecializationChanged();
         }
 
@@ -114,14 +112,12 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.DoctorSpecializationsMenu
             System.Windows.Application.Current.Dispatcher.Invoke(action);
         }
 
-        private void LoadDoctors()
+        private async void LoadDoctors()
         {
-            Task.Run(async () =>
-            {
-                UiDispatch(() => AllDoctors = new ObservableCollection<Doctor>());
-                var allDoctors = (await _doctorService.GetAll()).ToList();
-                UiDispatch(() => allDoctors.ForEach(d => AllDoctors.Add(d)));
-            });
+            AllDoctors = new ObservableCollection<Doctor>();
+
+            var allDoctors = (await _doctorService.GetAll()).ToList();
+            allDoctors.ForEach(d => AllDoctors.Add(d));
         }
     }
 }

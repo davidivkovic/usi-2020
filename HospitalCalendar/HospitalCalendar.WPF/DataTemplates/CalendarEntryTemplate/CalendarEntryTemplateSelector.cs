@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HospitalCalendar.Domain.Models;
+using HospitalCalendar.WPF.DataTemplates.Calendar;
 using System.Windows;
 using System.Windows.Controls;
-using HospitalCalendar.Domain.Models;
-using HospitalCalendar.WPF.DataTemplates.Calendar;
 
 namespace HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate
 {
