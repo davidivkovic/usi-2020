@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using HospitalCalendar.Domain.Models;
-using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.WPF.Messages;
-using PropertyChanged;
 
 namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 {
