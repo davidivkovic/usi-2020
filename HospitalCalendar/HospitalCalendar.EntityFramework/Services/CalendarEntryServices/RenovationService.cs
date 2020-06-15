@@ -1,10 +1,10 @@
+using HospitalCalendar.Domain.Models;
+using HospitalCalendar.Domain.Services.CalendarEntryServices;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HospitalCalendar.Domain.Models;
-using HospitalCalendar.Domain.Services.CalendarEntryServices;
-using Microsoft.EntityFrameworkCore;
 
 namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 {
@@ -14,11 +14,11 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
         {
         }
 
-        public async Task<Renovation> Create(Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end, bool splitting, 
+        public async Task<Renovation> Create(Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end, bool splitting,
             ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems)
         {
             var renovation = new Renovation()
-            {   
+            {
                 IsActive = true,
                 Room = null,
                 RoomToAdd = null,
@@ -135,7 +135,7 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             return updatedRenovation;
         }
 
-        public async Task<Renovation> Update(Renovation renovation,Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end, bool splitting,
+        public async Task<Renovation> Update(Renovation renovation, Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end, bool splitting,
             ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems)
         {
             renovation.Room = room;
@@ -146,7 +146,7 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             renovation.Splitting = splitting;
             renovation.RemovedEquipmentItems = removedEquipmentItems;
             renovation.AddedEquipmentItems = addedEquipmentItems;
-            
+
             return await Update(renovation);
         }
 
