@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.WPF.Messages;
-using HospitalCalendar.WPF.ViewModels.DoctorMenu;
 
 namespace HospitalCalendar.WPF.ViewModels.SecretaryMenu
 {
