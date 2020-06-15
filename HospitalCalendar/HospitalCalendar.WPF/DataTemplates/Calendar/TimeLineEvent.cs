@@ -1,11 +1,10 @@
-﻿using System;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using HospitalCalendar.Domain.Models;
 using HospitalCalendar.WPF.Messages;
 using PropertyChanged;
+using System;
+using System.Windows.Input;
 
 namespace HospitalCalendar.WPF.DataTemplates.Calendar
 {
@@ -22,6 +21,7 @@ namespace HospitalCalendar.WPF.DataTemplates.Calendar
         public CalendarEntryBindableViewModel CalendarEntry { get; set; }
         public ICommand EventSelected { get; set; }
         public ICommand EventUnselected { get; set; }
+        public bool IsWorkingHoursStartOrEnd { get; set; }
 
         public TimeLineEvent()
         {
