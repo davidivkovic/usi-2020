@@ -43,13 +43,14 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
         {
             var equipmentTypes = (await _equipmentTypeService.GetAll()).ToList();
             equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
-            AllEquipmentTypes.Clear();
+            var tempEquipmentTypes = new ObservableCollection<EquipmentTypeBindableViewModel>();
 
             foreach (var equipmentType in equipmentTypes)
             {
                 var amount = await _equipmentItemService.CountByType(equipmentType);
-                AllEquipmentTypes.Add(new EquipmentTypeBindableViewModel(equipmentType, amount));
+                tempEquipmentTypes.Add(new EquipmentTypeBindableViewModel(equipmentType, amount));
             }
+            AllEquipmentTypes = new ObservableCollection<EquipmentTypeBindableViewModel>(tempEquipmentTypes);
         }
 
         private void HandleEquipmentTypeCreateSuccess(EquipmentTypeCreateSuccess message)
@@ -59,11 +60,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 
         private void HandleEquipmentTypeUpdateSuccess(EquipmentTypeUpdateSuccess message)
         {
-            AllEquipmentTypes.First(etbvm => etbvm.EquipmentType.ID == message.EquipmentType.ID)
-                    .EquipmentType = message.EquipmentType;
-
-                AllEquipmentTypes.First(etbvm => etbvm.EquipmentType.ID == message.EquipmentType.ID)
-                    .Amount = message.NewAmount;
+            LoadEquipmentTypes();
         }
 
         private void HandleEquipmentTypeDeleteSuccess(EquipmentTypeDeleteSuccess message)
