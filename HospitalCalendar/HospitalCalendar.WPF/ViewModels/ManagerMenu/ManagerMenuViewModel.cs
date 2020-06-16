@@ -18,9 +18,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu
         public ICommand ShowDoctorMenu { get; set; }
         public ICommand ShowRoomSearchMenu { get; set; }
         public ICommand ShowReportMenu { get; set; }
-
         public Manager Manager { get; set; }
-
         public ViewModelBase CurrentViewModel { get; set; }
         public EquipmentMenuViewModel EquipmentMenuViewModel { get; set; }
         public RenovationMenuViewModel RenovationMenuViewModel { get; set; }
