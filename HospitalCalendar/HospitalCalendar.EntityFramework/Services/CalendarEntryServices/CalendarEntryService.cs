@@ -31,7 +31,7 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             return await _appointmentService.CreateAppointmentRequest(start, end, patient, requester, proposedDoctor, timestamp, room);
         }
 
-        public async Task<AppointmentRequest> CreateSurgeryRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, bool isUrgent, DateTime timestamp, Room room)
+        public async Task<SurgeryRequest> CreateSurgeryRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, bool isUrgent, DateTime timestamp, Room room)
         {
             return await _surgeryService.CreateSurgeryRequest(start, end, patient, requester, proposedDoctor, isUrgent, timestamp, room);
         }
