@@ -60,14 +60,15 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
 
             if (amountDelta < 0)
             {
-                await Task.Factory.StartNew(() => _equipmentItemService.Remove(equipmentType, amountDelta));
+                await _equipmentItemService.Remove(equipmentType, amountDelta);
             }
             else
             {
-                await Task.Factory.StartNew(() => _equipmentItemService.Create(equipmentType, amountDelta));
+                await _equipmentItemService.Create(equipmentType, amountDelta);
             }
-
             return await Update(equipmentType);
+
+            //return await Update(equipmentType, et => equipmentType.Description, et => equipmentType.Name);
         }
 
         public async Task<bool> PhysicalDelete(Guid id)
