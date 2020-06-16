@@ -91,7 +91,7 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             appointment.Patient = patient;
             appointment.Room = room;
             appointment.Status = AppointmentStatus.Scheduled;
-            appointment.Type = doctor.Specializations.FirstOrDefault();
+            appointment.Type = doctor.Specializations?.FirstOrDefault();
 
             return await Update(appointment);
         }
@@ -162,50 +162,60 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             appointment.Patient = requestingPatient;
             appointment.Room = room;
             appointment.Status = AppointmentStatus.Scheduled;
-            appointment.Type = doctor.Specializations.FirstOrDefault();
+            appointment.Type = doctor?.Specializations.FirstOrDefault();
 
             return await Update(appointment);
         }
 
         public async Task<AppointmentRequest> CreateAppointmentRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, DateTime timestamp, Room room)
         {
-            var appointmentRequest = new AppointmentRequest
-            {
-                IsActive = true,
-                Room = room,
-                StartDate = start,
-                EndDate = end,
-                IsApproved = false,
-                Patient = patient,
-                Requester = requester,
-                ProposedDoctor = proposedDoctor
-            };
+            var appointmentRequest = new AppointmentRequest();
 
             await using var context = ContextFactory.CreateDbContext();
             var createdAppointmentRequest = (await context.AppointmentRequests.AddAsync(appointmentRequest)).Entity;
+            await context.SaveChangesAsync();
 
-            await _notificationService.PublishAppointmentRequestNotification(createdAppointmentRequest, timestamp, string.Empty);
+            createdAppointmentRequest.IsActive = true;
+            createdAppointmentRequest.Room = room;
+            createdAppointmentRequest.StartDate = start;
+            createdAppointmentRequest.EndDate = end;
+            createdAppointmentRequest.IsApproved = false;
+            createdAppointmentRequest.Patient = patient;
+            createdAppointmentRequest.Requester = requester;
+            createdAppointmentRequest.ProposedDoctor = proposedDoctor;
+
+            await using var context1 = ContextFactory.CreateDbContext();
+            context.AppointmentRequests.Update(appointmentRequest);
+            await context.SaveChangesAsync();
+
+            await _notificationService.PublishAppointmentRequestNotification(appointmentRequest, timestamp, string.Empty);
 
             return createdAppointmentRequest;
         }
 
         public async Task<AppointmentChangeRequest> CreateAppointmentChangeRequest(DateTime start, DateTime end, Appointment appointment, DateTime timestamp, string message)
         {
-            var appointmentChangeRequest = new AppointmentChangeRequest
-            {
-                IsActive = true,
-                IsApproved = false,
-                NewStartDateTime = start,
-                NewEndDateTime = end,
-                Appointment = appointment,
-                PreviousStartDateTime = appointment.StartDateTime,
-                PreviousEndDateTime = appointment.EndDateTime
-            };
+
+            var appointmentChangeRequest = new AppointmentChangeRequest();
 
             await using var context = ContextFactory.CreateDbContext();
             var createdAppointmentChangeRequest = (await context.AppointmentChangeRequests.AddAsync(appointmentChangeRequest)).Entity;
+            await context.SaveChangesAsync();
 
-            await _notificationService.PublishAppointmentChangeRequestNotification(appointmentChangeRequest, timestamp, message);
+            createdAppointmentChangeRequest.IsActive = true;
+            createdAppointmentChangeRequest.NewStartDateTime = start;
+            createdAppointmentChangeRequest.NewEndDateTime = end;
+            createdAppointmentChangeRequest.IsApproved = false;
+            createdAppointmentChangeRequest.Appointment = appointment;
+            createdAppointmentChangeRequest.PreviousStartDateTime = appointment.StartDateTime;
+            createdAppointmentChangeRequest.PreviousEndDateTime = appointment.EndDateTime;
+
+            await using var context1 = ContextFactory.CreateDbContext();
+            context.AppointmentChangeRequests.Update(createdAppointmentChangeRequest);
+            await context.SaveChangesAsync();
+
+
+            //await _notificationService.PublishAppointmentChangeRequestNotification(appointmentChangeRequest, timestamp, message);
 
             return createdAppointmentChangeRequest;
         }
