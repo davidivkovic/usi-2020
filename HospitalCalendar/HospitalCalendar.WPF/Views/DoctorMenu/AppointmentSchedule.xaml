@@ -71,21 +71,18 @@
                         <ListView Width="Auto" ItemsSource="{Binding Anamnesis}" Margin="0 0 0 0" Height="700" Panel.ZIndex="3"
                               MinWidth="300" MaxWidth="300" HorizontalAlignment="Left" SelectedItem="{Binding CurrentlySelectedEntry}">
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <!--<Border Padding="8" ToolTip="{Binding Description}">-->
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
                                     <Border Padding="5">
-
-<Grid>
-                                        <StackPanel Orientation="Horizontal">
-                                            <!--<CheckBox VerticalAlignment="Top" Margin="0.3" IsChecked="{Binding IsSelected}">-->
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
 
                                                 <StackPanel Margin="8 0 0 0">
 
                                                     <StackPanel Orientation="Horizontal">
-                                                    <TextBlock FontWeight="Medium" FontSize="14" 
+                                                        <TextBlock FontWeight="Medium" FontSize="14" 
                                                                Text="{Binding Appointment, Converter={StaticResource DomainObjectNameToStringConverter}}" />
-                                                    <TextBlock Margin="5 1 0 0" Text="{Binding Appointment.Type.SingleSpecialization}"/>
+                                                        <TextBlock Margin="5 1 0 0" Text="{Binding Appointment.Type.SingleSpecialization}"/>
                                                     </StackPanel>
 
                                                     <TextBlock Text="{Binding Appointment.StartDateTime, StringFormat=dd.MM.yyyy. - HH:mm}" />
@@ -99,20 +96,14 @@
                                                         </TextBlock.Text>
                                                     </TextBlock>
 
-                                                    <!--<TextBlock Text="{Binding Description}" />-->
-
-
                                                 </StackPanel>
 
-
-                                            <!--</CheckBox>-->
-
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
 
                         <TextBlock Margin="310 25 0 0" Text="{Binding CurrentlySelectedEntry.Description}" Opacity=".88" FontSize="12" TextWrapping="Wrap" MaxWidth="1100"/>
 
@@ -143,7 +134,7 @@
 
 
 
-                        <Button Content="Add entry" Width="200" Margin="0 20 15 0" 
+                            <Button Content="Add entry" Width="200" Margin="0 20 15 0" 
                                 HorizontalAlignment="Right"
                                 Foreground="{DynamicResource MaterialDesignBody}" 
                                 Background="{DynamicResource MaterialDesignBackground}" 
@@ -167,7 +158,7 @@
 
                     <ContentControl Content="{Binding CurrentlySelectedCalendarEntry}" ContentTemplateSelector="{StaticResource CalendarEntryTemplateSelector}" 
                                     Height="400" />
-                    
+
                 </materialDesign:TransitioningContent>
 
             </StackPanel>
