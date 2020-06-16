@@ -55,27 +55,30 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
                 .ToListAsync();
         }
 
-        public async Task<AppointmentRequest> CreateSurgeryRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, bool isUrgent, DateTime timestamp, Room room)
+        public async Task<SurgeryRequest> CreateSurgeryRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, bool isUrgent, DateTime timestamp, Room room)
         {
-            var surgeryRequest = new SurgeryRequest
-            {
-                IsActive = true,
-                Room = room,
-                StartDate = start,
-                EndDate = end,
-                IsApproved = false,
-                Patient = patient,
-                Requester = requester,
-                ProposedDoctor = proposedDoctor,
-                IsUrgent = isUrgent
-            };
-
             await using var context = ContextFactory.CreateDbContext();
-            var createdSurgeryRequest = (await context.SurgeryRequests.AddAsync(surgeryRequest)).Entity;
+            var surgeryRequest = new SurgeryRequest();
+            var request = (await context.SurgeryRequests.AddAsync(surgeryRequest)).Entity;
 
-            await _notificationService.PublishSurgeryRequestNotification(createdSurgeryRequest, timestamp, string.Empty);
+            request.IsActive = true;
+            request.Room = room;
+            request.StartDate = start;
+            request.EndDate = end;
+            request.IsApproved = false;
+            request.Patient = patient;
+            request.Requester = requester;
+            request.ProposedDoctor = proposedDoctor;
+            request.IsUrgent = isUrgent;
+            
 
-            return createdSurgeryRequest;
+            await using var context1 = ContextFactory.CreateDbContext();
+            context1.SurgeryRequests.Update(request);
+            await context.SaveChangesAsync();
+
+            await _notificationService.PublishSurgeryRequestNotification(request, timestamp, string.Empty);
+
+            return request;
         }
 
         public async Task<Surgery> Create(DateTime start, DateTime end, Doctor doctor, Patient patient, Room room, bool isUrgent)
