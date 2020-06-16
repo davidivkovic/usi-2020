@@ -26,7 +26,6 @@ using HospitalCalendar.Domain.Services.NotificationsServices;
 using HospitalCalendar.Domain.Services.UserServices;
 using HospitalCalendar.EntityFramework.Services.NotificationServices;
 
-
 namespace HospitalCalendar.WPF.ViewModels
 {
     public class ViewModelLocator
@@ -85,8 +84,11 @@ namespace HospitalCalendar.WPF.ViewModels
             services.AddScoped<DoctorSpecializationsViewModel>();
             services.AddScoped<AppointmentScheduleViewModel>();
             services.AddScoped<AppointmentCreateViewModel>();
-            services.AddScoped<AnamnesisUpdateViewModel>();
+            services.AddScoped<PatientRegisterViewModel>();
             services.AddScoped<DoctorReportMenuViewModel>();
+            services.AddScoped<DoctorReportMenuViewModel>();
+            services.AddScoped<NotificationMenuViewModel>();
+            services.AddScoped<ScheduleViewModel>();
 
             return services.BuildServiceProvider();
         }
@@ -107,9 +109,11 @@ namespace HospitalCalendar.WPF.ViewModels
         public AppointmentScheduleViewModel AppointmentScheduleViewModel => ServiceProvider.GetService<AppointmentScheduleViewModel>();
         public DoctorMenuViewModel DoctorMenuViewModel => ServiceProvider.GetService<DoctorMenuViewModel>();
         public AppointmentCreateViewModel AppointmentCreateViewModel => ServiceProvider.GetRequiredService<AppointmentCreateViewModel>();
-        public AnamnesisUpdateViewModel AnamnesisUpdateViewModel => ServiceProvider.GetRequiredService<AnamnesisUpdateViewModel>();
+        public PatientRegisterViewModel PatientRegisterViewModel => ServiceProvider.GetRequiredService<PatientRegisterViewModel>();
         public SecretaryMenuViewModel SecretaryMenuViewModel => ServiceProvider.GetRequiredService<SecretaryMenuViewModel>();
         public ManagerReportMenuViewModel ManagerReportMenuViewModel => ServiceProvider.GetRequiredService<ManagerReportMenuViewModel>();
         public DoctorReportMenuViewModel DoctorReportMenuViewModel => ServiceProvider.GetRequiredService<DoctorReportMenuViewModel>();
+        public NotificationMenuViewModel NotificationMenuViewModel => ServiceProvider.GetRequiredService<NotificationMenuViewModel>();
+        public ScheduleViewModel ScheduleViewModel => ServiceProvider.GetRequiredService<ScheduleViewModel>();
     }
 }
