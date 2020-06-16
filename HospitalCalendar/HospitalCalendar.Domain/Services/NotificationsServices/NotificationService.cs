@@ -8,6 +8,7 @@ namespace HospitalCalendar.Domain.Services.NotificationsServices
 {
     public interface INotificationService : IDataService<Notification>
     {
+        public new Task<ICollection<Notification>> GetAll();
         Task<SurgeryNotification> PublishSurgeryNotification(Surgery surgery, DateTime timestamp, string message);
         Task<SurgeryRequestNotification> PublishSurgeryRequestNotification(SurgeryRequest surgeryRequest, DateTime timestamp, string message);
         Task<AppointmentRequestNotification> PublishAppointmentRequestNotification(AppointmentRequest appointmentRequest, DateTime timestamp, string message);
