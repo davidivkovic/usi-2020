@@ -25,9 +25,9 @@ namespace HospitalCalendar.EntityFramework.Services
         //        .FirstOrDefaultAsync(p => p.ID == id);
         //}
 
-        public async Task<Patient> Register(string firstName, string lastName, string userName, string password, string insuranceNumber, Sex sex)
+        public async Task<Patient> Register(string firstName, string lastName, string userName, string password, Sex sex, string insuranceNumber)
         {
-            return await _userService.Register(typeof(Patient), firstName, lastName, userName, password) as Patient;
+            return await _userService.Register(typeof(Patient), firstName, lastName, userName, password, sex, insuranceNumber) as Patient;
         }
     }
 }
