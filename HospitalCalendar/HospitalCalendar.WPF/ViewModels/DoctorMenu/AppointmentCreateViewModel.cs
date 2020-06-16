@@ -138,7 +138,7 @@ namespace HospitalCalendar.WPF.ViewModels.DoctorMenu
                     .Where(doctor => doctor.Specializations
                         .Any(specialization => specialization.SingleSpecialization.ToString()
                             .Contains("Surgery")))
-                    .ToList();
+                    .Where(d => d.ID != Doctor.ID).ToList();
             }
             else
             {
@@ -146,7 +146,7 @@ namespace HospitalCalendar.WPF.ViewModels.DoctorMenu
                     .Where(doctor => !doctor.Specializations
                         .Any(specialization => specialization.SingleSpecialization.ToString()
                             .Contains("Surgery")))
-                    .ToList();
+                    .Where(d => d.ID != Doctor.ID).ToList();
             }
 
             AvailableSpecialists.Clear();
