@@ -4,9 +4,72 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.DoctorMenu"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="400">
-    <Grid>
+ <Grid>
+        <materialDesign:Card Width="200" Height="115" Padding="5" UniformCornerRadius="7" materialDesign:ShadowAssist.ShadowDepth="Depth1">
+
+            <Grid>
+                <materialDesign:PackIcon HorizontalAlignment="Right" Margin="0 2 2 0"  Height="20"
+                                         Kind="{Binding Status, Converter = {StaticResource AppointmentStatusToMdPackIconConverter}}"
+                                         Foreground="{Binding Status, Converter={StaticResource AppointmentStatusToBrushConverter}, ConverterParameter=true}"/>
             
+
+            <StackPanel Margin="5 2 0 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+
+                <TextBlock FontSize="14" Margin="0 0 0 5">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} {1}">
+                            <Binding Path="Patient.FirstName"/>
+                            <Binding Path="Patient.LastName"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+    
+
+                <StackPanel Orientation="Vertical">
+                    <StackPanel>
+
+                        <TextBlock FontSize="13" >
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0:hh':'mm} - {1:hh':'mm}">
+                                    <Binding Path="StartDateTime"/>
+                                    <Binding Path="EndDateTime"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Appointment - " FontSize="12" FontWeight="Medium"/>
+                            <TextBlock FontSize="12" FontWeight="Medium" Text="{Binding Type, Converter={StaticResource ListToStringConverter}, ConverterParameter=true}"/>
+                        </StackPanel>
+                        
+
+
+                    </StackPanel>
+                    <TextBlock FontSize="12" >
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Room {0}/{1}">
+                                <Binding Path="Room.Floor"/>
+                                <Binding Path="Room.Number"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+
+                
+                <TextBlock Text="{Binding Patient.Sex}"/>
+                <TextBlock FontSize="12" >
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}Insurance number {0}">
+                            <Binding Path="Patient.InsuranceNumber"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+
     </Grid>
 </UserControl>
