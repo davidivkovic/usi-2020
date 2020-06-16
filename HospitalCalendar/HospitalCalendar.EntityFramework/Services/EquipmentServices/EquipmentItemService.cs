@@ -88,22 +88,20 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
         public async Task<bool> Create(EquipmentType equipmentType, int amount)
         {
             await using var context = ContextFactory.CreateDbContext();
-            return await Task.Run(async () =>
-            {
-                var createdEquipmentItems = Enumerable
-                    .Range(1, amount)
-                    .Select(i => new EquipmentItem { IsActive = true })
-                    .ToList();
 
-                await context.EquipmentItems.AddRangeAsync(createdEquipmentItems);
-                await context.SaveChangesAsync();
+            var createdEquipmentItems = Enumerable
+                .Range(1, amount)
+                .Select(i => new EquipmentItem { IsActive = true })
+                .ToList();
 
-                createdEquipmentItems.ForEach(ei => ei.EquipmentType = equipmentType);
-                context.EquipmentItems.UpdateRange(createdEquipmentItems);
-                await context.SaveChangesAsync();
+            await context.EquipmentItems.AddRangeAsync(createdEquipmentItems);
+            await context.SaveChangesAsync();
 
-                return true;
-            });
+            createdEquipmentItems.ForEach(ei => ei.EquipmentType = equipmentType);
+            context.EquipmentItems.UpdateRange(createdEquipmentItems);
+            await context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<bool> Remove(EquipmentType equipmentType, int amount)
@@ -111,11 +109,10 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             await using var context = ContextFactory.CreateDbContext();
             var freeEquipmentItems = await GetAllFreeByType(equipmentType);
             freeEquipmentItems = freeEquipmentItems.Take(Math.Abs(amount)).ToList();
-            await Task.Run(async () =>
-            {
-                context.EquipmentItems.RemoveRange(freeEquipmentItems);
-                await context.SaveChangesAsync();
-            });
+
+            context.EquipmentItems.RemoveRange(freeEquipmentItems);
+            await context.SaveChangesAsync();
+
             return true;
         }
 
