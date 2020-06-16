@@ -9,7 +9,6 @@ namespace HospitalCalendar.EntityFramework
     public class HospitalCalendarDbContext : DbContext
     {
         public DbSet<Administrator> Administrators { get; set; }
-        //public DbSet<Anamnesis> Anamneses { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentChangeRequest> AppointmentChangeRequests { get; set; }
         public DbSet<AppointmentChangeRequestNotification> AppointmentChangeRequestNotifications { get; set; }
@@ -30,7 +29,7 @@ namespace HospitalCalendar.EntityFramework
         public DbSet<Surgery> Surgeries { get; set; }
         public DbSet<SurgeryNotification> SurgeryNotifications { get; set; }
         public DbSet<SurgeryRequest> SurgeryRequests { get; set; }
-        public DbSet<SurgeryRequest> SurgeryRequestNotifications { get; set; }
+        public DbSet<SurgeryRequestNotification> SurgeryRequestNotifications { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<DoctorPatient> DoctorsPatients { get; set; }
 
