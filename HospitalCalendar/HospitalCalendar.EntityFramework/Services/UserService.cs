@@ -35,7 +35,7 @@ namespace HospitalCalendar.EntityFramework.Services
                 .FirstOrDefaultAsync(u => u.Username == username);
         }
 
-        public async Task<User> Register(Type userType, string firstName, string lastName, string username, string password)
+        public async Task<User> Register(Type userType, string firstName, string lastName, string username, string password, Sex? sex = null, string insuranceNumber = "")
         {
             var existingUser = await GetByUsername(username);
             var existingUserInactive = await GetInactiveByUsername(username);
@@ -47,9 +47,15 @@ namespace HospitalCalendar.EntityFramework.Services
 
             var newUser = (User)Activator.CreateInstance(userType);
 
-            if (newUser == null)
+            switch (newUser)
             {
-                throw new TypeInitializationException("userType was null", null);
+                case null:
+                    throw new TypeInitializationException("userType was null", null);
+                case Patient patient:
+                    if (sex != null) patient.Sex = sex.Value;
+                    patient.InsuranceNumber = insuranceNumber;
+                    newUser = patient;
+                    break;
             }
 
             newUser.FirstName = firstName;
@@ -81,11 +87,13 @@ namespace HospitalCalendar.EntityFramework.Services
             user.LastName = newLastName;
             user.IsActive = true;
 
-            if (!string.IsNullOrWhiteSpace(newPassword))
+            if (string.IsNullOrWhiteSpace(newPassword))
             {
-                var hashedPassword = _passwordHasher.HashPassword(user, newPassword);
-                user.Password = hashedPassword;
+                return await Update(user);
             }
+
+            var hashedPassword = _passwordHasher.HashPassword(user, newPassword);
+            user.Password = hashedPassword;
 
             return await Update(user);
         }
