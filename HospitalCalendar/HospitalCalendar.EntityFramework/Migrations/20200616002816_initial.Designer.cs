@@ -4,14 +4,16 @@ using HospitalCalendar.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HospitalCalendar.EntityFramework.Migrations
 {
     [DbContext(typeof(HospitalCalendarDbContext))]
-    partial class HospitalCalendarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200616002816_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
