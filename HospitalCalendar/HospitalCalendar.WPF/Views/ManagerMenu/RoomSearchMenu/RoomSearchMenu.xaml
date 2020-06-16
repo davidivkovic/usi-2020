@@ -111,7 +111,7 @@
                 </StackPanel.Style>
                 <CheckBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Margin="0 10 0 0" IsEnabled="True"
                           Content="Search Occupied Rooms" IsChecked="{Binding SearchOccupiedRooms}"/>
-                <Button Width="200" Margin="0 20 0 0" Command="{Binding Search}" Content="Search" Style="{DynamicResource MaterialDesignFlatMidBgButton}"/>
+                <Button Width="255" Margin="0 20 40 0" Command="{Binding Search}" Content="Search" Style="{DynamicResource MaterialDesignFlatMidBgButton}"/>
             </StackPanel>
         </StackPanel>
 
