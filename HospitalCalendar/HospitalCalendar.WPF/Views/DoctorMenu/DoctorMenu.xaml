@@ -25,7 +25,7 @@
             </Grid.ColumnDefinitions>
 
             <materialDesign:DialogHost HorizontalAlignment="Left" Width="1600"  Margin="0 0 0 0" Identifier="RootDialog" Panel.ZIndex="10">
-                <materialDesign:DrawerHost IsLeftDrawerOpen="True" x:Name="Drawer" >
+                <materialDesign:DrawerHost IsLeftDrawerOpen="False" x:Name="Drawer" >
                     <materialDesign:DrawerHost.LeftDrawerContent>
                         <DockPanel Background="{DynamicResource MaterialDesignBackground}">
 
