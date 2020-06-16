@@ -36,7 +36,7 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
             Roles = new List<Type>
             {
-                typeof(Doctor),
+                typeof(Manager),
                 typeof(Secretary),
                 typeof(Doctor)
             };
