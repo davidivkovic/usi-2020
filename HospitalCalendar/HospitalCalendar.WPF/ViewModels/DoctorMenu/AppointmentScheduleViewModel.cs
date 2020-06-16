@@ -19,7 +19,6 @@ namespace HospitalCalendar.WPF.ViewModels.DoctorMenu
     public class AppointmentScheduleViewModel : ViewModelBase
     {
         private readonly ICalendarEntryService _calendarEntryService;
-        private readonly IPatientService _patientService;
         private readonly IAnamnesisService _anamnesisService;
 
         public ICommand NextWeek { get; set; }
@@ -35,10 +34,9 @@ namespace HospitalCalendar.WPF.ViewModels.DoctorMenu
         public bool AnamnesisIsEditable { get; set; }
         public string EntryText { get; set; }
 
-        public AppointmentScheduleViewModel(ICalendarEntryService calendarEntryService, IPatientService patientService, IAnamnesisService anamnesisService)
+        public AppointmentScheduleViewModel(ICalendarEntryService calendarEntryService, IAnamnesisService anamnesisService)
         {
             _calendarEntryService = calendarEntryService;
-            _patientService = patientService;
             _anamnesisService = anamnesisService;
 
             MessengerInstance.Register<CalendarEventUnselected>(this, HandleCalendarEventUnselected);
