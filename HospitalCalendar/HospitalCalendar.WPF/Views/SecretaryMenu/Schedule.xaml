@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.SecretaryMenu.Schedule"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.SecretaryMenu"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:control="clr-namespace:HospitalCalendar.WPF.DataTemplates.Calendar.Control"
+             xmlns:renovationMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1600"
+             d:DataContext="{Binding Path=ScheduleViewModel, Source={StaticResource Locator}}">
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+
+        <Grid >
+            <StackPanel HorizontalAlignment="Right" Margin="0 170 275 0" Panel.ZIndex="1">
+                <TextBlock FontSize="20" FontWeight="Regular" Text="Choose Room" Margin="0 0 0 0"/>
+
+                <renovationMenu:RenovationRoomList x:Name="RoomList" Width="150" Margin="0 10 0 0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   ItemsSource="{Binding AvailableRooms}" ToolTip="Select Room" SelectedItem="{Binding SelectedRoom}"/>
+            </StackPanel>
+
+
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 130 0" Panel.ZIndex="1"
+                        Visibility="{Binding SelectedCalendarEntry, Converter={StaticResource NullableToVisibilityConverter}}">
+                <materialDesign:TransitioningContent >
+                    <materialDesign:TransitioningContent.OpeningEffects >
+                        <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.300" />
+                    </materialDesign:TransitioningContent.OpeningEffects>
+
+                    <Button Style="{StaticResource MaterialDesignFlatMidBgButton}" Content="Cancel calendar event" Command="{Binding CancelCalendarEntry}"/>
+                </materialDesign:TransitioningContent>
+
+            </StackPanel>
+
+            <StackPanel>
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="105 35 0 5">
+                    <Label FontSize="34" FontWeight="Black" Content="Appointment Schedule" Padding="0"/>
+                    <Label FontSize="15" FontWeight="Regular" Content="View your scheduled examinations and surgeries" Padding="0" Margin="2 0 0 0"/>
+                </StackPanel>
+
+                <Grid>
+                    <control:Calendar x:Name="AppointmentCalendar" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0 0 0 0" Margin="100 6 0 0"/>
+
+
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </materialDesign:TransitioningContent>
+</UserControl>
