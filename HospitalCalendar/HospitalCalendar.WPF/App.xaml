@@ -88,6 +88,18 @@
                 <doctorMenu:AppointmentCreate/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type secretaryViewModels:PatientRegisterViewModel}">
+                <secretaryMenu:PatientRegister/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type secretaryViewModels:NotificationMenuViewModel}">
+                <secretaryMenu:NotificationsMenu/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type secretaryViewModels:ScheduleViewModel}">
+                <secretaryMenu:Schedule/>
+            </DataTemplate>
+
             <converters:DomainObjectNameToStringConverter x:Key="DomainObjectNameToStringConverter" />
             <converters:RoomTypeToStringConverter x:Key="RoomTypeToStringConverter" />
             <converters:EventLengthConverter x:Key="EventLengthConverter" />
