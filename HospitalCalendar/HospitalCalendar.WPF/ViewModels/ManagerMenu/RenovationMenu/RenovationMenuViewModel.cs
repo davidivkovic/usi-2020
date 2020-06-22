@@ -47,7 +47,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
         public EquipmentTypeBindableViewModel CurrentlySelectedEquipmentTypeInRoom { get; set; }
         public RoomBindableViewModel RoomToJoinTo { get; set; }
         public ObservableCollection<RoomType> RoomTypes { get; set; }
-        public RoomType? NewRoomType { get; set; }
+        public RoomType NewRoomType { get; set; }
 
         public ObservableCollection<EquipmentTypeBindableViewModel> FreeEquipmentTypes { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
         public ObservableCollection<EquipmentTypeBindableViewModel> EquipmentTypesInRoom { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
@@ -62,7 +62,6 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             if (CurrentlySelectedRoom is null) return;
             RoomTypes = new ObservableCollection<RoomType>(Enum.GetValues(typeof(RoomType)).Cast<RoomType>().ToList());
             RoomTypes.Remove(RoomTypes.First(rt => rt == CurrentlySelectedRoom.Type));
-            NewRoomType = null;
             LoadCurrentCalendarWeekForRoom();
             ExecuteLoadRoomsAvailableToJoinTo();
             AddedEquipmentTypes.Clear();
@@ -130,6 +129,7 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
         private async Task LoadRooms()
         {
             var rooms = (await _roomService.GetAll()).ToList();
+            AllRooms.Clear();
             rooms.ForEach(room => AllRooms.Add(new RoomBindableViewModel(room)));
             CurrentlySelectedRoom = AllRooms.FirstOrDefault();
         }
@@ -240,60 +240,54 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             freeRooms.ForEach(r => RoomsAvailableToJoinTo.Add(new RoomBindableViewModel(r)));
         }
 
-        private void ExecuteScheduleRenovation()
+        private async void ExecuteScheduleRenovation()
         {
-            Task.Run(async () =>
+            RoomAlreadyInUse = InvalidTimeFrame = false;
+            var renovationStartPeriod = RenovationStartDate + RenovationStartTime?.TimeOfDay;
+            var renovationEndPeriod = RenovationEndDate + RenovationEndTime?.TimeOfDay;
+
+            if (renovationEndPeriod <= renovationStartPeriod || renovationStartPeriod == null || renovationEndPeriod == null)
             {
-                RoomAlreadyInUse = InvalidTimeFrame = false;
-                var renovationStartPeriod = RenovationStartDate + RenovationStartTime?.TimeOfDay;
-                var renovationEndPeriod = RenovationEndDate + RenovationEndTime?.TimeOfDay;
+                InvalidTimeFrame = true;
+                return;
+            }
 
-                if (renovationEndPeriod <= renovationStartPeriod || renovationStartPeriod == null || renovationEndPeriod == null)
-                {
-                    InvalidTimeFrame = true;
-                    return;
-                }
+            // Trying to save some RAM
+            if ((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).Count != 0)
+            {
+                RoomAlreadyInUse = true;
+                return;
+            }
 
-                // Trying to save some RAM
-                if ((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).Count != 0)
-                {
-                    RoomAlreadyInUse = true;
-                    return;
-                }
+            var addedItems = await AddedEquipmentItems();
+            var removedItems = await RemovedEquipmentItems();
 
-                var addedItems = AddedEquipmentItems();
-                var removedItems = RemovedEquipmentItems();
+            var roomToJoinTo = RoomToJoinTo?.Room;
 
-                if (OtherRenovations)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value);
-                }
-                else if (NewRoomType == null)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value, addedItems, removedItems);
-                }
-                else if (NewRoomType != null)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, NewRoomType.Value, renovationStartPeriod.Value, renovationEndPeriod.Value, addedItems, removedItems);
-                }
-                // Create a new renovation which splits the selected room in two
-                else if (SplittingRoom)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value, SplittingRoom);
-                }
-                // Create a new renovation which extends the selected room with another room
-                else if (RoomToJoinTo != null)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, RoomToJoinTo.Room, renovationStartPeriod.Value, renovationEndPeriod.Value);
-                }
+            await _renovationService.Create(CurrentlySelectedRoom.Room, roomToJoinTo, NewRoomType,
+                renovationStartPeriod.Value, renovationEndPeriod.Value, SplittingRoom,
+                removedItems, addedItems);
 
-                Calendar.AddEvents((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).ToList());
-                RenovationStartDate = RenovationEndDate = RenovationStartTime = RenovationEndTime = null;
-                NewRoomType = null;
-            });
+            if (removedItems.Count > 0)
+            {
+                foreach (var equipmentItem in removedItems)
+                {
+                    await _equipmentItemService.Create(equipmentItem.EquipmentType, 1);
+                }
+                
+            }
+
+            Calendar.AddEvents((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).ToList());
+            RenovationEndDate = RenovationStartDate = RenovationStartTime = RenovationEndTime = null;
+            SplittingRoom = false;
+            OtherRenovations = false;
+            AddedEquipmentTypes.Clear();
+            RemovedEquipmentTypes.Clear();
+            LoadFreeEquipmentTypes();
+            LoadRoomEquipmentTypes();
         }
 
-        private List<EquipmentItem> RemovedEquipmentItems()
+        private async Task<List<EquipmentItem>> RemovedEquipmentItems()
         {
             var countByRemovedEquipmentType = RemovedEquipmentTypes
                 .GroupBy(x => x)
@@ -303,16 +297,16 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
 
             var removedItems = new List<EquipmentItem>();
 
-            countByRemovedEquipmentType.ForEach(async pair =>
+            foreach (var pair in countByRemovedEquipmentType)
             {
-                removedItems.AddRange(
-                    (await _equipmentItemService.GetAllByTypeInRoom(pair.Value, CurrentlySelectedRoom.Room))
-                    .Take(pair.Count).ToList());
-            });
+                var itemsToRemove = (await _equipmentItemService.GetAllByTypeInRoom(pair.Value, CurrentlySelectedRoom.Room))
+                    .Take(pair.Count).ToList();
+                removedItems.AddRange(itemsToRemove);
+            }
             return removedItems;
         }
 
-        private List<EquipmentItem> AddedEquipmentItems()
+        private async Task<List<EquipmentItem>> AddedEquipmentItems()
         {
             var countByAddedEquipmentType = AddedEquipmentTypes
                 .GroupBy(x => x)
@@ -322,10 +316,11 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
 
             var addedItems = new List<EquipmentItem>();
 
-            countByAddedEquipmentType.ForEach(async pair =>
+            foreach (var pair in countByAddedEquipmentType)
             {
-                addedItems.AddRange((await _equipmentItemService.GetAllFreeByType(pair.Value)).Take(pair.Count).ToList());
-            });
+                var itemsToAdd = (await _equipmentItemService.GetAllFreeByType(pair.Value)).Take(pair.Count).ToList();
+                addedItems.AddRange(itemsToAdd);
+            }
             return addedItems;
         }
     }

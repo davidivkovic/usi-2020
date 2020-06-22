@@ -20,6 +20,14 @@ namespace HospitalCalendar.EntityFramework.Services
             _doctorService = doctorService;
         }
 
+        public new async Task<Room> Get(Guid id)
+        {
+            await using var context = ContextFactory.CreateDbContext();
+            return await context.Rooms
+                .Include(room => room.Equipment)
+                .FirstOrDefaultAsync(r => r.IsActive && r.ID == id);
+        }
+
         public async Task<ICollection<Room>> GetAllByFloor(int floor)
         {
             await using var context = ContextFactory.CreateDbContext();
@@ -104,33 +112,55 @@ namespace HospitalCalendar.EntityFramework.Services
             });
         }
 
-        public async Task<(Room room, DateTime? timeSlotStart)> GetFirstFreeByTimeSlotAndDoctor(DateTime start, DateTime end, Doctor doctor)
+        public async Task<(Room room, DateTime? timeSlotStart)> GetFirstFreeByTimeSlotAndDoctor(TimeSpan start, TimeSpan end, DateTime latestDate, Doctor doctor)
         {
-            var doctorIsFree = await _doctorService.IsDoctorFreeInTimeSpan(start, end, doctor);
+            //var doctorIsFree = await _doctorService.IsDoctorFreeInTimeSpan(start, end, doctor);
 
             // No room found or the doctor is not free in the given time frame
-            if (!doctorIsFree || (await GetAllFree(start, end)).FirstOrDefault() == null)
+            //if (!doctorIsFree || (await GetAllFree(start, end)).FirstOrDefault() == null)
+            //{
+            //    return (null, null);
+            //}
+            var startDate = DateTime.Today + start;
+            var endDate = DateTime.Today + end;
+
+
+            if ((await GetAllFree(startDate, endDate)).FirstOrDefault() == null)
             {
                 return (null, null);
             }
 
-            // Room and doctor are found in a given time frame and the first empty slot for the room needs to be found
-            while ((await GetAllFree(start, start.AddMinutes(30))).FirstOrDefault() == null &&
-                   await _doctorService.IsDoctorFreeInTimeSpan(start, start.AddMinutes(30), doctor) == false &&
-                   start < end)
+            while (endDate.Date < latestDate.Date + TimeSpan.FromDays(1))
             {
-                start = start.AddMinutes(30);
+                // Room and doctor are found in a given time frame and the first empty slot for the room needs to be found
+                while (((await GetAllFree(startDate, startDate.AddMinutes(30))).FirstOrDefault() == null ||
+                        await _doctorService.IsDoctorFreeInTimeSpan(startDate, startDate.AddMinutes(30), doctor) == false) &&
+                       startDate < endDate)
+                {
+                    startDate = startDate.AddMinutes(30);
+                }
+                // See where the loop stopped (did the loop find a value or just loop to the end?)
+                var doctorIsFree = await _doctorService.IsDoctorFreeInTimeSpan(startDate, startDate.AddMinutes(30), doctor);
+                var freeRoom = (await GetAllFree(startDate, startDate.AddMinutes(30))).FirstOrDefault();
+
+                if (doctorIsFree && freeRoom != null)
+                {
+                    return (freeRoom, startDate);
+                }
+
+                startDate = startDate.Date + TimeSpan.FromDays(1) + start;
+                endDate = endDate.Date + TimeSpan.FromDays(1) + end;
             }
 
-            // See where the loop stopped (did the loop find a vlue or just loop to the end?)
-            doctorIsFree = await _doctorService.IsDoctorFreeInTimeSpan(start, start.AddMinutes(30), doctor);
-            var freeRoom = (await GetAllFree(start, start.AddMinutes(30))).FirstOrDefault();
+
+            //var doctorIsFree = await _doctorService.IsDoctorFreeInTimeSpan(startDate, startDate.AddMinutes(30), doctor);
+            //var freeRoom = (await GetAllFree(startDate, startDate.AddMinutes(30))).FirstOrDefault();
 
             // And check if both the doctor and room are free in the given time frame
-            if (doctorIsFree && freeRoom != null)
-            {
-                return (freeRoom, start);
-            }
+            //if (doctorIsFree && freeRoom != null)
+            //{
+            //    return (freeRoom, startDate);
+            //}
             return (null, null);
         }
 

@@ -42,6 +42,7 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             await using var context = ContextFactory.CreateDbContext();
             var occupiedDoctors = await context.Appointments
+                .Include(a => a.Doctor)
                 .Where(a => (a.StartDateTime >= start && a.StartDateTime <= end) ||
                             (a.EndDateTime >= start && a.EndDateTime <= end) ||
                             (a.StartDateTime >= start && a.EndDateTime <= end))

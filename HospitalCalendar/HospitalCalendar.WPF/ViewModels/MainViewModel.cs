@@ -9,6 +9,7 @@ using HospitalCalendar.WPF.ViewModels.ManagerMenu;
 using HospitalCalendar.WPF.ViewModels.SecretaryMenu;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Input;
+using HospitalCalendar.Domain.Services;
 
 namespace HospitalCalendar.WPF.ViewModels
 {
@@ -26,8 +27,9 @@ namespace HospitalCalendar.WPF.ViewModels
         public SecretaryMenuViewModel SecretaryMenuViewModel { get; set; }
         public LoginViewModel LoginViewModel { get; set; }
 
-        public MainViewModel(LoginViewModel loginViewModel)
+        public MainViewModel(ISynchronizationService synchronizationService ,LoginViewModel loginViewModel)
         {
+            synchronizationService.Synchronize();
             ViewModelLocator = new ViewModelLocator();
             Logout = new RelayCommand(ExecuteLogout);
             ToggleDarkMode = new RelayCommand(ExecuteToggleDarkMode);
@@ -85,6 +87,10 @@ namespace HospitalCalendar.WPF.ViewModels
                 case Secretary secretary:
                     CurrentViewModel = ViewModelLocator.SecretaryMenuViewModel;
                     MessengerInstance.Send(new CurrentUser(secretary));
+                    break;
+                case Patient patient:
+                    CurrentViewModel = ViewModelLocator.PatientMenuViewModel;
+                    MessengerInstance.Send(new CurrentUser(patient));
                     break;
             }
         }

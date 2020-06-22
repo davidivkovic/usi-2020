@@ -117,9 +117,11 @@
                                                   ItemsSource="{Binding RoomTypes}"
                                                   materialDesign:HintAssist.Hint="New room purpose"
                                                   Foreground="{DynamicResource MaterialDesignBody}"
+                                                  x:Name="NewRoomType"
                                                   Margin="0 0 0 0"
                                                   Width ="120"
-                                                  SelectedItem="{Binding NewRoomType}">
+                                                  SelectedItem="{Binding NewRoomType}"
+                                                  Validation.ErrorTemplate="{x:Null}" >
 
                                             <ComboBox.ItemsPanel>
                                                 <ItemsPanelTemplate>

@@ -3,6 +3,7 @@ using HospitalCalendar.WPF.ViewModels.ManagerMenu.ReportMenu;
 using MaterialDesignExtensions.Controls;
 using System.Windows;
 using System.Windows.Controls;
+using HospitalCalendar.WPF.ViewModels.DoctorMenu;
 
 namespace HospitalCalendar.WPF.Views.DoctorMenu
 {
@@ -23,7 +24,7 @@ namespace HospitalCalendar.WPF.Views.DoctorMenu
 
         private void OpenDirectoryControl_OnDirectorySelected(object sender, RoutedEventArgs e)
         {
-            var viewModel = (ManagerReportMenuViewModel)DataContext;
+            var viewModel = (DoctorReportMenuViewModel)DataContext;
             MdDialog.IsOpen = false;
             viewModel.FilePath = ((OpenDirectoryControl)sender).CurrentDirectory;
         }

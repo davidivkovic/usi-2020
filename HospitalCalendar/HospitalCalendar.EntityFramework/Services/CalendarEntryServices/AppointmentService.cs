@@ -66,6 +66,9 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
         {
             await using var context = ContextFactory.CreateDbContext();
             return await context.Appointments
+                .Include(a => a.Room)
+                .Include(a => a.Patient)
+                .Include(a => a.Type)
                 .Where(a => a.IsActive)
                 .Where(a => a.Patient.ID == patient.ID)
                 .ToListAsync();
@@ -80,7 +83,7 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
                 .ToListAsync();
         }
 
-        public async Task<Appointment> Create(DateTime start, DateTime end, Doctor doctor, Patient patient,Room room)
+        public async Task<Appointment> Create(DateTime start, DateTime end, Doctor doctor, Patient patient, Room room)
         {
             var appointment = new Appointment();
             appointment = await Create(appointment);
@@ -113,51 +116,76 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             return appointment;
         }
 
-        public async Task<Appointment> CreateOnPatientRequest(DateTime preferredDate, DateTime latestAcceptableDate, Patient requestingPatient, Doctor requestedDoctor, AppointmentPriority priority)
+        public async Task<Appointment> CreateOnPatientRequest(TimeSpan preferredStartTime, TimeSpan preferredEndTime, DateTime latestAcceptableDate,
+            Patient requestingPatient, Doctor requestedDoctor, AppointmentPriority appointmentPriority)
         {
-            Room room;
-            Doctor doctor;
-            DateTime start;
+            Room room = null;
+            Doctor doctor = null;
+            var start = DateTime.Now;
+            var end = DateTime.Now;
 
-            var (freeRoom, timeSlotStart) = await _roomService.GetFirstFreeByTimeSlotAndDoctor(preferredDate, latestAcceptableDate, requestedDoctor);
 
-            // The doctor is free in the requested time frame and a room with a free slot has been found
-            if ((freeRoom, timeSlotStart) != (null, null))
+            if (preferredStartTime < requestedDoctor.WorkingHoursStart)
             {
-                doctor = requestedDoctor;
-                room = freeRoom;
-                start = timeSlotStart.Value;
+                preferredStartTime = requestedDoctor.WorkingHoursStart;
             }
 
-            else
+            if (preferredEndTime > requestedDoctor.WorkingHoursEnd)
             {
-                switch (priority)
-                {
-                    case AppointmentPriority.Urgent:
-                        var currentTime = DateTime.Now;
-                        doctor = (await _doctorService.GetAllFree(currentTime, currentTime + TimeSpan.FromDays(1))).FirstOrDefault();
-                        (freeRoom, timeSlotStart) = await _roomService.GetFirstFreeByTimeSlotAndDoctor(currentTime, currentTime + TimeSpan.FromDays(1), doctor);
+                preferredEndTime = requestedDoctor.WorkingHoursEnd;
+            }
+
+            switch (appointmentPriority)
+            {
+                case AppointmentPriority.Doctor:
+                    var (freeRoom, timeSlotStart) = await _roomService.GetFirstFreeByTimeSlotAndDoctor(preferredStartTime, preferredEndTime, latestAcceptableDate, requestedDoctor);
+                    
+                    if (freeRoom != null && timeSlotStart != null)
+                    {
                         room = freeRoom;
                         start = timeSlotStart.Value;
-                        break;
-
-                    case AppointmentPriority.SelectedTime:
-                        (freeRoom, timeSlotStart) = await _roomService.GetFirstFreeByTimeSlotAndDoctor(latestAcceptableDate, latestAcceptableDate + TimeSpan.FromDays(7), requestedDoctor);
+                        end = start + TimeSpan.FromMinutes(29);
                         doctor = requestedDoctor;
+                    }
+                    else
+                    {
+                        goto case AppointmentPriority.Time;
+                    }
+                    break;
+
+                case AppointmentPriority.Time:
+                    var allDoctors = await _doctorService.GetAll();
+                    foreach (var doc in allDoctors.ToList())
+                    {
+                        (freeRoom, timeSlotStart) = await _roomService.GetFirstFreeByTimeSlotAndDoctor(preferredStartTime, preferredEndTime, latestAcceptableDate, requestedDoctor);
+                        if (freeRoom == null || timeSlotStart == null) continue;
                         room = freeRoom;
                         start = timeSlotStart.Value;
+                        end = start + TimeSpan.FromMinutes(29);
+                        doctor = doc;
                         break;
+                    }
+                    if (room == null || doctor == null)
+                        return null;
+                    break;
 
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(priority), priority, null);
-                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(appointmentPriority), appointmentPriority, null);
+            }
+
+            var patientsAppointments = await GetAllByPatient(requestingPatient);
+            if (patientsAppointments.Any(a => (a.StartDateTime >= start && a.StartDateTime <= end) ||
+                                              (a.EndDateTime >= start && a.EndDateTime <= end) ||
+                                              (a.StartDateTime >= start && a.EndDateTime <= end)))
+            {
+                return null;
             }
 
             var appointment = new Appointment();
             appointment = await Create(appointment);
             appointment.IsActive = true;
             appointment.StartDateTime = start;
-            appointment.EndDateTime = start + TimeSpan.FromMinutes(30);
+            appointment.EndDateTime = end;
             appointment.Doctor = doctor;
             appointment.Patient = requestingPatient;
             appointment.Room = room;
@@ -215,7 +243,7 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             await context.SaveChangesAsync();
 
 
-            //await _notificationService.PublishAppointmentChangeRequestNotification(appointmentChangeRequest, timestamp, message);
+            await _notificationService.PublishAppointmentChangeRequestNotification(appointmentChangeRequest, timestamp, message);
 
             return createdAppointmentChangeRequest;
         }

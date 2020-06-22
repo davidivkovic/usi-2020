@@ -17,5 +17,6 @@ namespace HospitalCalendar.Domain.Services
         Task<TimeSpan> AverageDailyOccupiedTimeForAllDoctors(DateTime start, DateTime end);
         Task GenerateRoomReport(DateTime start, DateTime end, string directory, FileFormat format);
         Task GenerateDoctorReport(DateTime start, DateTime end, string directory, FileFormat format);
+        Task GeneratePersonalDoctorReport(Doctor doctor, DateTime start, DateTime end, string directory, FileFormat format);
     }
 }

@@ -50,6 +50,14 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 
             return appointments;
         }
+        public async Task<ICollection<Appointment>> GetAllByPatientAndTimeFrame(Patient patient, DateTime start, DateTime end)
+        {
+            return (await GetAllByPatient(patient))
+                .Where(calendarEntry => (calendarEntry.StartDateTime >= start && calendarEntry.StartDateTime <= end) ||
+                                        (calendarEntry.EndDateTime >= start && calendarEntry.EndDateTime <= end) ||
+                                        (calendarEntry.StartDateTime >= start && calendarEntry.EndDateTime <= end))
+                .ToList();
+        }
 
         public async Task<ICollection<CalendarEntry>> GetAllByTimeFrame(DateTime start, DateTime end)
         {

@@ -7,10 +7,7 @@
       google.charts.setOnLoadCallback(drawStuff);
 
       function drawStuff() {
-        var data = new google.visualization.arrayToDataTable([
-          ['Date', 'Hours'],
-          /*CHART_DATA*/
-        ]);
+          var data = new google.visualization.arrayToDataTable([[{ label: 'Date', type: 'string' }, { label: 'Hours', type: 'number' }] /*CHART_DATA*/]);
 
         var options = {
           legend: { position: 'none' },
@@ -94,11 +91,11 @@
     <div class="stats">
       <div class="total-hours">
         <h3>Total hours scheduled</h3>
-        <h4>{{total}}h</h4>
+        <h4>{{total}}</h4>
       </div>
       <div class="average-daily">
         <h3>Average per day</h3>
-        <h4>{{average}}h</h4>
+        <h4>{{average}}</h4>
       </div>
     </div>
     <div id="top_x_div"></div>

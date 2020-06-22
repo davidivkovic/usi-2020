@@ -31,7 +31,7 @@
             <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
             <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
         </materialDesign:TransitioningContent.OpeningEffects>
-        <Grid>
+        <Grid Margin="20 0 0 0">
 
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="105 35 0 5">
                 <Label FontSize="34" FontWeight="Black" Content="Schedule Appointments" Padding="0"/>

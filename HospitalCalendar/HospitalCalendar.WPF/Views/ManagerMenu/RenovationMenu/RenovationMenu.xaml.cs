@@ -60,19 +60,44 @@ namespace HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu
             {
                 RoomSplitCheckbox.IsChecked = false;
                 RoomsAvailableToJoinTo.IsEnabled = true;
+                FreeEquipmentTypes.IsEnabled = false;
+                EquipmentTypesInRoom.IsEnabled = false;
+                AddEquipmentToRoom.IsEnabled = false;
+                RemoveEquipmentFromRoom.IsEnabled = false;
+                NewRoomType.IsEnabled = false;
             };
 
             RoomJoinCheckBox.Unchecked += (o, e) =>
             {
                 RoomsAvailableToJoinTo.IsEnabled = false;
                 RoomsAvailableToJoinTo.SelectedItem = null;
+                FreeEquipmentTypes.IsEnabled = true;
+                EquipmentTypesInRoom.IsEnabled = true;
+                AddEquipmentToRoom.IsEnabled = true;
+                RemoveEquipmentFromRoom.IsEnabled = true;
+                NewRoomType.IsEnabled = true;
             };
 
             RoomSplitCheckbox.Checked += (o, e) =>
             {
                 RoomJoinCheckBox.IsChecked = false;
                 RoomsAvailableToJoinTo.IsEnabled = false;
+                FreeEquipmentTypes.IsEnabled = false;
+                EquipmentTypesInRoom.IsEnabled = false;
+                AddEquipmentToRoom.IsEnabled = false;
+                RemoveEquipmentFromRoom.IsEnabled = false;
+                NewRoomType.IsEnabled = false;
             };
+            
+            RoomSplitCheckbox.Unchecked += (o, e) =>
+            {
+                FreeEquipmentTypes.IsEnabled = true;
+                EquipmentTypesInRoom.IsEnabled = true;
+                AddEquipmentToRoom.IsEnabled = true;
+                RemoveEquipmentFromRoom.IsEnabled = true;
+                NewRoomType.IsEnabled = true;
+            };
+
 
             MakeRoomUnavailableRenovation.Checked += (o, e) =>
             {

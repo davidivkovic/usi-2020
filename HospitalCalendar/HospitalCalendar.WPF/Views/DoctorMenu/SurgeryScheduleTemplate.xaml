@@ -41,7 +41,7 @@
                         </TextBlock>
 
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Appointment - " FontSize="12" FontWeight="Medium"/>
+                            <TextBlock Text="Surgery - " FontSize="12" FontWeight="Medium"/>
                             <TextBlock FontSize="12" FontWeight="Medium" Text="{Binding Type, Converter={StaticResource ListToStringConverter}, ConverterParameter=true}"/>
                         </StackPanel>
                         

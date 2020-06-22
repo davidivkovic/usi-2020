@@ -18,6 +18,6 @@ namespace HospitalCalendar.Domain.Services
         Task<Room> AddItems(Room room, ICollection<EquipmentItem> equipment);
         Task<Room> Update(Room entity, int floor, string number, RoomType roomType, ICollection<EquipmentItem> equipment);
         new Task<bool> Delete(Guid id);
-        Task<(Room room, DateTime? timeSlotStart)> GetFirstFreeByTimeSlotAndDoctor(DateTime start, DateTime end, Doctor doctor);
+        Task<(Room room, DateTime? timeSlotStart)> GetFirstFreeByTimeSlotAndDoctor(TimeSpan start, TimeSpan end, DateTime latestDate, Doctor doctor);
     }
 }

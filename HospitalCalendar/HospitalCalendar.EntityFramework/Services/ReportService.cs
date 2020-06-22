@@ -236,6 +236,80 @@ namespace HospitalCalendar.EntityFramework.Services
             return outputHtml;
         }
 
+        public async Task GeneratePersonalDoctorReport(Doctor doctor, DateTime start, DateTime end, string directory, FileFormat format)
+        {
+            var totalTime = await TimeOccupiedByDoctor(start, end, doctor);
+            var averageTime = await AverageDailyOccupiedTimeByDoctor(start, end, doctor);
+
+            var headerData = new
+            {
+                startDate = start.ToString("dd.MM.yyyy."),
+                endDate = end.ToString("dd.MM.yyyy."),
+                total = CustomTimeSpanFormat(totalTime),
+                averageOverall = CustomTimeSpanFormat(averageTime)
+            };
+
+            var html = await File.ReadAllTextAsync(@"Services\Assets\doctorHimself.html");
+            var stringBuilder = new StringBuilder(html);
+            var outputHtml = await InsertPersonalDoctorDataIntoHtml(start, end, doctor);
+
+            html = stringBuilder
+                .Replace("{{doctorName}}", doctor.FirstName + " " + doctor.LastName)
+                .Replace("{{startDate}}", headerData.startDate)
+                .Replace("{{endDate}}", headerData.endDate)
+                .Replace("{{total}}", headerData.total)
+                .Replace("{{average}}", headerData.averageOverall)
+                .Replace("/*CHART_DATA*/", outputHtml)
+                .ToString();
+            
+            var renderer = new HtmlToPdf
+            {
+                PrintOptions = { MarginTop = 0, MarginBottom = 0, MarginLeft = 0, MarginRight = 0 }
+            };
+
+            renderer.PrintOptions.EnableJavaScript = true;
+            renderer.PrintOptions.RenderDelay = 500; //milliseconds
+
+            await Task.Run(() => {
+                switch (format)
+                {
+                    case FileFormat.Pdf:
+                        var pdf = renderer.RenderHtmlAsPdf(html);
+                        pdf.SaveAs(directory + @"\PersonalDoctorReport.pdf");
+                        break;
+                    case FileFormat.Csv:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(format), format, null);
+                }
+            });
+        }
+
+        private async Task<string> InsertPersonalDoctorDataIntoHtml(DateTime start, DateTime end, Doctor doctor)
+        {
+            const string rowTemplate = ", ['{{date}}', {{time}}]";
+            var template = Handlebars.Compile(rowTemplate);
+            var outputHtml = string.Empty;
+
+            await Task.Run(async () =>
+            {
+                while (start < end)
+                {
+                    var totalHours = (await TimeOccupiedByDoctor(start, end + TimeSpan.FromDays(1), doctor)).TotalHours;
+
+                    var data = new
+                    {
+                        date = start.ToString("dd.MM.yyyy."),
+                        time = totalHours
+                    };
+                    outputHtml += template(data);
+
+                    start += TimeSpan.FromDays(1);
+                }
+            });
+            return outputHtml;
+        }
+
         private static string CustomTimeSpanFormat(TimeSpan input) => $"{(int) input.TotalHours:D2}H {(int) (input.TotalMinutes % 60):D2}m";
     }
 }

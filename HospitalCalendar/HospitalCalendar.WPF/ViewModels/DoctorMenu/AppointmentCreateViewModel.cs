@@ -52,14 +52,11 @@ namespace HospitalCalendar.WPF.ViewModels.DoctorMenu
         public bool InvalidTimeFrame { get; set; }
         public bool IsUrgent { get; set; }
         public SnackbarMessageQueue MaterialDesignMessageQueue { get; set; }
-
-
         public ObservableCollection<Patient> FilteredPatients
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(FilterText))
-                    return AllPatients;
+                if (string.IsNullOrWhiteSpace(FilterText)) return AllPatients;
 
                 var filterResults = AllPatients
                     .Where(p => FilterText.Split().All(p.InsuranceNumber.Contains) ||
@@ -138,15 +135,17 @@ namespace HospitalCalendar.WPF.ViewModels.DoctorMenu
                     .Where(doctor => doctor.Specializations
                         .Any(specialization => specialization.SingleSpecialization.ToString()
                             .Contains("Surgery")))
-                    .Where(d => d.ID != Doctor.ID).ToList();
+                    .Where(d => d.ID != Doctor.ID && d.WorkingHoursStart <= appointmentStart.TimeOfDay && d.WorkingHoursEnd >= appointmentEnd.TimeOfDay)
+                    .ToList();
             }
             else
             {
                 availableSpecialists = (await _doctorService.GetAllFree(appointmentStart, appointmentEnd))
                     .Where(doctor => !doctor.Specializations
-                        .Any(specialization => specialization.SingleSpecialization.ToString()
+                        .All(specialization => specialization.SingleSpecialization.ToString()
                             .Contains("Surgery")))
-                    .Where(d => d.ID != Doctor.ID).ToList();
+                    .Where(d => d.ID != Doctor.ID && d.WorkingHoursStart <= appointmentStart.TimeOfDay && d.WorkingHoursEnd >= appointmentEnd.TimeOfDay)
+                    .ToList();
             }
 
             AvailableSpecialists.Clear();

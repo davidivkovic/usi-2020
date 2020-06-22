@@ -5,12 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Services\Assets\doctorHimself.html" />
+    <None Remove="Services\Assets\doctorPatients.html" />
     <None Remove="Services\doctor.html" />
     <None Remove="Services\room.html" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Services\Assets\doctor.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Services\Assets\doctorHimself.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Services\Assets\doctorPatients.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Services\Assets\room.html">

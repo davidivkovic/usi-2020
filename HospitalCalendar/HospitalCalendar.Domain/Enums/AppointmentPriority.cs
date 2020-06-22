@@ -2,7 +2,7 @@
 {
     public enum AppointmentPriority
     {
-        Urgent,
-        SelectedTime
+        Doctor,
+        Time
     }
 }

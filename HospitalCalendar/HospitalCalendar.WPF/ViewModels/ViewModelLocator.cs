@@ -25,6 +25,7 @@ using System;
 using HospitalCalendar.Domain.Services.NotificationsServices;
 using HospitalCalendar.Domain.Services.UserServices;
 using HospitalCalendar.EntityFramework.Services.NotificationServices;
+using HospitalCalendar.WPF.ViewModels.PatientMenu;
 
 namespace HospitalCalendar.WPF.ViewModels
 {
@@ -63,6 +64,7 @@ namespace HospitalCalendar.WPF.ViewModels
             services.AddScoped<IPatientService, PatientService>();
             services.AddScoped<IAnamnesisService, AnamnesisService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<ISynchronizationService, SynchronizationService>();
             services.AddScoped<HospitalCalendarDbContextFactory>();
 
             // Register ViewModels here
@@ -75,6 +77,7 @@ namespace HospitalCalendar.WPF.ViewModels
             services.AddTransient<ManagerMenuViewModel>();
             services.AddTransient<DoctorMenuViewModel>();
             services.AddTransient<SecretaryMenuViewModel>();
+            services.AddTransient<PatientMenuViewModel>();
             services.AddScoped<EquipmentMenuViewModel>();
             services.AddScoped<EquipmentTypeCreateViewModel>();
             services.AddScoped<EquipmentTypeUpdateViewModel>();
@@ -89,6 +92,8 @@ namespace HospitalCalendar.WPF.ViewModels
             services.AddScoped<DoctorReportMenuViewModel>();
             services.AddScoped<NotificationMenuViewModel>();
             services.AddScoped<ScheduleViewModel>();
+            services.AddScoped<AnamnesisViewModel>();
+            services.AddScoped<AppointmentsViewModel>();
 
             return services.BuildServiceProvider();
         }
@@ -115,5 +120,8 @@ namespace HospitalCalendar.WPF.ViewModels
         public DoctorReportMenuViewModel DoctorReportMenuViewModel => ServiceProvider.GetRequiredService<DoctorReportMenuViewModel>();
         public NotificationMenuViewModel NotificationMenuViewModel => ServiceProvider.GetRequiredService<NotificationMenuViewModel>();
         public ScheduleViewModel ScheduleViewModel => ServiceProvider.GetRequiredService<ScheduleViewModel>();
+        public PatientMenuViewModel PatientMenuViewModel => ServiceProvider.GetRequiredService<PatientMenuViewModel>();
+        public AnamnesisViewModel AnamnesisViewModel => ServiceProvider.GetRequiredService<AnamnesisViewModel>();
+        public AppointmentsViewModel AppointmentsViewModel => ServiceProvider.GetRequiredService<AppointmentsViewModel>();
     }
 }

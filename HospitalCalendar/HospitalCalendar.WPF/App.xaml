@@ -9,6 +9,8 @@
              xmlns:managerViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu"
              xmlns:doctorViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.DoctorMenu"
              xmlns:secretaryViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.SecretaryMenu"
+             xmlns:patientViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.PatientMenu"
+
              xmlns:managerEquipmentMenuViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu"
              xmlns:managerRenovationViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu"
              xmlns:managerRoomSearchViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu"
@@ -19,6 +21,7 @@
              xmlns:doctorMenu="clr-namespace:HospitalCalendar.WPF.Views.DoctorMenu"
              xmlns:managerMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu"
              xmlns:secretaryMenu="clr-namespace:HospitalCalendar.WPF.Views.SecretaryMenu"
+             xmlns:patientMenu="clr-namespace:HospitalCalendar.WPF.Views.PatientMenu"
              xmlns:managerMenuEquipmentMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu"
              xmlns:managerMenuRenovationMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu"
              xmlns:managerMenuRoomSearchMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.RoomSearchMenu"
@@ -98,6 +101,18 @@
 
             <DataTemplate DataType="{x:Type secretaryViewModels:ScheduleViewModel}">
                 <secretaryMenu:Schedule/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type patientViewModels:PatientMenuViewModel}">
+                <patientMenu:PatientMenu/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type patientViewModels:AnamnesisViewModel}">
+                <patientMenu:AnamnesisOverview/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type patientViewModels:AppointmentsViewModel}">
+                <patientMenu:Appointments/>
             </DataTemplate>
 
             <converters:DomainObjectNameToStringConverter x:Key="DomainObjectNameToStringConverter" />

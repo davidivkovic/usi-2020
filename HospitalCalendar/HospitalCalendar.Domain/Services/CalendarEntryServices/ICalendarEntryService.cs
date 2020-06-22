@@ -17,5 +17,6 @@ namespace HospitalCalendar.Domain.Services.CalendarEntryServices
         Task<AppointmentRequest> CreateAppointmentRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, DateTime timestamp, Room room);
         Task<SurgeryRequest> CreateSurgeryRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, bool isUrgent, DateTime timestamp, Room room);
         Task<bool> CancelCalendarEntry(CalendarEntry calendarEntry);
+        Task<ICollection<Appointment>> GetAllByPatientAndTimeFrame(Patient patient, DateTime start, DateTime end);
     }
 }

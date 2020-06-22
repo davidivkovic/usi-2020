@@ -40,7 +40,7 @@
             <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
         </materialDesign:TransitioningContent.OpeningEffects>
 
-        <Grid >
+        <Grid Margin="20 0 0 0">
 
             <Expander ExpandDirection="Left" Height="860" VerticalAlignment="Bottom" HorizontalAlignment="Right" Panel.ZIndex="2" 
                       Visibility="{Binding AnamnesisIsEditable, Converter={StaticResource BooleanToVisibilityConverter}}"
