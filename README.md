@@ -12,8 +12,8 @@ A GUI based Hospital calendar and general planning System, developed during the 
 
 ### Prerequisites:
 - A Microsoft SQL Server runnining remotely, locally or in docker
-- Visual studio 2019
-- The .NET Desktop Development Workload for Visual studio
+- [Visual studio 2019](https://visualstudio.microsoft.com/vs/)
+- The [.NET Desktop Development Workload for Visual studio](https://visualstudio.microsoft.com/vs/features/net-development/)
 
 ## How to run 🚀
 
