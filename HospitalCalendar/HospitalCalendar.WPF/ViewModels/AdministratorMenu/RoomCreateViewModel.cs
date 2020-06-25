@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.EntityFramework.Exceptions;
 using HospitalCalendar.WPF.Messages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
@@ -35,36 +35,33 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
             RoomTypes = Enum.GetValues(typeof(RoomType)).Cast<RoomType>().ToList();
         }
 
-        private void ExecuteCreateRoom()
+        private async void ExecuteCreateRoom()
         {
-            Task.Run(() =>
+            try
             {
-                try
-                {
-                    ValidationError = false;
-                    RoomAlreadyExistsError = false;
+                ValidationError = false;
+                RoomAlreadyExistsError = false;
 
-                    if (Type == null || string.IsNullOrWhiteSpace(Number) || Floor == null)
-                    {
-                        throw new ArgumentNullException();
-                    }
-
-                    var createdRoom = _roomService.Create(Floor.Value, Number.ToUpper(), Type.Value).GetAwaiter().GetResult();
-                    MessengerInstance.Send(new RoomCreateSuccess(createdRoom));
-
-                    Type = null;
-                    Floor = null;
-                    Number = "";
-                }
-                catch (ArgumentNullException)
+                if (Type == null || string.IsNullOrWhiteSpace(Number) || Floor == null)
                 {
-                    ValidationError = true;
+                    throw new ArgumentNullException();
                 }
-                catch (RoomAlreadyExistsException)
-                {
-                    RoomAlreadyExistsError = true;
-                }
-            });
+
+                var createdRoom = await _roomService.Create(Floor.Value, Number.ToUpper(), Type.Value);
+                MessengerInstance.Send(new RoomCreateSuccess(createdRoom));
+
+                Type = null;
+                Floor = null;
+                Number = string.Empty;
+            }
+            catch (ArgumentNullException)
+            {
+                ValidationError = true;
+            }
+            catch (RoomAlreadyExistsException)
+            {
+                RoomAlreadyExistsError = true;
+            }
         }
     }
 }

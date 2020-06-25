@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.EntityFramework.Exceptions;
 using HospitalCalendar.WPF.Messages;
-using PropertyChanged;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using HospitalCalendar.Domain.Services.UserServices;
 
 namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 {
     public class UserRegisterViewModel : ViewModelBase
     {
         private readonly IUserService _userService;
-
-        public List<User> Roles { get; set; }
-        public ICommand RegisterUser { get; private set; }
-
-        //[AlsoNotifyFor(nameof(FirstName), nameof(LastName), nameof(Username))]
-        public User UserToRegister { get; set; }
-
+        public ICommand RegisterUser { get; }
+        public List<Type> Roles { get; set; }
+        public Type UserToRegister { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
@@ -38,61 +34,56 @@ namespace HospitalCalendar.WPF.ViewModels.AdministratorMenu
 
             RegisterUser = new RelayCommand(ExecuteRegistration);
 
-            Roles = new List<User>
+            Roles = new List<Type>
             {
-                new Doctor(),
-                new Secretary(),
-                new Manager()
+                typeof(Manager),
+                typeof(Secretary),
+                typeof(Doctor)
             };
         }
 
-        private void ExecuteRegistration()
+        private async void ExecuteRegistration()
         {
-            var inputFields = new List<string>{FirstName, LastName, Username, Password, ConfirmPassword};
+            var inputFields = new List<string> { FirstName, LastName, Username, Password, ConfirmPassword };
 
             ValidationError = false;
             UsernameAlreadyExists = false;
             NonMatchingPasswords = false;
 
-            Task.Run(() =>
+            try
             {
-                try
+                if (inputFields.Any(string.IsNullOrWhiteSpace) || UserToRegister == null)
                 {
-                    if (inputFields.Any(string.IsNullOrWhiteSpace) || UserToRegister == null)
-                    {
-                        throw new ArgumentNullException();
-                    }
-
-                    if (Password != ConfirmPassword)
-                    {
-                        throw new NonMatchingPasswordException(Password);
-                    }
-                    // TODO: This should be extracted to a separate method
-                    var genericRegisterMethod = _userService.GetType().GetMethod("Register");
-                    var userType = UserToRegister?.GetType();
-                    var typedRegisterMethod = genericRegisterMethod?.MakeGenericMethod(userType);
-
-                    var registeredUser = (typedRegisterMethod?.Invoke(_userService, new object[] {FirstName, LastName, Username, Password}) as Task<User>)?.GetAwaiter().GetResult();
-
-                    FirstName = LastName = Username = Password = ConfirmPassword = "";
-                    UserToRegister = null;
-
-                    MessengerInstance.Send(new UserRegisterSuccess(registeredUser));
+                    throw new ArgumentNullException();
                 }
 
-                catch (ArgumentNullException)
+                if (Password != ConfirmPassword)
                 {
-                    ValidationError = true;
+                    throw new NonMatchingPasswordException(Password);
                 }
-                catch (NonMatchingPasswordException)
-                {
-                    NonMatchingPasswords = true;
-                }
-                catch (UsernameAlreadyExistsException)
-                {
-                    UsernameAlreadyExists = true;
-                }
-            });
+
+                var registeredUser = await _userService.Register(UserToRegister, FirstName, LastName, Username, Password);
+                MessengerInstance.Send(new UserRegisterSuccess(registeredUser));
+
+                Clear();
+            }
+            catch (ArgumentNullException)
+            {
+                ValidationError = true;
+            }
+            catch (NonMatchingPasswordException)
+            {
+                NonMatchingPasswords = true;
+            }
+            catch (UsernameAlreadyExistsException)
+            {
+                UsernameAlreadyExists = true;
+            }
+        }
+        private void Clear()
+        {
+            FirstName = LastName = Username = Password = ConfirmPassword = string.Empty;
+            UserToRegister = null;
         }
     }
 }

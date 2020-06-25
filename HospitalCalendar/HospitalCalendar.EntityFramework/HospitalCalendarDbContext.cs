@@ -1,52 +1,36 @@
-﻿using HospitalCalendar.Domain.Models;
+﻿using System.Linq;
+using HospitalCalendar.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace HospitalCalendar.EntityFramework
 {
     public class HospitalCalendarDbContext : DbContext
     {
         public DbSet<Administrator> Administrators { get; set; }
-
-        public DbSet<Anamnesis> Anamneses { get; set; }
-
         public DbSet<Appointment> Appointments { get; set; }
-
         public DbSet<AppointmentChangeRequest> AppointmentChangeRequests { get; set; }
-
         public DbSet<AppointmentChangeRequestNotification> AppointmentChangeRequestNotifications { get; set; }
-
         public DbSet<AppointmentRequest> AppointmentRequests { get; set; }
-
         public DbSet<AppointmentRequestNotification> AppointmentRequestNotifications { get; set; }
-
         public DbSet<CalendarEntry> CalendarEntries { get; set; }
-
         public DbSet<Doctor> Doctors { get; set; }
-
         public DbSet<Entry> Entries { get; set; }
-
         public DbSet<EquipmentType> EquipmentTypes { get; set; }
-
         public DbSet<EquipmentItem> EquipmentItems { get; set; }
-
         public DbSet<Manager> Managers { get; set; }
-
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Patient> Patients { get; set; }
-
         public DbSet<Renovation> Renovations { get; set; }
-
         public DbSet<Room> Rooms { get; set; }
-
         public DbSet<Secretary> Secretaries { get; set; }
-
         public DbSet<Specialization> Specializations { get; set; }
-
         public DbSet<Surgery> Surgeries { get; set; }
-
         public DbSet<SurgeryNotification> SurgeryNotifications { get; set; }
-
+        public DbSet<SurgeryRequest> SurgeryRequests { get; set; }
+        public DbSet<SurgeryRequestNotification> SurgeryRequestNotifications { get; set; }
         public DbSet<User> Users { get; set; }
-
         public DbSet<DoctorPatient> DoctorsPatients { get; set; }
 
         public HospitalCalendarDbContext(DbContextOptions options) : base(options)
@@ -70,24 +54,11 @@ namespace HospitalCalendar.EntityFramework
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
+                .HasIndex(user => user.Username)
                 .IsUnique();
 
-           // modelBuilder.Entity<EquipmentItem>()
-            
-            /*
-            modelBuilder.Entity<EquipmentItem>()
-                .HasOne(ei => ei.EquipmentType)
-                .WithOne()
-                .HasForeignKey<EquipmentType>(et => et.EquipmentTypeId);*/
-            
-            //.HasOne(dp => dp.EquipmentType)
-            //.WithMany(p => p.Name)
-            //.HasForeignKey(dp => dp.PatientId)
-            //.OnDelete(DeleteBehavior.NoAction);
-
             modelBuilder.Entity<EquipmentType>()
-                .HasIndex(ei => ei.Name)
+                .HasIndex(equipmentType => equipmentType.Name)
                 .IsUnique();
         }
     }

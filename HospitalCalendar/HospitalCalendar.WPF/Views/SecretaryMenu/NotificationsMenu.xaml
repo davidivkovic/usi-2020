@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.SecretaryMenu.NotificationsMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.SecretaryMenu"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:models="clr-namespace:HospitalCalendar.Domain.Models;assembly=HospitalCalendar.Domain"
+             xmlns:styles="clr-namespace:HospitalCalendar.WPF.DataTemplates.NotificationTemplate.Styles"
+             xmlns:notificationTemplates="clr-namespace:HospitalCalendar.WPF.DataTemplates.NotificationTemplate"
+
+             mc:Ignorable="d"            
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             d:DesignHeight="900" d:DesignWidth="1600"
+             d:DataContext="{Binding Path=NotificationMenuViewModel, Source={StaticResource Locator}}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <DataTemplate x:Key="SurgeryNotificationTemplate">
+                <styles:SurgeryNotification/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="SurgeryRequestNotificationTemplate">
+                <styles:SurgeryRequestNotification/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="AppointmentRequestNotificationTemplate">
+                <styles:AppointmentRequestNotification/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="AppointmentChangeRequestNotificationTemplate">
+                <styles:AppointmentChangeRequestNotification/>
+            </DataTemplate>
+
+            <notificationTemplates:NotificationTemplateSelector x:Key="NotificationTemplateSelector" 
+                                                                SurgeryNotificationTemplate="{StaticResource SurgeryNotificationTemplate}"
+                                                                SurgeryRequestNotificationTemplate="{StaticResource SurgeryRequestNotificationTemplate}"
+                                                                AppointmentRequestNotificationTemplate="{StaticResource AppointmentRequestNotificationTemplate}"
+                                                                AppointmentChangeRequestNotificationTemplate="{StaticResource AppointmentChangeRequestNotificationTemplate}"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+        <Grid>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="105 35 0 5">
+                <Label FontSize="34" FontWeight="Black" Content="Notifications" Padding="0"/>
+                <Label FontSize="15" FontWeight="Regular" Content="View and resolve surgery and appointment requests by notification" Padding="0" Margin="2 0 0 0"/>
+            </StackPanel>
+
+            <Grid>
+                <ListView Margin="110 80 0 0" Width="295" Height="700" HorizontalAlignment="Left"
+                          Style="{StaticResource MaterialDesignListView}" SelectedItem="{Binding SelectedNotification}"
+                          ItemsSource="{Binding Notifications}">
+                    <ListView.ItemTemplate>
+
+                        <DataTemplate>
+                            <Border>
+                                <StackPanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <!--<TextBlock FontWeight="Regular" FontSize="14" >
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                    <Binding Path="FirstName"/>
+                                                    <Binding Path="LastName"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>-->
+
+                                        <TextBlock Text="{Binding Converter={StaticResource DomainObjectNameToStringConverter}}" FontSize="12"/>
+                                        <TextBlock Text="{Binding Timestamp, StringFormat=dd.MM.yyyy. - HH:mm}" FontSize="12"/>
+                                        <TextBlock Text="{Binding Status}" FontSize="12"/>
+
+
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+            <ContentControl Width="500" Height="500" Content="{Binding Path=SelectedNotification}" 
+                            ContentTemplateSelector="{StaticResource NotificationTemplateSelector}"
+                            Visibility="{Binding SelectedNotification, Converter={StaticResource notNullToVisibileConverter}}"/>
+            <Button Width="200" Content="Approve" Margin="0 200 0 0" Command="{Binding ResolveNotification}" 
+                    Visibility="{Binding NotificationIsUnresolved, Converter={StaticResource boolToVisibilityConverter}}"/>
+
+        </Grid>
+    </materialDesign:TransitioningContent>
+</UserControl>

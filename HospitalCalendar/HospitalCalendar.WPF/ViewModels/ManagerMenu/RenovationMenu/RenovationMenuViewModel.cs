@@ -1,25 +1,18 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
 using HospitalCalendar.Domain.Services.CalendarEntryServices;
-using HospitalCalendar.WPF.Messages;
+using HospitalCalendar.Domain.Services.EquipmentServices;
+using HospitalCalendar.WPF.DataTemplates.Calendar;
 using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
-using PropertyChanged;
+using HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
-using HospitalCalendar.Domain.Services.EquipmentServices;
-using HospitalCalendar.WPF.DataTemplates.Calendar;
-using HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu;
 
 namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
 {
@@ -30,7 +23,6 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
         private readonly IEquipmentTypeService _equipmentTypeService;
         private readonly IEquipmentItemService _equipmentItemService;
         private readonly IRenovationService _renovationService;
-        private RoomBindableViewModel _currentlySelectedRoom;
 
         public DateTime? RenovationStartDate { get; set; }
         public DateTime? RenovationEndDate { get; set; }
@@ -55,34 +47,27 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
         public EquipmentTypeBindableViewModel CurrentlySelectedEquipmentTypeInRoom { get; set; }
         public RoomBindableViewModel RoomToJoinTo { get; set; }
         public ObservableCollection<RoomType> RoomTypes { get; set; }
-        public RoomType? NewRoomType { get; set; }
+        public RoomType NewRoomType { get; set; }
 
         public ObservableCollection<EquipmentTypeBindableViewModel> FreeEquipmentTypes { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
         public ObservableCollection<EquipmentTypeBindableViewModel> EquipmentTypesInRoom { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
         public List<EquipmentType> AddedEquipmentTypes { get; set; } = new List<EquipmentType>();
         public List<EquipmentType> RemovedEquipmentTypes { get; set; } = new List<EquipmentType>();
         public Calendar Calendar { get; set; }
+        public RoomBindableViewModel CurrentlySelectedRoom { get; set; }
 
-        public RoomBindableViewModel CurrentlySelectedRoom
+        // Used by Fody weaver
+        private void OnCurrentlySelectedRoomChanged()
         {
-            get => _currentlySelectedRoom;
-            set
-            {
-                if (_currentlySelectedRoom == value || value == null)
-                    return;
-
-                _currentlySelectedRoom = value;
-                RaisePropertyChanged(nameof(CurrentlySelectedRoom));
-                RoomTypes = new ObservableCollection<RoomType>(Enum.GetValues(typeof(RoomType)).Cast<RoomType>().ToList());
-                RoomTypes.Remove(RoomTypes.First(rt => rt == CurrentlySelectedRoom.Type));
-                NewRoomType = null;
-                LoadCurrentCalendarWeekForRoom();
-                ExecuteLoadRoomsAvailableToJoinTo();
-                AddedEquipmentTypes.Clear();
-                RemovedEquipmentTypes.Clear();
-                LoadFreeEquipmentTypes();
-                LoadRoomEquipmentTypes();
-            }
+            if (CurrentlySelectedRoom is null) return;
+            RoomTypes = new ObservableCollection<RoomType>(Enum.GetValues(typeof(RoomType)).Cast<RoomType>().ToList());
+            RoomTypes.Remove(RoomTypes.First(rt => rt == CurrentlySelectedRoom.Type));
+            LoadCurrentCalendarWeekForRoom();
+            ExecuteLoadRoomsAvailableToJoinTo();
+            AddedEquipmentTypes.Clear();
+            RemovedEquipmentTypes.Clear();
+            LoadFreeEquipmentTypes();
+            LoadRoomEquipmentTypes();
         }
 
         public RenovationMenuViewModel(ICalendarEntryService calendarEntryService, IRenovationService renovationService, IRoomService roomService,
@@ -94,7 +79,6 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             _equipmentItemService = equipmentItemService;
             _equipmentTypeService = equipmentTypeService;
 
-            //LoadRooms();
             Calendar = new Calendar(DateTime.Today);
 
             NextWeek = new RelayCommand(ExecuteLoadNextCalendarWeek);
@@ -105,271 +89,238 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu
             ScheduleRenovation = new RelayCommand(ExecuteScheduleRenovation);
         }
 
-        public void Initialize()
+        public async void Initialize()
         {
-            LoadRooms();
+            RenovationEndDate = RenovationStartDate = null;
+            RenovationStartTime = RenovationEndTime = null;
+            SplittingRoom = false;
+            OtherRenovations = false;
+            AddedEquipmentTypes.Clear();
+            RemovedEquipmentTypes.Clear();
+            EquipmentTypesInRoom.Clear();
+            FreeEquipmentTypes.Clear();
+            await LoadRooms();
+        }
+
+        private async void LoadCurrentCalendarWeekForRoom()
+        {
+            var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
+            var entries = (await _calendarEntryService
+                .GetAllByRoomAndTimeFrame(CurrentlySelectedRoom?.Room, weekStart, weekStart + TimeSpan.FromDays(7))).ToList();
+            Calendar.LoadCurrentWeek(entries);
+        }
+
+        private async void ExecuteLoadPreviousCalendarWeek()
+        {
+            var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
+            var entries = (await _calendarEntryService
+                .GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, weekStart - TimeSpan.FromDays(8), weekStart + TimeSpan.FromDays(1))).ToList();
+            Calendar.LoadPreviousWeek(entries);
+        }
+
+        private async void ExecuteLoadNextCalendarWeek()
+        {
+            var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
+            var entries = (await _calendarEntryService
+                .GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, weekStart + TimeSpan.FromDays(6), weekStart + TimeSpan.FromDays(15))).ToList();
+            Calendar.LoadNextWeek(entries);
+        }
+
+        private async Task LoadRooms()
+        {
+            var rooms = (await _roomService.GetAll()).ToList();
+            AllRooms.Clear();
+            rooms.ForEach(room => AllRooms.Add(new RoomBindableViewModel(room)));
             CurrentlySelectedRoom = AllRooms.FirstOrDefault();
         }
 
-        private void LoadCurrentCalendarWeekForRoom()
+        private async void LoadFreeEquipmentTypes()
         {
-            Task.Run(async() =>
-            {
-                var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
-                var entries = (await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom?.Room, weekStart, weekStart + TimeSpan.FromDays(7))).ToList();
-                Calendar.LoadCurrentWeek(entries);
-            });
-        }
+            var equipmentTypes = (await _equipmentTypeService.GetAll()).ToList();
+            var tempObsCol = new ObservableCollection<EquipmentTypeBindableViewModel>();
 
-        private void ExecuteLoadPreviousCalendarWeek()
-        {
-            Task.Run(async () =>
+            foreach (var equipmentType in equipmentTypes)
             {
-                var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
-                var entries = (await _calendarEntryService
-                    .GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, weekStart - TimeSpan.FromDays(8), weekStart + TimeSpan.FromDays(1))).ToList();
-                Calendar.LoadPreviousWeek(entries);
-            });
-        }
-
-        private void ExecuteLoadNextCalendarWeek()
-        {
-            Task.Run(async () =>
-            {
-                var weekStart = Calendar.CurrentWeek.WeekStartDateTime;
-                var entries = (await _calendarEntryService
-                .GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, weekStart + TimeSpan.FromDays(6), weekStart + TimeSpan.FromDays(15))).ToList();
-                Calendar.LoadNextWeek(entries);
-            });
-        }
-
-        private static void UiDispatch(Action action)
-        {
-            System.Windows.Application.Current.Dispatcher.Invoke(action);
-        }
-
-        private void LoadRooms()
-        {
-            Task.Run(async () =>
-            {
-                var rooms = (await _roomService.GetAll()).ToList();
-                rooms.Sort((x, y) => x.Floor.CompareTo(y.Floor));
-                UiDispatch(() => AllRooms.Clear());
-                UiDispatch(() =>
+                var amount = await _equipmentItemService.CountFreeByType(equipmentType);
+                if (amount > 0)
                 {
-                    rooms.ForEach(r => AllRooms.Add(new RoomBindableViewModel(r)));
-                    CurrentlySelectedRoom = AllRooms.FirstOrDefault();
-                });
-            });
+                    tempObsCol.Add(new EquipmentTypeBindableViewModel(equipmentType, amount));
+                }
+            }
+            FreeEquipmentTypes = tempObsCol;
         }
 
-        private void LoadFreeEquipmentTypes()
+        private async void LoadRoomEquipmentTypes()
         {
-            Task.Run(async () =>
+            var equipmentTypes = (await _equipmentTypeService.GetAllByRoom(CurrentlySelectedRoom.Room)).ToList();
+            var tempObsCol = new ObservableCollection<EquipmentTypeBindableViewModel>();
+
+            equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
+
+            foreach (var equipmentType in equipmentTypes)
             {
-                var equipmentTypes = (await _equipmentTypeService.GetAll()).ToList();
-                //equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
-                UiDispatch(() => FreeEquipmentTypes.Clear());
-
-                equipmentTypes.ForEach(async et =>
-                {
-                    int amount = (await _equipmentItemService.GetAllFreeByType(et)).Count;
-                    if (amount > 0)
-                    {
-                        UiDispatch(() => FreeEquipmentTypes.Add(new EquipmentTypeBindableViewModel(et, amount)));
-                    }
-                });
-            });
-        }
-
-        private void LoadRoomEquipmentTypes()
-        {
-            Task.Run(async () =>
-            {
-                var equipmentTypes = (await _equipmentTypeService.GetAllByRoom(CurrentlySelectedRoom.Room)).ToList();
-                equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
-                UiDispatch(() => EquipmentTypesInRoom.Clear());
-
-                equipmentTypes.ForEach(async et =>
-                {
-                    int amount = (await _equipmentItemService.GetAllByTypeInRoom(et, CurrentlySelectedRoom.Room)).Count;
-                    UiDispatch(() => EquipmentTypesInRoom.Add(new EquipmentTypeBindableViewModel(et, amount)));
-                });
-            });
+                var amount = await _equipmentItemService.CountByTypeInRoom(equipmentType, CurrentlySelectedRoom.Room);
+                tempObsCol.Add(new EquipmentTypeBindableViewModel(equipmentType, amount));
+            }
+            EquipmentTypesInRoom = tempObsCol;
         }
 
         private void ExecuteAddEquipmentItemToRoom()
         {
-            UiDispatch(() =>
+            var typeToRemove = RemovedEquipmentTypes.FirstOrDefault(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name);
+            if (typeToRemove != null)
+                RemovedEquipmentTypes.Remove(typeToRemove);
+
+            AddedEquipmentTypes.Add(CurrentlySelectedFreeEquipmentType.EquipmentType);
+            FreeEquipmentTypes.First(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name).Amount--;
+
+            // The type is not present in the room
+            if (EquipmentTypesInRoom.FirstOrDefault(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name) == null)
             {
-                var typeToRemove = RemovedEquipmentTypes.FirstOrDefault(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name);
-                if (typeToRemove != null)
-                    RemovedEquipmentTypes.Remove(typeToRemove);
+                EquipmentTypesInRoom.Insert(0, new EquipmentTypeBindableViewModel(CurrentlySelectedFreeEquipmentType.EquipmentType, 1));
+            }
+            // The type is present in the room
+            else
+            {
+                EquipmentTypesInRoom.First(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name).Amount++;
+            }
 
-                AddedEquipmentTypes.Add(CurrentlySelectedFreeEquipmentType.EquipmentType);
-                FreeEquipmentTypes.First(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name).Amount--;
-
-                // The type is not present in the room
-                if (EquipmentTypesInRoom.FirstOrDefault(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name) == null)
-                {
-                    EquipmentTypesInRoom.Add(new EquipmentTypeBindableViewModel(CurrentlySelectedFreeEquipmentType.EquipmentType, 1));
-                }
-                else
-                {
-                    EquipmentTypesInRoom.First(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name).Amount++;
-                }
-
-                // If the free items have been exhausted for the selected type
-                if (FreeEquipmentTypes.First(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name).Amount == 0)
-                {
-                    FreeEquipmentTypes.Remove(FreeEquipmentTypes.First(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name));
-                    CurrentlySelectedFreeEquipmentType = null;
-                }
-            });
+            // If the free items have been exhausted for the selected type
+            if (FreeEquipmentTypes.First(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name).Amount == 0)
+            {
+                FreeEquipmentTypes.Remove(FreeEquipmentTypes.First(et => et.Name == CurrentlySelectedFreeEquipmentType.EquipmentType.Name));
+                CurrentlySelectedFreeEquipmentType = null;
+            }
         }
 
         private void ExecuteRemoveEquipmentItemFromRoom()
         {
-            UiDispatch(() =>
+            var typeToRemove = AddedEquipmentTypes.FirstOrDefault(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name);
+            if (typeToRemove != null)
+                AddedEquipmentTypes.Remove(typeToRemove);
+
+            RemovedEquipmentTypes.Add(CurrentlySelectedEquipmentTypeInRoom.EquipmentType);
+            EquipmentTypesInRoom.First(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name).Amount--;
+
+            // The type is not present in the room
+            if (FreeEquipmentTypes.FirstOrDefault(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name) == null)
             {
-                var typeToRemove = AddedEquipmentTypes.FirstOrDefault(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name);
-                if (typeToRemove != null)
-                    AddedEquipmentTypes.Remove(typeToRemove);
+                FreeEquipmentTypes.Insert(0, new EquipmentTypeBindableViewModel(CurrentlySelectedEquipmentTypeInRoom.EquipmentType, 1));
+            }
+            // The type is present in the room
+            else
+            {
+                FreeEquipmentTypes.First(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name).Amount++;
+            }
 
-                RemovedEquipmentTypes.Add(CurrentlySelectedEquipmentTypeInRoom.EquipmentType);
-
-                EquipmentTypesInRoom.First(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name).Amount--;
-
-                // The type is not present in the room
-                if (FreeEquipmentTypes.FirstOrDefault(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name) == null)
-                {
-                    FreeEquipmentTypes.Add(new EquipmentTypeBindableViewModel(CurrentlySelectedEquipmentTypeInRoom.EquipmentType, 1));
-                }
-                else
-                {
-                    FreeEquipmentTypes.First(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name).Amount++;
-                }
-
-                // If the free items have been exhausted for the selected type
-                if (EquipmentTypesInRoom.First(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name).Amount == 0)
-                {
-                    EquipmentTypesInRoom.Remove(EquipmentTypesInRoom.First(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name));
-                    CurrentlySelectedEquipmentTypeInRoom = null;
-                }
-            });
+            // If the free items have been exhausted for the selected type
+            if (EquipmentTypesInRoom.First(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name).Amount == 0)
+            {
+                EquipmentTypesInRoom.Remove(EquipmentTypesInRoom.First(et => et.Name == CurrentlySelectedEquipmentTypeInRoom.EquipmentType.Name));
+                CurrentlySelectedEquipmentTypeInRoom = null;
+            }
         }
 
-        private void ExecuteLoadRoomsAvailableToJoinTo()
+        private async void ExecuteLoadRoomsAvailableToJoinTo()
         {
-            Task.Run(async () =>
+            var renovationStartPeriod = RenovationStartDate + RenovationStartTime?.TimeOfDay;
+            var renovationEndPeriod = RenovationEndDate + RenovationEndTime?.TimeOfDay;
+
+            if (renovationEndPeriod == null || renovationStartPeriod == null)
+                return;
+
+            var freeRooms = (await _roomService.GetAllFree(renovationStartPeriod.Value, renovationEndPeriod.Value)).ToList();
+
+            if (freeRooms.FirstOrDefault(r => r.ID == CurrentlySelectedRoom.Room.ID) != null)
             {
-                var renovationStartPeriod = RenovationStartDate + RenovationStartTime?.TimeOfDay;
-                var renovationEndPeriod = RenovationEndDate + RenovationEndTime?.TimeOfDay;
+                freeRooms.Remove(freeRooms.FirstOrDefault(r => r.ID == CurrentlySelectedRoom.Room.ID));
+            }
 
-                if (renovationEndPeriod == null || renovationStartPeriod == null)
-                    return;
+            RoomsAvailableToJoinTo.Clear();
+            freeRooms.ForEach(r => RoomsAvailableToJoinTo.Add(new RoomBindableViewModel(r)));
+        }
 
-                var freeRooms = (await _roomService.GetAllFree(renovationStartPeriod.Value, renovationEndPeriod.Value)).ToList();
+        private async void ExecuteScheduleRenovation()
+        {
+            RoomAlreadyInUse = InvalidTimeFrame = false;
+            var renovationStartPeriod = RenovationStartDate + RenovationStartTime?.TimeOfDay;
+            var renovationEndPeriod = RenovationEndDate + RenovationEndTime?.TimeOfDay;
 
-                if (freeRooms.FirstOrDefault(r => r.ID == CurrentlySelectedRoom.Room.ID) != null)
+            if (renovationEndPeriod <= renovationStartPeriod || renovationStartPeriod == null || renovationEndPeriod == null)
+            {
+                InvalidTimeFrame = true;
+                return;
+            }
+
+            // Trying to save some RAM
+            if ((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).Count != 0)
+            {
+                RoomAlreadyInUse = true;
+                return;
+            }
+
+            var addedItems = await AddedEquipmentItems();
+            var removedItems = await RemovedEquipmentItems();
+
+            var roomToJoinTo = RoomToJoinTo?.Room;
+
+            await _renovationService.Create(CurrentlySelectedRoom.Room, roomToJoinTo, NewRoomType,
+                renovationStartPeriod.Value, renovationEndPeriod.Value, SplittingRoom,
+                removedItems, addedItems);
+
+            if (removedItems.Count > 0)
+            {
+                foreach (var equipmentItem in removedItems)
                 {
-                    freeRooms.Remove(freeRooms.FirstOrDefault(r => r.ID == CurrentlySelectedRoom.Room.ID));
+                    await _equipmentItemService.Create(equipmentItem.EquipmentType, 1);
                 }
                 
-                UiDispatch(() =>
-                {
-                    RoomsAvailableToJoinTo.Clear();
-                    freeRooms.ForEach(r => RoomsAvailableToJoinTo.Add(new RoomBindableViewModel(r)));
-                });
-            });
+            }
+
+            Calendar.AddEvents((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).ToList());
+            RenovationEndDate = RenovationStartDate = RenovationStartTime = RenovationEndTime = null;
+            SplittingRoom = false;
+            OtherRenovations = false;
+            AddedEquipmentTypes.Clear();
+            RemovedEquipmentTypes.Clear();
+            LoadFreeEquipmentTypes();
+            LoadRoomEquipmentTypes();
         }
 
-        private void ExecuteScheduleRenovation()
-        {
-            Task.Run(async () =>
-            {
-                RoomAlreadyInUse = InvalidTimeFrame = false;
-                var renovationStartPeriod = RenovationStartDate + RenovationStartTime?.TimeOfDay;
-                var renovationEndPeriod = RenovationEndDate + RenovationEndTime?.TimeOfDay;
-
-                if (renovationEndPeriod <= renovationStartPeriod || renovationStartPeriod == null || renovationEndPeriod == null)
-                {
-                    InvalidTimeFrame = true;
-                    return;
-                }
-
-                // Trying to save some RAM
-                if ((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).Count != 0)
-                {
-                    RoomAlreadyInUse = true;
-                    return;
-                }
-
-                var addedItems = AddedEquipmentItems();
-                var removedItems = RemovedEquipmentItems();
-
-                if (OtherRenovations)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value);
-                }
-                else if (NewRoomType == null)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value, addedItems, removedItems);
-                }
-                else if (NewRoomType != null)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, NewRoomType.Value, renovationStartPeriod.Value, renovationEndPeriod.Value, addedItems, removedItems);
-                }
-                // Create a new renovation which splits the selected room in two
-                else if (SplittingRoom)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value, SplittingRoom);
-                }
-                // Create a new renovation which extends the selected room with another room
-                else if (RoomToJoinTo != null)
-                {
-                    await _renovationService.Create(CurrentlySelectedRoom.Room, RoomToJoinTo.Room, renovationStartPeriod.Value, renovationEndPeriod.Value);
-                }
-
-                Calendar.AddEvents((await _calendarEntryService.GetAllByRoomAndTimeFrame(CurrentlySelectedRoom.Room, renovationStartPeriod.Value, renovationEndPeriod.Value)).ToList());
-                RenovationStartDate = RenovationEndDate = RenovationStartTime = RenovationEndTime = null;
-                NewRoomType = null;
-            });
-        }
-
-        private List<EquipmentItem> RemovedEquipmentItems()
+        private async Task<List<EquipmentItem>> RemovedEquipmentItems()
         {
             var countByRemovedEquipmentType = RemovedEquipmentTypes
                 .GroupBy(x => x)
-                .Select(g => new {Value = g.Key, Count = g.Count()})
+                .Select(g => new { Value = g.Key, Count = g.Count() })
                 .OrderByDescending(x => x.Count)
                 .ToList();
 
             var removedItems = new List<EquipmentItem>();
 
-            countByRemovedEquipmentType.ForEach(async pair =>
+            foreach (var pair in countByRemovedEquipmentType)
             {
-                removedItems.AddRange(
-                    (await _equipmentItemService.GetAllByTypeInRoom(pair.Value, CurrentlySelectedRoom.Room))
-                    .Take(pair.Count).ToList());
-            });
+                var itemsToRemove = (await _equipmentItemService.GetAllByTypeInRoom(pair.Value, CurrentlySelectedRoom.Room))
+                    .Take(pair.Count).ToList();
+                removedItems.AddRange(itemsToRemove);
+            }
             return removedItems;
         }
 
-        private List<EquipmentItem> AddedEquipmentItems()
+        private async Task<List<EquipmentItem>> AddedEquipmentItems()
         {
             var countByAddedEquipmentType = AddedEquipmentTypes
                 .GroupBy(x => x)
-                .Select(g => new {Value = g.Key, Count = g.Count()})
+                .Select(g => new { Value = g.Key, Count = g.Count() })
                 .OrderByDescending(x => x.Count)
                 .ToList();
 
             var addedItems = new List<EquipmentItem>();
 
-            countByAddedEquipmentType.ForEach(async pair =>
+            foreach (var pair in countByAddedEquipmentType)
             {
-                addedItems.AddRange((await _equipmentItemService.GetAllFreeByType(pair.Value)).Take(pair.Count).ToList());
-            });
+                var itemsToAdd = (await _equipmentItemService.GetAllFreeByType(pair.Value)).Take(pair.Count).ToList();
+                addedItems.AddRange(itemsToAdd);
+            }
             return addedItems;
         }
     }

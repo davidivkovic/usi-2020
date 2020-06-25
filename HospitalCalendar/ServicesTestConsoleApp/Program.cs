@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HospitalCalendar.Domain.Services.CalendarEntryServices;
+using HospitalCalendar.Domain.Services.UserServices;
 using HospitalCalendar.EntityFramework.Services.CalendarEntryServices;
 
 namespace ConsoleApp1

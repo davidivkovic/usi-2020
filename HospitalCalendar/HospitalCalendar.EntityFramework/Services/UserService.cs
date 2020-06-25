@@ -4,9 +4,9 @@ using HospitalCalendar.EntityFramework.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HospitalCalendar.Domain.Services.UserServices;
 
 namespace HospitalCalendar.EntityFramework.Services
 {
@@ -21,27 +21,21 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<User> GetByUsername(string username)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                var x = await context.Users
-                                    .Where(u => u.IsActive)
-                                    .FirstOrDefaultAsync(u => u.Username == username);
-                return x;
-            }
+            await using var context = ContextFactory.CreateDbContext();
+            return await context.Users
+                .Where(u => u.IsActive)
+                .FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public async Task<User> GetInactiveByUsername(string username)
         {
-            using (HospitalCalendarDbContext context = ContextFactory.CreateDbContext())
-            {
-                var x = await context.Users
-                    .Where(u => !u.IsActive)
-                    .FirstOrDefaultAsync(u => u.Username == username);
-                return x;
-            }
+            await using var context = ContextFactory.CreateDbContext();
+            return await context.Users
+                .Where(u => !u.IsActive)
+                .FirstOrDefaultAsync(u => u.Username == username);
         }
 
-        public async Task<User> Register<T>(string firstName, string lastName, string username, string password) where T : User, new()
+        public async Task<User> Register(Type userType, string firstName, string lastName, string username, string password, Sex? sex = null, string insuranceNumber = "")
         {
             var existingUser = await GetByUsername(username);
             var existingUserInactive = await GetInactiveByUsername(username);
@@ -51,24 +45,34 @@ namespace HospitalCalendar.EntityFramework.Services
                 throw new UsernameAlreadyExistsException(username);
             }
 
-            var newUser = new T()
+            var newUser = (User)Activator.CreateInstance(userType);
+
+            switch (newUser)
             {
-                FirstName = firstName,
-                LastName = lastName,
-                Username = username,
-                IsActive = true
-            };
+                case null:
+                    throw new TypeInitializationException("userType was null", null);
+                case Patient patient:
+                    if (sex != null) patient.Sex = sex.Value;
+                    patient.InsuranceNumber = insuranceNumber;
+                    newUser = patient;
+                    break;
+            }
+
+            newUser.FirstName = firstName;
+            newUser.LastName = lastName;
+            newUser.Username = username;
+            newUser.IsActive = true;
 
             var hashedPassword = _passwordHasher.HashPassword(newUser, password);
 
             newUser.Password = hashedPassword;
 
-            _ = await Create(newUser);
+            await Create(newUser);
 
             return newUser;
         }
 
-        
+
         public async Task<User> Update(User user, string newFirstName, string newLastName, string newUsername, string newPassword)
         {
             var existingUser = await GetByUsername(newUsername);
@@ -83,11 +87,13 @@ namespace HospitalCalendar.EntityFramework.Services
             user.LastName = newLastName;
             user.IsActive = true;
 
-            if (!string.IsNullOrWhiteSpace(newPassword))
+            if (string.IsNullOrWhiteSpace(newPassword))
             {
-                var hashedPassword = _passwordHasher.HashPassword(user, newPassword);
-                user.Password = hashedPassword;
+                return await Update(user);
             }
+
+            var hashedPassword = _passwordHasher.HashPassword(user, newPassword);
+            user.Password = hashedPassword;
 
             return await Update(user);
         }

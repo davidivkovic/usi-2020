@@ -25,7 +25,7 @@
             </Grid.ColumnDefinitions>
 
             <materialDesign:DialogHost HorizontalAlignment="Left" Width="1600"  Margin="0 0 0 0" Identifier="RootDialog" Panel.ZIndex="10">
-                <materialDesign:DrawerHost IsLeftDrawerOpen="True" x:Name="Drawer" >
+                <materialDesign:DrawerHost IsLeftDrawerOpen="False" x:Name="Drawer" >
                     <materialDesign:DrawerHost.LeftDrawerContent>
                         <DockPanel Background="{DynamicResource MaterialDesignBackground}">
 
@@ -73,7 +73,7 @@
                                     </StackPanel>
                                 </Button>
 
-                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                <!--<Button Style="{StaticResource MaterialDesignFlatButton}" 
                                         Background="{DynamicResource MaterialDesignBackground}"
                                         Foreground="{DynamicResource MaterialDesignBody}"
                                         HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
@@ -87,12 +87,13 @@
                                             <TextBlock Text="Update a patient's anamnesis" FontSize="12" HorizontalAlignment="Left" Opacity="0.8" />
                                         </StackPanel>
                                     </StackPanel>
-                                </Button>
+                                </Button>-->
 
                                 <Button Style="{StaticResource MaterialDesignFlatButton}" 
                                         Background="{DynamicResource MaterialDesignBackground}"
                                         Foreground="{DynamicResource MaterialDesignBody}"
                                         HorizontalAlignment="Center" Height="55" Margin="0 0 0 0" Width="290"
+                                        Command="{Binding ShowReportsMenu}"
                                         HorizontalContentAlignment="Left">
 
                                     <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
@@ -132,7 +133,7 @@
 
             <ContentControl
                         Panel.ZIndex="0"
-                        Margin="20 0 0 0"
+                        Margin="0 0 0 0"
                         Content="{Binding CurrentViewModel}">
             </ContentControl>
         </Grid>

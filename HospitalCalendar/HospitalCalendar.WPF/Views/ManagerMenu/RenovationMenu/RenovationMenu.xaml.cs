@@ -1,21 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Reflection;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
+﻿using System.Windows.Controls;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using HospitalCalendar.Domain.Models;
-using HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu;
-using MaterialDesignThemes.Wpf;
 
 namespace HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu
 {
@@ -38,9 +22,9 @@ namespace HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu
 
             FreeEquipmentTypes.EquipmentListBox.SelectionChanged += (o, e) =>
             {
-                
 
-                if(FreeEquipmentTypes.EquipmentListBox.Items.Count == 0)
+
+                if (FreeEquipmentTypes.EquipmentListBox.Items.Count == 0)
                     AddEquipmentToRoom.IsEnabled = false;
 
                 if (FreeEquipmentTypes.EquipmentListBox.SelectedItem == null)
@@ -76,19 +60,44 @@ namespace HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu
             {
                 RoomSplitCheckbox.IsChecked = false;
                 RoomsAvailableToJoinTo.IsEnabled = true;
+                FreeEquipmentTypes.IsEnabled = false;
+                EquipmentTypesInRoom.IsEnabled = false;
+                AddEquipmentToRoom.IsEnabled = false;
+                RemoveEquipmentFromRoom.IsEnabled = false;
+                NewRoomType.IsEnabled = false;
             };
 
             RoomJoinCheckBox.Unchecked += (o, e) =>
             {
                 RoomsAvailableToJoinTo.IsEnabled = false;
                 RoomsAvailableToJoinTo.SelectedItem = null;
+                FreeEquipmentTypes.IsEnabled = true;
+                EquipmentTypesInRoom.IsEnabled = true;
+                AddEquipmentToRoom.IsEnabled = true;
+                RemoveEquipmentFromRoom.IsEnabled = true;
+                NewRoomType.IsEnabled = true;
             };
 
             RoomSplitCheckbox.Checked += (o, e) =>
             {
                 RoomJoinCheckBox.IsChecked = false;
                 RoomsAvailableToJoinTo.IsEnabled = false;
+                FreeEquipmentTypes.IsEnabled = false;
+                EquipmentTypesInRoom.IsEnabled = false;
+                AddEquipmentToRoom.IsEnabled = false;
+                RemoveEquipmentFromRoom.IsEnabled = false;
+                NewRoomType.IsEnabled = false;
             };
+            
+            RoomSplitCheckbox.Unchecked += (o, e) =>
+            {
+                FreeEquipmentTypes.IsEnabled = true;
+                EquipmentTypesInRoom.IsEnabled = true;
+                AddEquipmentToRoom.IsEnabled = true;
+                RemoveEquipmentFromRoom.IsEnabled = true;
+                NewRoomType.IsEnabled = true;
+            };
+
 
             MakeRoomUnavailableRenovation.Checked += (o, e) =>
             {

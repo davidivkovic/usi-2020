@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HospitalCalendar.Domain.Models;
+using HospitalCalendar.WPF.DataTemplates.Calendar;
 using System.Windows;
 using System.Windows.Controls;
-using HospitalCalendar.Domain.Models;
-using HospitalCalendar.WPF.DataTemplates.Calendar;
 
 namespace HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate
 {
@@ -18,9 +15,17 @@ namespace HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate
         {
             var selectedTemplate = AppointmentTemplate;
 
-            var calendarEntryBindableViewModel = item as CalendarEntryBindableViewModel;
-            var calendarEntry = calendarEntryBindableViewModel?.CalendarEntry;
+            CalendarEntry calendarEntry;
 
+            if (item is CalendarEntryBindableViewModel calendarEntryBindableViewModel)
+            {
+                calendarEntry = calendarEntryBindableViewModel?.CalendarEntry;
+            }
+            else
+            {
+                calendarEntry = (CalendarEntry)item;
+            }
+            
             selectedTemplate = calendarEntry switch
             {
                 Surgery _ => SurgeryTemplate,

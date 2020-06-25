@@ -1,8 +1,8 @@
 ﻿using HospitalCalendar.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
-using System.Runtime.CompilerServices;
+using HospitalCalendar.Domain.Enums;
 
 namespace HospitalCalendar.Domain.Services.CalendarEntryServices
 {
@@ -13,7 +13,9 @@ namespace HospitalCalendar.Domain.Services.CalendarEntryServices
         Task<ICollection<Appointment>> GetAllByPatient(Patient patient);
         Task<ICollection<Appointment>> GetAllByDoctor(Doctor doctor);
         Task<ICollection<Appointment>> GetAllByRoom(Room room);
-        Task<Appointment> Create(DateTime start, DateTime end, Patient patient, Doctor doctor,Specialization type);
-        Task<Appointment> Update(Appointment appointment,DateTime start, DateTime end, Patient patient, Doctor doctor, Specialization type, AppointmentStatus status);
+        Task<Appointment> Create(DateTime start, DateTime end, Doctor doctor, Patient patient, Room room);
+        Task<Appointment> Update(Appointment appointment, DateTime start, DateTime end, Patient patient, Doctor doctor, Specialization type, AppointmentStatus status);
+        Task<AppointmentRequest> CreateAppointmentRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, DateTime timestamp, Room room);
+        Task<Appointment> CreateOnPatientRequest(TimeSpan preferredStartTime, TimeSpan preferredEndTime, DateTime latestAcceptableDate, Patient requestingPatient, Doctor requestedDoctor, AppointmentPriority priority);
     }
 }

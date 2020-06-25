@@ -15,29 +15,9 @@ namespace HospitalCalendar.EntityFramework.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("HospitalCalendar.Domain.Models.Anamnesis", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("PatientID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("PatientID")
-                        .IsUnique();
-
-                    b.ToTable("Anamneses");
-                });
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentChangeRequest", b =>
                 {
@@ -73,39 +53,6 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.ToTable("AppointmentChangeRequests");
                 });
 
-            modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentChangeRequestNotification", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AppointmentChangeRequestID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("SecretaryID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AppointmentChangeRequestID");
-
-                    b.HasIndex("SecretaryID");
-
-                    b.ToTable("AppointmentChangeRequestNotifications");
-                });
-
             modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentRequest", b =>
                 {
                     b.Property<Guid>("ID")
@@ -130,6 +77,9 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.Property<Guid?>("RequesterID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("RoomID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -141,40 +91,9 @@ namespace HospitalCalendar.EntityFramework.Migrations
 
                     b.HasIndex("RequesterID");
 
+                    b.HasIndex("RoomID");
+
                     b.ToTable("AppointmentRequests");
-                });
-
-            modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentRequestNotification", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AppointmentRequestID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("SecretaryID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AppointmentRequestID");
-
-                    b.HasIndex("SecretaryID");
-
-                    b.ToTable("AppointmentRequestNotifications");
                 });
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.CalendarEntry", b =>
@@ -198,6 +117,9 @@ namespace HospitalCalendar.EntityFramework.Migrations
 
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -229,7 +151,7 @@ namespace HospitalCalendar.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AnamnesisID")
+                    b.Property<Guid?>("AppointmentID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateCreated")
@@ -244,11 +166,16 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("PatientID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("AnamnesisID");
+                    b.HasIndex("AppointmentID");
 
                     b.HasIndex("DoctorID");
+
+                    b.HasIndex("PatientID");
 
                     b.ToTable("Entries");
                 });
@@ -311,6 +238,35 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.ToTable("EquipmentTypes");
                 });
 
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.Notification", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Notifications");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Notification");
+                });
+
             modelBuilder.Entity("HospitalCalendar.Domain.Models.Room", b =>
                 {
                     b.Property<Guid>("ID")
@@ -356,37 +312,50 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.ToTable("Specializations");
                 });
 
-            modelBuilder.Entity("HospitalCalendar.Domain.Models.SurgeryNotification", b =>
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.SurgeryRequest", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
 
-                    b.Property<Guid?>("SecretaryID")
+                    b.Property<bool>("IsUrgent")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("PatientID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("SurgeryID")
+                    b.Property<Guid?>("ProposedDoctorID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<Guid?>("RequesterID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RoomID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("SecretaryID");
+                    b.HasIndex("PatientID");
 
-                    b.HasIndex("SurgeryID");
+                    b.HasIndex("ProposedDoctorID");
 
-                    b.ToTable("SurgeryNotifications");
+                    b.HasIndex("RequesterID");
+
+                    b.HasIndex("RoomID");
+
+                    b.ToTable("SurgeryRequests");
                 });
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.User", b =>
@@ -435,9 +404,6 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.Property<Guid?>("PatientID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<Guid?>("TypeID")
                         .HasColumnType("uniqueidentifier");
 
@@ -454,6 +420,9 @@ namespace HospitalCalendar.EntityFramework.Migrations
                 {
                     b.HasBaseType("HospitalCalendar.Domain.Models.CalendarEntry");
 
+                    b.Property<bool>("Completed")
+                        .HasColumnType("bit");
+
                     b.Property<int>("NewRoomType")
                         .HasColumnType("int");
 
@@ -466,6 +435,54 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.HasIndex("RoomToAddID");
 
                     b.HasDiscriminator().HasValue("Renovation");
+                });
+
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentChangeRequestNotification", b =>
+                {
+                    b.HasBaseType("HospitalCalendar.Domain.Models.Notification");
+
+                    b.Property<Guid?>("AppointmentChangeRequestID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("AppointmentChangeRequestID");
+
+                    b.HasDiscriminator().HasValue("AppointmentChangeRequestNotification");
+                });
+
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentRequestNotification", b =>
+                {
+                    b.HasBaseType("HospitalCalendar.Domain.Models.Notification");
+
+                    b.Property<Guid?>("AppointmentRequestID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("AppointmentRequestID");
+
+                    b.HasDiscriminator().HasValue("AppointmentRequestNotification");
+                });
+
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.SurgeryNotification", b =>
+                {
+                    b.HasBaseType("HospitalCalendar.Domain.Models.Notification");
+
+                    b.Property<Guid?>("SurgeryID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("SurgeryID");
+
+                    b.HasDiscriminator().HasValue("SurgeryNotification");
+                });
+
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.SurgeryRequestNotification", b =>
+                {
+                    b.HasBaseType("HospitalCalendar.Domain.Models.Notification");
+
+                    b.Property<Guid?>("SurgeryRequestID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("SurgeryRequestID");
+
+                    b.HasDiscriminator().HasValue("SurgeryRequestNotification");
                 });
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.Administrator", b =>
@@ -525,31 +542,11 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.HasDiscriminator().HasValue("Surgery");
                 });
 
-            modelBuilder.Entity("HospitalCalendar.Domain.Models.Anamnesis", b =>
-                {
-                    b.HasOne("HospitalCalendar.Domain.Models.Patient", "Patient")
-                        .WithOne("Anamnesis")
-                        .HasForeignKey("HospitalCalendar.Domain.Models.Anamnesis", "PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentChangeRequest", b =>
                 {
                     b.HasOne("HospitalCalendar.Domain.Models.Appointment", "Appointment")
                         .WithMany()
                         .HasForeignKey("AppointmentID");
-                });
-
-            modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentChangeRequestNotification", b =>
-                {
-                    b.HasOne("HospitalCalendar.Domain.Models.AppointmentChangeRequest", "AppointmentChangeRequest")
-                        .WithMany()
-                        .HasForeignKey("AppointmentChangeRequestID");
-
-                    b.HasOne("HospitalCalendar.Domain.Models.Secretary", null)
-                        .WithMany("AppointmentChangeRequestNotifications")
-                        .HasForeignKey("SecretaryID");
                 });
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentRequest", b =>
@@ -565,17 +562,10 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.HasOne("HospitalCalendar.Domain.Models.Doctor", "Requester")
                         .WithMany()
                         .HasForeignKey("RequesterID");
-                });
 
-            modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentRequestNotification", b =>
-                {
-                    b.HasOne("HospitalCalendar.Domain.Models.AppointmentRequest", "AppointmentRequest")
+                    b.HasOne("HospitalCalendar.Domain.Models.Room", "Room")
                         .WithMany()
-                        .HasForeignKey("AppointmentRequestID");
-
-                    b.HasOne("HospitalCalendar.Domain.Models.Secretary", null)
-                        .WithMany("AppointmentRequestNotifications")
-                        .HasForeignKey("SecretaryID");
+                        .HasForeignKey("RoomID");
                 });
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.CalendarEntry", b =>
@@ -602,13 +592,17 @@ namespace HospitalCalendar.EntityFramework.Migrations
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.Entry", b =>
                 {
-                    b.HasOne("HospitalCalendar.Domain.Models.Anamnesis", "Anamnesis")
-                        .WithMany("Entries")
-                        .HasForeignKey("AnamnesisID");
+                    b.HasOne("HospitalCalendar.Domain.Models.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentID");
 
                     b.HasOne("HospitalCalendar.Domain.Models.Doctor", "Doctor")
                         .WithMany()
                         .HasForeignKey("DoctorID");
+
+                    b.HasOne("HospitalCalendar.Domain.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientID");
                 });
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.EquipmentItem", b =>
@@ -637,15 +631,23 @@ namespace HospitalCalendar.EntityFramework.Migrations
                         .HasForeignKey("DoctorID");
                 });
 
-            modelBuilder.Entity("HospitalCalendar.Domain.Models.SurgeryNotification", b =>
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.SurgeryRequest", b =>
                 {
-                    b.HasOne("HospitalCalendar.Domain.Models.Secretary", null)
-                        .WithMany("SurgeryNotifications")
-                        .HasForeignKey("SecretaryID");
-
-                    b.HasOne("HospitalCalendar.Domain.Models.Surgery", "Surgery")
+                    b.HasOne("HospitalCalendar.Domain.Models.Patient", "Patient")
                         .WithMany()
-                        .HasForeignKey("SurgeryID");
+                        .HasForeignKey("PatientID");
+
+                    b.HasOne("HospitalCalendar.Domain.Models.Doctor", "ProposedDoctor")
+                        .WithMany()
+                        .HasForeignKey("ProposedDoctorID");
+
+                    b.HasOne("HospitalCalendar.Domain.Models.Doctor", "Requester")
+                        .WithMany()
+                        .HasForeignKey("RequesterID");
+
+                    b.HasOne("HospitalCalendar.Domain.Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomID");
                 });
 
             modelBuilder.Entity("HospitalCalendar.Domain.Models.Appointment", b =>
@@ -668,6 +670,34 @@ namespace HospitalCalendar.EntityFramework.Migrations
                     b.HasOne("HospitalCalendar.Domain.Models.Room", "RoomToAdd")
                         .WithMany()
                         .HasForeignKey("RoomToAddID");
+                });
+
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentChangeRequestNotification", b =>
+                {
+                    b.HasOne("HospitalCalendar.Domain.Models.AppointmentChangeRequest", "AppointmentChangeRequest")
+                        .WithMany()
+                        .HasForeignKey("AppointmentChangeRequestID");
+                });
+
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.AppointmentRequestNotification", b =>
+                {
+                    b.HasOne("HospitalCalendar.Domain.Models.AppointmentRequest", "AppointmentRequest")
+                        .WithMany()
+                        .HasForeignKey("AppointmentRequestID");
+                });
+
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.SurgeryNotification", b =>
+                {
+                    b.HasOne("HospitalCalendar.Domain.Models.Surgery", "Surgery")
+                        .WithMany()
+                        .HasForeignKey("SurgeryID");
+                });
+
+            modelBuilder.Entity("HospitalCalendar.Domain.Models.SurgeryRequestNotification", b =>
+                {
+                    b.HasOne("HospitalCalendar.Domain.Models.SurgeryRequest", "SurgeryRequest")
+                        .WithMany()
+                        .HasForeignKey("SurgeryRequestID");
                 });
 #pragma warning restore 612, 618
         }

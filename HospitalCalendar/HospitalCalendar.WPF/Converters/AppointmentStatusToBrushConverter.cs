@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Data;
-using System.Windows.Media;
-using HospitalCalendar.Domain.Models;
+﻿using HospitalCalendar.Domain.Models;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
+using System;
+using System.Windows.Data;
+using System.Windows.Media;
 
 namespace HospitalCalendar.WPF.Converters
 {
     public class AppointmentStatusToBrushConverter : IValueConverter
     {
         public object Convert(object appointmentStatus, Type targetType, object convertTextToBrush, System.Globalization.CultureInfo culture)
-        {   
+        {
             var paletteHelper = new PaletteHelper();
             //Retrieve the app's existing theme
             var theme = paletteHelper.GetTheme();
@@ -23,37 +20,37 @@ namespace HospitalCalendar.WPF.Converters
             switch ((AppointmentStatus)appointmentStatus)
             {
                 case AppointmentStatus.Finished:
-                { 
-                    if (theme.Background == Theme.Dark.MaterialDesignBackground)
+                    {
+                        if (theme.Background == Theme.Dark.MaterialDesignBackground)
+                        {
+                            textBrush = Brushes.White;
+                            backgroundBrush = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.Grey900]);
+                        }
+                        else
+                        {
+                            textBrush = Brushes.Black;
+                            backgroundBrush = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.Grey100]);
+                        }
+                        break;
+                    }
+                case AppointmentStatus.InProgress:
                     {
                         textBrush = Brushes.White;
-                        backgroundBrush = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.Grey900]);
+                        backgroundBrush = new SolidColorBrush(theme.PrimaryMid.Color);
+                        break;
                     }
-                    else
+                case AppointmentStatus.Scheduled:
                     {
                         textBrush = Brushes.Black;
-                        backgroundBrush = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.Grey100]);
+                        backgroundBrush = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.Amber500]);
+                        break;
                     }
-                    break;
-                }
-                case AppointmentStatus.InProgress:
-                {
-                    textBrush = Brushes.White;
-                    backgroundBrush = new SolidColorBrush(theme.PrimaryMid.Color);
-                    break;
-                }
-                case AppointmentStatus.Scheduled:
-                {
-                    textBrush = Brushes.Black;
-                    backgroundBrush = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.Amber500]);
-                    break;
-                }
                 default:
-                {
-                    textBrush = Brushes.White;
-                    backgroundBrush = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.PinkA400]);
-                    break;
-                }
+                    {
+                        textBrush = Brushes.White;
+                        backgroundBrush = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.PinkA400]);
+                        break;
+                    }
             }
 
             if (convertTextToBrush == null) return backgroundBrush;

@@ -6,7 +6,6 @@ namespace HospitalCalendar.Domain.Models
     {
         public Sex Sex { get; set; }
         public string InsuranceNumber { get; set; }
-        public Anamnesis Anamnesis { get; set; }
         public virtual ICollection<DoctorPatient> DoctorsPatients { get; set; }
     }
 }

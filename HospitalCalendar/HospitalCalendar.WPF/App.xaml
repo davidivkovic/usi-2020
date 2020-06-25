@@ -9,19 +9,24 @@
              xmlns:managerViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu"
              xmlns:doctorViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.DoctorMenu"
              xmlns:secretaryViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.SecretaryMenu"
+             xmlns:patientViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.PatientMenu"
+
              xmlns:managerEquipmentMenuViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu"
              xmlns:managerRenovationViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.RenovationMenu"
              xmlns:managerRoomSearchViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu"
              xmlns:managerDoctorViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.DoctorSpecializationsMenu"
+             xmlns:managerReportViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.ManagerMenu.ReportMenu"
              xmlns:loginViewModels="clr-namespace:HospitalCalendar.WPF.ViewModels.Login"
              xmlns:administratorMenu="clr-namespace:HospitalCalendar.WPF.Views.AdministratorMenu"
              xmlns:doctorMenu="clr-namespace:HospitalCalendar.WPF.Views.DoctorMenu"
              xmlns:managerMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu"
              xmlns:secretaryMenu="clr-namespace:HospitalCalendar.WPF.Views.SecretaryMenu"
+             xmlns:patientMenu="clr-namespace:HospitalCalendar.WPF.Views.PatientMenu"
              xmlns:managerMenuEquipmentMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.EquipmentMenu"
              xmlns:managerMenuRenovationMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu"
              xmlns:managerMenuRoomSearchMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.RoomSearchMenu"
              xmlns:managerMenuDoctorMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.DoctorSpecializationsMenu"
+             xmlns:managerMenuReportMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.ReportMenu"
              xmlns:views="clr-namespace:HospitalCalendar.WPF.Views.Login"
              xmlns:calendarEntryTemplates="clr-namespace:HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate"
              xmlns:calendar="clr-namespace:HospitalCalendar.WPF.DataTemplates.Calendar"
@@ -70,31 +75,64 @@
                 <managerMenuDoctorMenu:DoctorSpecializationsMenu/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type managerReportViewModels:ManagerReportMenuViewModel}">
+                <managerMenuReportMenu:ManagerReportMenu/>
+            </DataTemplate>
+
             <DataTemplate DataType="{x:Type doctorViewModels:AppointmentScheduleViewModel}">
                 <doctorMenu:AppointmentSchedule/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type doctorViewModels:AnamnesisUpdateViewModel}">
-                <doctorMenu:AnamnesisUpdate/>
+            <DataTemplate DataType="{x:Type doctorViewModels:DoctorReportMenuViewModel}">
+                <doctorMenu:DoctorReportMenu/>
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type doctorViewModels:AppointmentCreateViewModel}">
                 <doctorMenu:AppointmentCreate/>
             </DataTemplate>
 
-            <converters:UserObjectToRoleStringConverter x:Key="UserObjectToRoleStringConverter" />
+            <DataTemplate DataType="{x:Type secretaryViewModels:PatientRegisterViewModel}">
+                <secretaryMenu:PatientRegister/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type secretaryViewModels:NotificationMenuViewModel}">
+                <secretaryMenu:NotificationsMenu/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type secretaryViewModels:ScheduleViewModel}">
+                <secretaryMenu:Schedule/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type patientViewModels:PatientMenuViewModel}">
+                <patientMenu:PatientMenu/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type patientViewModels:AnamnesisViewModel}">
+                <patientMenu:AnamnesisOverview/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type patientViewModels:AppointmentsViewModel}">
+                <patientMenu:Appointments/>
+            </DataTemplate>
+
+            <converters:DomainObjectNameToStringConverter x:Key="DomainObjectNameToStringConverter" />
             <converters:RoomTypeToStringConverter x:Key="RoomTypeToStringConverter" />
             <converters:EventLengthConverter x:Key="EventLengthConverter" />
             <converters:AppointmentStatusToBrushConverter x:Key="AppointmentStatusToBrushConverter" />
             <converters:DateTimeToOpacityConverter x:Key="DateTimeToOpacityConverter" />
             <converters:AppointmentStatusToMdPackIconConverter x:Key="AppointmentStatusToMdPackIconConverter" />
             <converters:ListToStringConverter x:Key="ListToStringConverter" />
+            <converters:BoolToInverseConverter x:Key="BoolToInverseConverter" />
+            <converters:FilePathStringToPrettyStringConverter x:Key="FilePathStringToPrettyStringConverter" />
+            <converters:ComparisonToBoolConverter x:Key="ComparisonToBoolConverter" />
 
             <!-- Application styles definition -->
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Indigo" SecondaryColor="Lime" />
-
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Indigo" SecondaryColor="Indigo" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Snackbar.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" />
+                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesignLightTheme.xaml" />-->
                 <ResourceDictionary Source="pack://application:,,,/HospitalCalendar.WPF;component/MaterialDesignTheme.Overrides.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

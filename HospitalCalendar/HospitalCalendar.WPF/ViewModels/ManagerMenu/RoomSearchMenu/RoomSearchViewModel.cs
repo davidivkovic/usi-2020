@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.Domain.Services;
@@ -12,6 +6,12 @@ using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.WPF.Messages;
 using HospitalCalendar.WPF.ViewModels.AdministratorMenu;
 using HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu
 {
@@ -21,53 +21,50 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu
         private readonly IEquipmentTypeService _equipmentTypeService;
         private readonly IEquipmentItemService _equipmentItemService;
 
-        public DateTime? SearchStartDate { get; set; } = null;
-        public DateTime? SearchEndDate { get; set; } = null;
-        public DateTime? SearchStartTime { get; set; } = null;
-        public DateTime? SearchEndTime { get; set; } = null;
-        public bool SearchOccupiedRooms { get; set; } = false;
+        public DateTime? SearchStartDate { get; set; }
+        public DateTime? SearchEndDate { get; set; }
+        public DateTime? SearchStartTime { get; set; }
+        public DateTime? SearchEndTime { get; set; }
+        public bool SearchOccupiedRooms { get; set; }
         public ICollection<EquipmentType> EquipmentTypesToSearchBy { get; set; } = new List<EquipmentType>();
-        public ObservableCollection<EquipmentTypeBindableViewModel> AllEquipmentTypes { get; set; } = new ObservableCollection<EquipmentTypeBindableViewModel>();
+        public ObservableCollection<EquipmentTypeBindableViewModel> AllEquipmentTypes { get; set; }
         public ICommand Search { get; set; }
         public List<Room> SearchResults { get; set; }
-        public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels { get; set; } = new ObservableCollection<RoomBindableViewModel>();
+        public ObservableCollection<RoomBindableViewModel> RoomBindableViewModels { get; set; }
 
         public RoomSearchViewModel(IRoomService roomService, IEquipmentTypeService equipmentTypeService, IEquipmentItemService equipmentItemService)
         {
             _roomService = roomService;
             _equipmentTypeService = equipmentTypeService;
             _equipmentItemService = equipmentItemService;
+
+            AllEquipmentTypes = new ObservableCollection<EquipmentTypeBindableViewModel>();
+            RoomBindableViewModels = new ObservableCollection<RoomBindableViewModel>();
             Search = new RelayCommand(ExecuteSearch);
             MessengerInstance.Register<EquipmentTypeBindableViewModelChecked>(this, HandleEquipmentTypeBindableViewModelChanged);
         }
 
-        private static void UiDispatch(Action action)
-        {
-            System.Windows.Application.Current.Dispatcher.Invoke(action);
-        }
-
         public void Initialize()
         {
+            SearchStartDate = SearchEndDate = SearchStartTime = SearchEndTime = null;
+            SearchOccupiedRooms = false;
             LoadEquipmentTypes();
         }
 
-        private void LoadEquipmentTypes()
+        private async void LoadEquipmentTypes()
         {
-            Task.Run(async () =>
-            {
-                var equipmentTypes = (await _equipmentTypeService.GetAll()).ToList();
-                //equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
-                UiDispatch(() => AllEquipmentTypes.Clear());
-                equipmentTypes.ForEach( et =>
-                {
-                    var amount = ( _equipmentItemService.GetAllByType(et)).GetAwaiter().GetResult().Count;
-                    UiDispatch(() => AllEquipmentTypes.Add(new EquipmentTypeBindableViewModel(et, amount)));
-                });
-            });
+            var equipmentTypes = (await _equipmentTypeService.GetAll()).ToList();
+            equipmentTypes.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
+            AllEquipmentTypes.Clear();
 
+            foreach (var equipmentType in equipmentTypes)
+            {
+                var amount = await _equipmentItemService.CountByType(equipmentType);
+                AllEquipmentTypes.Add(new EquipmentTypeBindableViewModel(equipmentType, amount));
+            }
         }
 
-        private void HandleEquipmentTypeBindableViewModelChanged(EquipmentTypeBindableViewModelChecked obj)
+        private void HandleEquipmentTypeBindableViewModelChanged(EquipmentTypeBindableViewModelChecked message)
         {
             EquipmentTypesToSearchBy = AllEquipmentTypes
                 .Where(etbvm => etbvm.IsSelected)
@@ -75,43 +72,37 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.RoomSearchMenu
                 .ToList();
         }
 
-        private void ExecuteSearch()
+        private async void ExecuteSearch()
         {
-            Task.Run(async () =>
+            var searchStartPeriod = SearchStartDate + SearchStartTime?.TimeOfDay;
+            var searchEndPeriod = SearchEndDate + SearchEndTime?.TimeOfDay;
+
+            if (searchStartPeriod == null || searchEndPeriod == null) return;
+
+            IEnumerable<Room> searchResultsByDate;
+
+            if (SearchOccupiedRooms)
             {
-                var searchStartPeriod = SearchStartDate + SearchStartTime?.TimeOfDay;
-                var searchEndPeriod = SearchEndDate + SearchEndTime?.TimeOfDay;
+                searchResultsByDate = await _roomService.GetAllOccupied(searchStartPeriod.Value, searchEndPeriod.Value);
+            }
+            else
+            {
+                searchResultsByDate = await _roomService.GetAllFree(searchStartPeriod.Value, searchEndPeriod.Value);
+            }
 
-                //if(SearchOccupiedRooms)
-                // TODO: Will this actually include rooms within the query? test!
-                if (searchStartPeriod != null && searchEndPeriod != null)
-                {
-                    IEnumerable<Room> searchResultsByDate;
+            var searchResultsByEquipmentTypes = await _roomService.GetAllByEquipmentTypes(EquipmentTypesToSearchBy);
 
-                    if (SearchOccupiedRooms)
-                    {
-                        searchResultsByDate = await _roomService.GetAllOccupied(searchStartPeriod.Value, searchEndPeriod.Value);
-                    }
-                    else
-                    {
-                        searchResultsByDate = await _roomService.GetAllFree(searchStartPeriod.Value, searchEndPeriod.Value);
-                    }
+            var searchResultIDs = searchResultsByDate
+                .Select(r => r.ID)
+                .Intersect(searchResultsByEquipmentTypes.Select(s => s.ID));
 
-                    var searchResultsByEquipmentTypes = await _roomService.GetAllByEquipmentTypes(EquipmentTypesToSearchBy);
+            SearchResults = searchResultsByDate
+                .Where(r => searchResultIDs
+                    .Contains(r.ID))
+                .ToList();
 
-                    var searchResultIDs = searchResultsByDate
-                        .Select(r => r.ID)
-                        .Intersect(searchResultsByEquipmentTypes.Select(s => s.ID));
-
-                    SearchResults = searchResultsByDate
-                        .Where(r => searchResultIDs
-                            .Contains(r.ID))
-                        .ToList();
-
-                    UiDispatch(() => RoomBindableViewModels.Clear());
-                    UiDispatch(() => SearchResults.ForEach(r => RoomBindableViewModels.Add(new RoomBindableViewModel(r))));
-                }
-            });
+            RoomBindableViewModels.Clear();
+            SearchResults.ForEach(room => RoomBindableViewModels.Add(new RoomBindableViewModel(room)));
         }
     }
 }

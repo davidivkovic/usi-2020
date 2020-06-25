@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using System.Windows.Data;
-using HospitalCalendar.Domain.Models;
+﻿using HospitalCalendar.Domain.Models;
 using MaterialDesignThemes.Wpf;
+using System;
+using System.Globalization;
+using System.Windows.Data;
 
 namespace HospitalCalendar.WPF.Converters
 {

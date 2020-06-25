@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using HospitalCalendar.Domain.Services.EquipmentServices;
 using HospitalCalendar.EntityFramework.Exceptions;
 using HospitalCalendar.WPF.Messages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
 {
@@ -32,36 +31,33 @@ namespace HospitalCalendar.WPF.ViewModels.ManagerMenu.EquipmentMenu
             AmountEnumerable = Enumerable.Range(1, 10000);
         }
 
-        private void ExecuteCreateEquipmentType()
+        private async void ExecuteCreateEquipmentType()
         {
-            Task.Run(async () =>
+            try
             {
-                try
-                {
-                    ValidationError = false;
-                    EquipmentTypeAlreadyExistsError = false;
+                ValidationError = false;
+                EquipmentTypeAlreadyExistsError = false;
 
-                    if (string.IsNullOrWhiteSpace(Description) || string.IsNullOrWhiteSpace(Name) || Amount == null)
-                    {
-                        throw new ArgumentNullException();
-                    }
-
-                    var createdEquipmentType = await _equipmentTypeService.Create(Name, Description, Amount.Value);
-                    MessengerInstance.Send(new EquipmentTypeCreateSuccess(createdEquipmentType, Amount.Value));
-
-                    Name = null;
-                    Description = null;
-                    Amount = null;
-                }
-                catch (ArgumentNullException)
+                if (string.IsNullOrWhiteSpace(Description) || string.IsNullOrWhiteSpace(Name) || Amount == null)
                 {
-                    ValidationError = true;
+                    throw new ArgumentNullException();
                 }
-                catch (EquipmentTypeAlreadyExistsException)
-                {
-                    EquipmentTypeAlreadyExistsError = true;
-                }
-            });
+
+                var createdEquipmentType = await _equipmentTypeService.Create(Name, Description, Amount.Value);
+                MessengerInstance.Send(new EquipmentTypeCreateSuccess(createdEquipmentType, Amount.Value));
+
+                Name = null;
+                Description = null;
+                Amount = null;
+            }
+            catch (ArgumentNullException)
+            {
+                ValidationError = true;
+            }
+            catch (EquipmentTypeAlreadyExistsException)
+            {
+                EquipmentTypeAlreadyExistsError = true;
+            }
         }
     }
 }

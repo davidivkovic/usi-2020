@@ -1,9 +1,9 @@
-﻿using System;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using HospitalCalendar.Domain.Models;
 using HospitalCalendar.WPF.Messages;
 using PropertyChanged;
+using System;
 
 namespace HospitalCalendar.WPF.DataTemplates.Calendar
 {

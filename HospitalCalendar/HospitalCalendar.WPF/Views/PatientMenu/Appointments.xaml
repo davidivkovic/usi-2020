@@ -1,0 +1,161 @@
+﻿<UserControl x:Class="HospitalCalendar.WPF.Views.PatientMenu.Appointments"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.PatientMenu"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:control="clr-namespace:HospitalCalendar.WPF.DataTemplates.Calendar.Control"
+             xmlns:doctorMenu="clr-namespace:HospitalCalendar.WPF.Views.DoctorMenu"
+             xmlns:calendarEntryTemplate="clr-namespace:HospitalCalendar.WPF.DataTemplates.CalendarEntryTemplate"
+             mc:Ignorable="d" 
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignBackground}"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             d:DesignHeight="900" d:DesignWidth="1600"
+             d:DataContext="{Binding Path=AppointmentsViewModel, Source={StaticResource Locator}}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <DataTemplate x:Key="AppointmentTemplate">
+                <doctorMenu:AppointmentScheduleTemplate/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="SurgeryTemplate">
+                <doctorMenu:SurgeryScheduleTemplate/>
+            </DataTemplate>
+
+            <calendarEntryTemplate:CalendarEntryTemplateSelector x:Key="CalendarEntryTemplateSelector" 
+                                                                 AppointmentTemplate="{StaticResource AppointmentTemplate}"
+                                                                 SurgeryTemplate="{StaticResource SurgeryTemplate}"
+                                                                 RenovationTemplate="{x:Null}"/>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <materialDesign:TransitioningContent>
+        <materialDesign:TransitioningContent.OpeningEffects >
+            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
+            <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
+        </materialDesign:TransitioningContent.OpeningEffects>
+
+        <Grid Margin="20 0 0 0">
+            <StackPanel>
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="105 35 0 5">
+                    <Label FontSize="34" FontWeight="Black" Content="Appointments" Padding="0"/>
+                    <Label FontSize="15" FontWeight="Regular" Content="View, schedule and move your appointments" Padding="0" Margin="2 0 0 0"/>
+                </StackPanel>
+
+                <control:Calendar x:Name="AppointmentCalendar" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0 0 0 0" Margin="100 6 0 0"/>
+            </StackPanel>
+
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 300 120 0"
+                        Visibility="{Binding CanScheduleAppointment, Converter={StaticResource boolToVisibilityConverter}}">
+                <TextBlock Margin="65 36 0 10" Text="Schedule an Appointment"  HorizontalAlignment="Left"  FontSize="16"/>
+
+                <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" 
+                          x:Name="AvailableSpecialists"
+                          Margin="0 5 0 0"
+                          Width="240" Height="45" ItemsSource="{Binding AllDoctors}" 
+                          FontSize="12" materialDesign:HintAssist.Hint="Preferred Doctor"
+                          SelectedItem="{Binding SelectedDoctor}">
+                    <ComboBox.ItemTemplate>
+
+                        <DataTemplate>
+                            <Border>
+                                <Border.ToolTip>
+                                    <ToolTip MaxWidth="250">
+                                        <TextBlock Text="{Binding Specializations, Converter={StaticResource ListToStringConverter}}" TextWrapping="Wrap" />
+                                    </ToolTip>
+                                </Border.ToolTip>
+                                <StackPanel >
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock FontWeight="Regular" FontSize="14" >
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                    <Binding Path="FirstName"/>
+                                                    <Binding Path="LastName"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <TextBlock VerticalAlignment="Center" FontSize="12">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0:hh':'mm} - {1:hh':'mm}">
+                                                    <Binding Path="WorkingHoursStart"/>
+                                                    <Binding Path="WorkingHoursEnd"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <TextBlock TextWrapping="Wrap" FontSize="12" Opacity="0.8" Text="{Binding Specializations, Converter={StaticResource ListToStringConverter}}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock Text="Furthest Date of Appointment" Width="240" Margin="0 40 0 8"/>
+                <DatePicker Margin="35 0 115 0"
+                Name="DatePicker"
+                Width="155"
+                Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                materialDesign:HintAssist.Hint="Date" FirstDayOfWeek="Monday" SelectedDate="{Binding LatestAppointmentDate}"/>
+
+
+                <TextBlock Text="Preferred Time Slots (Range)" Width="240" Margin="0 40 0 8" />
+                <Grid Margin="65 0 65 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal"  Grid.Column="0">
+                        <TextBlock Text="From" Padding="0 0 0 1" Grid.Column="0"  FontSize="16" VerticalAlignment="Center"/>
+                        <Grid HorizontalAlignment="Right">
+                            <materialDesign:TimePicker Is24Hours="True" Margin="5 0 5 0" SelectedTime="{Binding AppointmentStartTime}"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                        <TextBlock Text="To" Grid.Column="0" Padding="0 0 0 1" FontSize="16" VerticalAlignment="Center"/>
+                        <Grid HorizontalAlignment="Right" Margin="10 0 5 0">
+                            <materialDesign:TimePicker Is24Hours="True" SelectedTime="{Binding AppointmentEndTime}"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Priority" Width="240" Margin="0 30 0 8" FontSize="13"/>
+                
+                <ComboBox materialDesign:HintAssist.Hint="Priority" Style="{StaticResource MaterialDesignDataGridComboBox}"
+                          ItemsSource="{Binding Priorities}" SelectedItem="{Binding SelectedPriority}"
+                  Margin="0 0 0 30"
+                  Width ="240"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0 0 0 0" HorizontalAlignment="Center">
+
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    ToolTip="Send request for appointment"
+                    Margin="20 0"
+                    Command="{Binding RequestAppointment}"
+                    Content="Request appointment"/>
+                        
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 225 350" Panel.ZIndex="1"
+                        Visibility="{Binding CurrentlySelectedCalendarEntry, Converter={StaticResource NullableToVisibilityConverter}}">
+                <materialDesign:TransitioningContent >
+                    <materialDesign:TransitioningContent.OpeningEffects >
+                        <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.300" />
+                    </materialDesign:TransitioningContent.OpeningEffects>
+
+                    <ContentControl Content="{Binding CurrentlySelectedCalendarEntry}" ContentTemplateSelector="{StaticResource CalendarEntryTemplateSelector}" 
+                                    Height="400" />
+
+                </materialDesign:TransitioningContent>
+
+            </StackPanel>
+
+        </Grid>
+    </materialDesign:TransitioningContent>
+</UserControl>

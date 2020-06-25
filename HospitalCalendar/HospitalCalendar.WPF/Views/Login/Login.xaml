@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HospitalCalendar.WPF.Views.Login"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:lottieCore="clr-namespace:LottieSharp;assembly=LottieCore"
              x:Class="HospitalCalendar.WPF.Views.Login.Login"
              mc:Ignorable="d"
              FontFamily="{materialDesign:MaterialDesignFont}"
@@ -34,7 +35,7 @@
                 </Label.Background>
             </Label>
 
-            <Grid>
+            <Grid Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.7*"/>
                     <ColumnDefinition Width="3.3*"/>
@@ -99,7 +100,6 @@
 
                 </TextBlock>
 
-
                 <Button Style="{StaticResource MaterialDesignFlatDarkBgButton}"
                         Background="#FF585BBF" BorderBrush="#FF585BBF"
                         Foreground="White"
@@ -110,8 +110,9 @@
                         Cursor="Arrow"
                         Content="Login"
                         IsDefault="True"
-                        Command="{Binding Login}"
-                        CommandParameter="{Binding ElementName=PasswordBox}"/>
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource BoolToInverseConverter}}"
+                        Command="{Binding Login, IsAsync=True}"
+                        CommandParameter="{Binding ElementName=PasswordBox, IsAsync=True}"/>
             </Grid>
         </Grid>
     </materialDesign:TransitioningContent>

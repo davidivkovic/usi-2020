@@ -8,6 +8,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:renovationMenu="clr-namespace:HospitalCalendar.WPF.Views.ManagerMenu.RenovationMenu"
              xmlns:models="clr-namespace:HospitalCalendar.Domain.Models;assembly=HospitalCalendar.Domain"
+             xmlns:control="clr-namespace:HospitalCalendar.WPF.DataTemplates.Calendar.Control"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignBackground}"
              FontFamily="{materialDesign:MaterialDesignFont}"
@@ -29,166 +31,222 @@
             <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.600" />
             <materialDesign:TransitionEffect Kind="FadeIn" Duration="0:0:0.600" />
         </materialDesign:TransitioningContent.OpeningEffects>
-        <Grid>
+        <Grid Margin="20 0 0 0">
 
-        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="105 35 0 5">
-            <Label FontSize="34" FontWeight="Black" Content="Schedule Appointments" Padding="0"/>
-            <Label FontSize="15" FontWeight="Regular" Content="Appoint examinations and surgeries for patients" Padding="0" Margin="2 0 0 0"/>
-        </StackPanel>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="105 35 0 5">
+                <Label FontSize="34" FontWeight="Black" Content="Schedule Appointments" Padding="0"/>
+                <Label FontSize="15" FontWeight="Regular" Content="Appoint examinations and surgeries for patients" Padding="0" Margin="2 0 0 0"/>
+            </StackPanel>
 
-        <!--<TextBlock FontSize="20" FontWeight="Regular" Text="Schedule a new appointment" Margin="0 165 0 0"/>-->
+            <control:Calendar x:Name="RenovationCalendar" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0 0 0 0" Margin="100 110 0 0"/>
 
-        <StackPanel>
-            <materialDesign:Card Width="300" Height="35" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="135 130 0 0" UniformCornerRadius="7">
-            <materialDesign:Card.Style>
-                <Style TargetType="{x:Type materialDesign:Card}">
+            <StackPanel HorizontalAlignment="Right" Margin="0 170 85 0">
+                <TextBlock FontSize="20" FontWeight="Regular" Text="Choose Room" Margin="0 0 0 0"/>
 
-                    <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth1"/>
+                <renovationMenu:RenovationRoomList x:Name="RoomList" Width="150" Margin="0 10 0 0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                               ItemsSource="{Binding AvailableRooms}" ToolTip="Select Room" SelectedItem="{Binding SelectedRoom}"/>
 
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth2"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </materialDesign:Card.Style>
-            <Grid>
-                <TextBox Padding="10" MinHeight="35" Style="{StaticResource MaterialDesignComboBoxEditableTextBox}" 
+                <materialDesign:Card Width="300" Height="35" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4 10 0 0" UniformCornerRadius="7">
+                    <materialDesign:Card.Style>
+                        <Style TargetType="{x:Type materialDesign:Card}">
+
+                            <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth1"/>
+
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth2"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </materialDesign:Card.Style>
+                    <Grid>
+                        <TextBox Padding="10" MinHeight="35" Style="{StaticResource MaterialDesignComboBoxEditableTextBox}" 
                          Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <materialDesign:PackIcon VerticalAlignment="Center" Margin="0 0 10 2" HorizontalAlignment="Right" Kind="Search"/>
-            </Grid>
-        </materialDesign:Card>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Margin="0 0 10 2" HorizontalAlignment="Right" Kind="Search"/>
+                    </Grid>
+                </materialDesign:Card>
 
-       
+                <ListView Margin="8 20 0 0" Width="295" Height="250" HorizontalAlignment="Left"
+                          Style="{StaticResource MaterialDesignListView}" x:Name="PatientsList"
+                          ItemsSource="{Binding FilteredPatients}" SelectedItem="{Binding SelectedPatient}">
+                    <ListView.ItemTemplate>
 
+                        <DataTemplate>
+                            <Border>
+                                <StackPanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock FontWeight="Regular" FontSize="14" >
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                    <Binding Path="FirstName"/>
+                                                    <Binding Path="LastName"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
 
+                                        <TextBlock Text="{Binding Sex}" FontSize="12"/>
 
-            <ListView Margin="138 20 0 0" Width="295" Height="680" HorizontalAlignment="Left"
-                                  ItemsSource="{Binding FilteredPatients}" SelectedItem="{Binding SelectedPatient}">
-                <ListView.ItemTemplate>
+                                        <TextBlock VerticalAlignment="Center" FontSize="12">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}Insurance number {0}">
+                                                    <Binding Path="InsuranceNumber"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
 
-                    <DataTemplate>
-                        <Border>
-                            <!--<Border.ToolTip>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Regular" FontSize="20" >
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Schedule {0}">
+                                <Binding Path="SelectedAppointmentType" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <CheckBox Padding="0" Margin="10 2 0 0" x:Name="UrgentCheckBox" IsChecked="{Binding IsUrgent}">
+                        <TextBlock Margin="2 0 0 1" FontSize="18" Text="Urgent"/>
+                    </CheckBox>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 0" HorizontalAlignment="Left">
+                    <DatePicker x:Name="AppointmentStartDate"
+                                VerticalAlignment="Top" Margin="10 0 0 0"
+                                Width="110"
+                                Height="60"
+                                materialDesign:HintAssist.Hint="Start Date"
+                                DisplayDateStart="{x:Static sys:DateTime.Today}"
+                                SelectedDate="{Binding AppointmentStartDate}"
+                                Style="{StaticResource MaterialDesignOutlinedDatePicker}" 
+                                CalendarStyle="{StaticResource MaterialDesignCalendarPortrait}"/>
+
+                    <materialDesign:TimePicker Margin="10 0 0 0"
+                                               Is24Hours="True"
+                                               SelectedTime="{Binding AppointmentStartTime}"
+                                               Style="{StaticResource MaterialDesignFloatingHintTimePicker}"
+                                               materialDesign:HintAssist.Hint="Start Time"
+                                               x:Name="AppointmentStartTime"
+                                               Width="100"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <DatePicker x:Name="AppointmentEndDate"
+                                VerticalAlignment="Top" Margin="10 10 0 0"
+                                Width="110"
+                                Height="60"
+                                materialDesign:HintAssist.Hint="End Date"
+                                DisplayDateStart="{x:Static sys:DateTime.Today}"
+                                SelectedDate="{Binding AppointmentEndDate}"
+                                Style="{StaticResource MaterialDesignOutlinedDatePicker}" 
+                                CalendarStyle="{StaticResource MaterialDesignCalendarPortrait}"/>
+
+                    <materialDesign:TimePicker Margin="10 15 0 0"        
+                                               Is24Hours="True"
+                                               SelectedTime="{Binding AppointmentEndTime}"
+                                               materialDesign:HintAssist.Hint="End Time"
+                                               Style="{StaticResource MaterialDesignFloatingHintTimePicker}"
+                                               x:Name="AppointmentEndTime"
+                                               Width="100"/>
+                </StackPanel>
+
+                <StackPanel x:Name="SelectSpecialists" >
+                    <StackPanel.Style >
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="IsEnabled" Value="True" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedDate, ElementName=AppointmentStartDate}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding SelectedDate, ElementName=AppointmentEndDate}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding SelectedTime, ElementName=AppointmentStartTime}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding SelectedTime, ElementName=AppointmentEndTime}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox x:Name="ScheduleAppointmentAtSpecialist" Padding="10" Margin="10 5 0 0" 
+                              Content="Schedule with a specialist"
+                              IsChecked="{Binding ScheduleAppointmentAtSpecialist}">
+                        </CheckBox>
+
+                        <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" 
+                          x:Name="AvailableSpecialists"
+                          Margin="0 5 0 0"
+                          Width="155" Height="45" ItemsSource="{Binding AvailableSpecialists}" 
+                          FontSize="12" materialDesign:HintAssist.Hint="Choose Doctor"
+                          SelectedItem="{Binding SelectedSpecialist}">
+                            <ComboBox.ItemTemplate>
+
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.ToolTip>
                                             <ToolTip MaxWidth="250">
                                                 <TextBlock Text="{Binding Specializations, Converter={StaticResource ListToStringConverter}}" TextWrapping="Wrap" />
                                             </ToolTip>
-                                        </Border.ToolTip>-->
-                            <StackPanel>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock FontWeight="Regular" FontSize="14" >
-                                        <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0} {1}">
-                                                <Binding Path="FirstName"/>
-                                                <Binding Path="LastName"/>
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
+                                        </Border.ToolTip>
+                                        <StackPanel>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock FontWeight="Regular" FontSize="14" >
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} {1}">
+                                                            <Binding Path="FirstName"/>
+                                                            <Binding Path="LastName"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                                <TextBlock VerticalAlignment="Center" FontSize="12">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0:hh':'mm} - {1:hh':'mm}">
+                                                            <Binding Path="WorkingHoursStart"/>
+                                                            <Binding Path="WorkingHoursEnd"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <TextBlock TextWrapping="Wrap" FontSize="12" Opacity="0.8" Text="{Binding Specializations, Converter={StaticResource ListToStringConverter}}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
 
-                                    <TextBlock Text="{Binding Sex}" FontSize="12"/>
+                    <TextBlock Margin="60 0 0 0" Text="Room is already occupied during selected period"
+                               Visibility="{Binding RoomAlreadyInUse, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                                    <TextBlock VerticalAlignment="Center" FontSize="12">
-                                        <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}Insurance number {0}">
-                                                <Binding Path="InsuranceNumber"/>
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                    <TextBlock Margin="145 10 0 0" Text="Invalid time frame"
+                                   Visibility="{Binding InvalidTimeFrame, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-
-            <StackPanel x:Name="AllRenovationOptions">
-                <StackPanel.Style >
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="IsEnabled" Value="True" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding SelectedDate, ElementName=RenovationStartDate}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding SelectedDate, ElementName=RenovationEndDate}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding SelectedTime, ElementName=RenovationStartTime}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding SelectedTime, ElementName=RenovationEndTime}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
-
-                <!--<CheckBox x:Name="MakeRoomUnavailableRenovation" Content="Just make this room unavailable during the selected time" 
-                                      Padding="10" Margin="0 5 0 0" IsChecked="{Binding OtherRenovations}"/>-->
-
-
-
-                <!--<Button 
-                                    Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignBackground}" 
-                                    BorderBrush="{DynamicResource MaterialDesignBackground}" 
-                                    Margin="0 45 70 0"
-                                    FontSize="16" FontWeight="Light" Width="180"
-                                    Command="{Binding ScheduleRenovation}">
-                                <TextBlock Text="Schedule renovation"/>
-                            </Button>-->
-
+                    <Button x:Name="ScheduleButton"
+                            Foreground="{DynamicResource MaterialDesignBody}" 
+                            Background="{DynamicResource MaterialDesignPaper}" 
+                            BorderBrush="{DynamicResource MaterialDesignBackground}" 
+                            Margin="50 15 0 0"
+                            FontSize="15" FontWeight="Regular" Width="200"
+                            Command="{Binding ScheduleAppointment}">
+                        <TextBlock Text="Schedule Appointment"/>
+                    </Button>
+                </StackPanel>
             </StackPanel>
+            <materialDesign:Snackbar HorizontalContentAlignment="Left" Margin="-25 0 0 0" MinWidth="1610" HorizontalAlignment="Left"
+                                     Background="{DynamicResource PrimaryHueMidBrush}" Foreground="White"
+                                     MessageQueue="{Binding MaterialDesignMessageQueue}"/>
+        </Grid>
 
-        </StackPanel>
-
-        <renovationMenu:RenovationRoomList x:Name="RoomList" Width="150" Margin="0 140 0 0" HorizontalAlignment="Center" VerticalAlignment="Top"
-                                           ItemsSource="{Binding AvailableRooms}"  SelectedItem="{Binding SelectedRoom}"/>
-
-            <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" Width="100" Height="25" Padding="6" ItemsSource="{Binding AppointmentTypes}" SelectedItem="{Binding SelectedAppointmentType}"/>
-        <!--<StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-                            <DatePicker x:Name="RenovationStartDate"
-                                                    VerticalAlignment="Top" Margin="0 0 0 0"
-                                                    Width="110"
-                                                    Height="60"
-                                                    materialDesign:HintAssist.Hint="Start Date"
-                                                    DisplayDateStart="{x:Static sys:DateTime.Today}"
-                                                    SelectedDate="{Binding RenovationStartDate}"
-                                                    Style="{StaticResource MaterialDesignOutlinedDatePicker}" 
-                                                    CalendarStyle="{StaticResource MaterialDesignCalendarPortrait}"/>
-
-                            <materialDesign:TimePicker Margin="10 0 0 0"
-                                                            Is24Hours="True"
-                                                            SelectedTime="{Binding RenovationStartTime}"
-                                                            Style="{StaticResource MaterialDesignFloatingHintTimePicker}"
-                                                            materialDesign:HintAssist.Hint="Start Time"
-                                                            x:Name="RenovationStartTime"
-                                                            Width="100"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <DatePicker x:Name="RenovationEndDate"
-                                            VerticalAlignment="Top" Margin="0 10 0 0"
-                                            Width="110"
-                                            Height="60"
-                                            materialDesign:HintAssist.Hint="End Date"
-                                            DisplayDateStart="{x:Static sys:DateTime.Today}"
-                                            SelectedDate="{Binding RenovationEndDate}"
-                                            Style="{StaticResource MaterialDesignOutlinedDatePicker}" 
-                                            CalendarStyle="{StaticResource MaterialDesignCalendarPortrait}"/>
-
-                            <materialDesign:TimePicker Margin="10 15 0 0"        
-                                                            Is24Hours="True"
-                                                            SelectedTime="{Binding RenovationEndTime}"
-                                                            materialDesign:HintAssist.Hint="End Time"
-                                                            Style="{StaticResource MaterialDesignFloatingHintTimePicker}"
-                                                            x:Name="RenovationEndTime"
-                                                            Width="100"/>
-                        </StackPanel>-->
-
-    </Grid>
-        </materialDesign:TransitioningContent>
+    </materialDesign:TransitioningContent>
 </UserControl>
