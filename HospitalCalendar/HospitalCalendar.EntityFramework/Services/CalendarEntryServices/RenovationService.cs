@@ -34,96 +34,6 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             }
         }
 
-        public async Task<bool> Execute(Renovation renovation)
-        {
-            if (renovation.Completed || renovation.EndDateTime > DateTime.Now)
-            {
-                return false;
-            }
-
-            renovation = await Get(renovation.ID);
-
-            var roomToUpdate = await _roomService.Get(renovation.Room.ID);
-
-            roomToUpdate.Type = renovation.NewRoomType;
-
-            if (renovation.AddedEquipmentItems.Count > 0)
-            {
-                var itemsInRoom = roomToUpdate.Equipment.ToList();
-                roomToUpdate.Equipment = new List<EquipmentItem>();
-                await _roomService.Update(roomToUpdate, room => room.Equipment);
-
-                foreach (var equipmentItem in renovation.AddedEquipmentItems.ToList())
-                {
-                    roomToUpdate.Equipment.Add(await _equipmentItemService.Get(equipmentItem.ID));
-                }
-
-                itemsInRoom.ForEach(ei => roomToUpdate.Equipment.Add(ei));
-                
-                await _roomService.Update(roomToUpdate, room => room.Equipment);
-
-                foreach (var equipmentItem in renovation.AddedEquipmentItems)
-                {
-                    await _equipmentItemService.Create(equipmentItem.EquipmentType, 1);
-                }
-            }
-
-            if (renovation.RemovedEquipmentItems.Count > 0)
-            {
-                var itemsInRoom = roomToUpdate.Equipment.ToList();
-                roomToUpdate.Equipment = new List<EquipmentItem>();
-                await _roomService.Update(roomToUpdate, room => room.Equipment);
-
-                var idsToRemove = new HashSet<Guid>(renovation.RemovedEquipmentItems.Select(x => x.ID));
-
-                foreach (var equipmentItem in itemsInRoom)
-                {
-                    roomToUpdate.Equipment.Add(await _equipmentItemService.Get(equipmentItem.ID));
-                }
-
-                roomToUpdate.Equipment = roomToUpdate.Equipment
-                    .Where(equipmentItem => !idsToRemove.Contains(equipmentItem.ID))
-                    .ToList();
-
-                //roomToUpdate.Equipment.ToList().RemoveAll(equipmentItem => idsToRemove.Contains(equipmentItem.ID));
-                await _roomService.Update(roomToUpdate, room => room.Equipment);
-            }
-
-            if (renovation.Splitting)
-            {
-                var newRoom = new Room
-                {
-                    Floor = renovation.Room.Floor,
-                    Type = renovation.NewRoomType,
-                    IsActive = true,
-                };
-                
-                if (!char.IsLetter(renovation.Room.Number.Last()))
-                {
-                    newRoom.Number = renovation.Room.Number + "B";
-                    roomToUpdate.Number += "A";
-                }
-                else
-                {
-                    newRoom.Number = renovation.Room.Number + "2";
-                    roomToUpdate.Number += "1";
-                }
-                await _roomService.Create(newRoom);
-                await _roomService.Update(roomToUpdate);
-            }
-
-            else if (renovation.RoomToAdd != null)
-            {
-                renovation.RoomToAdd.IsActive = false;
-                await _roomService.Update(renovation.RoomToAdd);
-            }
-
-            renovation = await Get(renovation.ID);
-            renovation.Completed = true;
-            await Update(renovation);
-            return true;
-        }
-
         public new async Task<Renovation> Get(Guid id)
         {
             await using var context = ContextFactory.CreateDbContext();
@@ -174,130 +84,6 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             return updatedRenovation;
         }
 
-        //public async Task<Renovation> Create(Room room, RoomType newRoomType, DateTime start, DateTime end,
-        //    ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems)
-        //{
-        //    var renovation = new Renovation()
-        //    {
-        //        IsActive = true,
-        //        Room = null,
-        //        RoomToAdd = null,
-        //        NewRoomType = newRoomType,
-        //        StartDateTime = start,
-        //        EndDateTime = end,
-        //        Splitting = false,
-        //        RemovedEquipmentItems = null,
-        //        AddedEquipmentItems = null
-        //    };
-
-        //    var createdRenovation = await Create(renovation);
-        //    var updatedRenovation = await Update(createdRenovation, room, null, newRoomType, start, end, false, removedEquipmentItems, addedEquipmentItems);
-        //    return updatedRenovation;
-        //}
-
-        //public async Task<Renovation> Create(Room room, DateTime start, DateTime end,
-        //    ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems)
-        //{
-        //    var renovation = new Renovation()
-        //    {
-        //        IsActive = true,
-        //        Room = null,
-        //        RoomToAdd = null,
-        //        NewRoomType = room.Type,
-        //        StartDateTime = start,
-        //        EndDateTime = end,
-        //        Splitting = false,
-        //        RemovedEquipmentItems = null,
-        //        AddedEquipmentItems = null
-        //    };
-
-        //    var createdRenovation = await Create(renovation);
-        //    var updatedRenovation = await Update(createdRenovation, room, null, room.Type, start, end, false, removedEquipmentItems, addedEquipmentItems);
-        //    return updatedRenovation;
-        //}
-
-        //public async Task<Renovation> Create(Room room, DateTime start, DateTime end, bool splitting)
-        //{
-        //    var renovation = new Renovation
-        //    {
-        //        IsActive = true,
-        //        Room = null,
-        //        RoomToAdd = null,
-        //        NewRoomType = room.Type,
-        //        StartDateTime = start,
-        //        EndDateTime = end,
-        //        Splitting = splitting,
-        //        RemovedEquipmentItems = null,
-        //        AddedEquipmentItems = null
-        //    };
-
-        //    var createdRenovation = await Create(renovation);
-        //    var updatedRenovation = await Update(createdRenovation, room, null, room.Type, start, end, splitting, null, null);
-        //    return updatedRenovation;
-        //}
-
-        //public async Task<Renovation> Create(Room room, Room roomToAdd, DateTime start, DateTime end)
-        //{
-        //    var renovation = new Renovation
-        //    {
-        //        IsActive = true,
-        //        Room = null,
-        //        RoomToAdd = null,
-        //        NewRoomType = room.Type,
-        //        StartDateTime = start,
-        //        EndDateTime = end,
-        //        Splitting = false,
-        //        RemovedEquipmentItems = null,
-        //        AddedEquipmentItems = null
-        //    };
-
-        //    var createdRenovation = await Create(renovation);
-        //    var updatedRenovation = await Update(createdRenovation, room, roomToAdd, room.Type, start, end, false, null, null);
-        //    return updatedRenovation;
-        //}
-
-        //public async Task<Renovation> Create(Room room, DateTime start, DateTime end)
-        //{
-        //    var renovation = new Renovation
-        //    {
-        //        IsActive = true,
-        //        Room = null,
-        //        RoomToAdd = null,
-        //        NewRoomType = room.Type,
-        //        StartDateTime = start,
-        //        EndDateTime = end,
-        //        Splitting = false,
-        //        RemovedEquipmentItems = null,
-        //        AddedEquipmentItems = null
-        //    };
-
-        //    var createdRenovation = await Create(renovation);
-        //    var updatedRenovation = await Update(createdRenovation, room, null, room.Type, start, end, false, null, null);
-        //    return updatedRenovation;
-        //}
-
-        //public async Task<Renovation> Update(Renovation renovation, Room room, Room roomToAdd, RoomType newRoomType, DateTime start, DateTime end, bool splitting,
-        //    ICollection<EquipmentItem> removedEquipmentItems, ICollection<EquipmentItem> addedEquipmentItems)
-        //{
-        //    await Update(renovation, r => r.AddedEquipmentItems, r => r.RemovedEquipmentItems);
-        //    renovation.Room = await _roomService.Get(room.ID);
-        //    if(roomToAdd != null)
-        //        renovation.RoomToAdd = await _roomService.Get(roomToAdd.ID);
-        //    renovation.NewRoomType = newRoomType;
-        //    renovation.StartDateTime = start;
-        //    renovation.EndDateTime = end;
-        //    renovation.Splitting = splitting;
-        //    renovation.RemovedEquipmentItems = removedEquipmentItems;
-        //    renovation.AddedEquipmentItems = addedEquipmentItems;
-
-        //    await Update(renovation, r => r.AddedEquipmentItems, 
-        //        r => r.RemovedEquipmentItems);
-
-        //    await Update(renovation);
-        //    return renovation;
-        //}
-
-
         public async Task<ICollection<Renovation>> GetAllByTimeFrame(DateTime start, DateTime end)
         {
             await using var context = ContextFactory.CreateDbContext();
@@ -309,5 +95,95 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
                                     (r.StartDateTime >= start && r.EndDateTime <= end))
                 .ToListAsync();
         }
+
+        #region Execute
+        public async Task<bool> Execute(Renovation renovation)
+        {
+            if (renovation.Completed || renovation.EndDateTime > DateTime.Now)
+            {
+                return false;
+            }
+
+            renovation = await Get(renovation.ID);
+
+            var roomToUpdate = await _roomService.Get(renovation.Room.ID);
+
+            roomToUpdate.Type = renovation.NewRoomType;
+
+            if (renovation.AddedEquipmentItems.Count > 0)
+            {
+                var itemsInRoom = roomToUpdate.Equipment.ToList();
+                roomToUpdate.Equipment = new List<EquipmentItem>();
+                await _roomService.Update(roomToUpdate, room => room.Equipment);
+
+                foreach (var equipmentItem in renovation.AddedEquipmentItems.ToList())
+                {
+                    roomToUpdate.Equipment.Add(await _equipmentItemService.Get(equipmentItem.ID));
+                }
+
+                itemsInRoom.ForEach(ei => roomToUpdate.Equipment.Add(ei));
+
+                await _roomService.Update(roomToUpdate, room => room.Equipment);
+
+                foreach (var equipmentItem in renovation.AddedEquipmentItems)
+                {
+                    await _equipmentItemService.Create(equipmentItem.EquipmentType, 1);
+                }
+            }
+
+            if (renovation.RemovedEquipmentItems.Count > 0)
+            {
+                var itemsInRoom = roomToUpdate.Equipment.ToList();
+                roomToUpdate.Equipment = new List<EquipmentItem>();
+                await _roomService.Update(roomToUpdate, room => room.Equipment);
+
+                var idsToRemove = new HashSet<Guid>(renovation.RemovedEquipmentItems.Select(x => x.ID));
+
+                foreach (var equipmentItem in itemsInRoom)
+                {
+                    roomToUpdate.Equipment.Add(await _equipmentItemService.Get(equipmentItem.ID));
+                }
+
+                roomToUpdate.Equipment = roomToUpdate.Equipment
+                    .Where(equipmentItem => !idsToRemove.Contains(equipmentItem.ID))
+                    .ToList();
+                await _roomService.Update(roomToUpdate, room => room.Equipment);
+            }
+
+            if (renovation.Splitting)
+            {
+                var newRoom = new Room
+                {
+                    Floor = renovation.Room.Floor,
+                    Type = renovation.NewRoomType,
+                    IsActive = true,
+                };
+
+                if (!char.IsLetter(renovation.Room.Number.Last()))
+                {
+                    newRoom.Number = renovation.Room.Number + "B";
+                    roomToUpdate.Number += "A";
+                }
+                else
+                {
+                    newRoom.Number = renovation.Room.Number + "2";
+                    roomToUpdate.Number += "1";
+                }
+                await _roomService.Create(newRoom);
+                await _roomService.Update(roomToUpdate);
+            }
+
+            else if (renovation.RoomToAdd != null)
+            {
+                renovation.RoomToAdd.IsActive = false;
+                await _roomService.Update(renovation.RoomToAdd);
+            }
+
+            renovation = await Get(renovation.ID);
+            renovation.Completed = true;
+            await Update(renovation);
+            return true;
+        }
+        #endregion
     }
 }

@@ -75,7 +75,7 @@ namespace ConsoleApp1
             //equipmentTypeService.Create("Blyet", "suka desc", 5).GetAwaiter().GetResult();
 
             //equipmentTypeService.Create( "Syringe", "30ml medical syringe, nothing much to say here.",130).Wait();
-            // userService.Register<Administrator>("David", "Ivkovic", "admin", "pw").GetAwaiter().GetResult();
+            userService.Register(typeof(Administrator), "David", "Ivkovic", "admin", "pw").GetAwaiter().GetResult();
 
         }
     }
