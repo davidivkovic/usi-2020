@@ -14,17 +14,6 @@ namespace HospitalCalendar.EntityFramework.Services
         {
             _userService = userService;
         }
-
-        //public new async Task<Patient> Get(Guid id)
-        //{
-        //    await using var context = ContextFactory.CreateDbContext();
-        //    return await context.Patients
-        //        //.Include(p => p.Anamnesis)
-        //            //.ThenInclude(a => a.Entries)
-        //        //.Include(a => a.Anamnesis)
-        //        .FirstOrDefaultAsync(p => p.ID == id);
-        //}
-
         public async Task<Patient> Register(string firstName, string lastName, string userName, string password, Sex sex, string insuranceNumber)
         {
             return await _userService.Register(typeof(Patient), firstName, lastName, userName, password, sex, insuranceNumber) as Patient;

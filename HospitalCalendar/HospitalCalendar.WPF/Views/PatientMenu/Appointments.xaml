@@ -71,6 +71,7 @@
                                 </Border.ToolTip>
                                 <StackPanel >
                                     <StackPanel Orientation="Vertical">
+
                                         <TextBlock FontWeight="Regular" FontSize="14" >
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0} {1}">
@@ -79,6 +80,7 @@
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
+
                                         <TextBlock VerticalAlignment="Center" FontSize="12">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0:hh':'mm} - {1:hh':'mm}">
@@ -87,6 +89,7 @@
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
+
                                     </StackPanel>
                                     <TextBlock TextWrapping="Wrap" FontSize="12" Opacity="0.8" Text="{Binding Specializations, Converter={StaticResource ListToStringConverter}}"/>
                                 </StackPanel>
@@ -102,19 +105,21 @@
                 Style="{StaticResource MaterialDesignOutlinedDatePicker}"
                 materialDesign:HintAssist.Hint="Date" FirstDayOfWeek="Monday" SelectedDate="{Binding LatestAppointmentDate}"/>
 
-
                 <TextBlock Text="Preferred Time Slots (Range)" Width="240" Margin="0 40 0 8" />
+
                 <Grid Margin="65 0 65 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+
                     <StackPanel Orientation="Horizontal"  Grid.Column="0">
                         <TextBlock Text="From" Padding="0 0 0 1" Grid.Column="0"  FontSize="16" VerticalAlignment="Center"/>
                         <Grid HorizontalAlignment="Right">
                             <materialDesign:TimePicker Is24Hours="True" Margin="5 0 5 0" SelectedTime="{Binding AppointmentStartTime}"/>
                         </Grid>
                     </StackPanel>
+
                     <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
                         <TextBlock Text="To" Grid.Column="0" Padding="0 0 0 1" FontSize="16" VerticalAlignment="Center"/>
                         <Grid HorizontalAlignment="Right" Margin="10 0 5 0">

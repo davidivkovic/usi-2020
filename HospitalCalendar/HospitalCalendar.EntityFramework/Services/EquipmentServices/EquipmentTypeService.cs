@@ -18,8 +18,6 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
             _equipmentItemService = equipmentItemService;
         }
 
-
-
         public async Task<EquipmentType> GetByName(string name)
         {
             await using HospitalCalendarDbContext context = ContextFactory.CreateDbContext();
@@ -67,8 +65,6 @@ namespace HospitalCalendar.EntityFramework.Services.EquipmentServices
                 await _equipmentItemService.Create(equipmentType, amountDelta);
             }
             return await Update(equipmentType);
-
-            //return await Update(equipmentType, et => equipmentType.Description, et => equipmentType.Name);
         }
 
         public async Task<bool> PhysicalDelete(Guid id)

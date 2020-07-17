@@ -13,12 +13,10 @@ namespace HospitalCalendar.EntityFramework.Services
     public class GenericDataService<T> : IDataService<T> where T : DomainObject
     {
         protected readonly HospitalCalendarDbContextFactory ContextFactory;
-       // protected readonly HospitalCalendarDbContext Context;
 
         public GenericDataService(HospitalCalendarDbContextFactory contextFactory)
         {
             ContextFactory = contextFactory;
-           // Context = ContextFactory.CreateDbContext();
         }
 
         public async Task<T> Create(T entity)

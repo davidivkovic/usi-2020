@@ -26,12 +26,14 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
             return await _appointmentService.Create(start, end, doctor, patient, room);
         }
 
-        public async Task<AppointmentRequest> CreateAppointmentRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, DateTime timestamp, Room room)
+        public async Task<AppointmentRequest> CreateAppointmentRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor,
+            DateTime timestamp, Room room)
         {
             return await _appointmentService.CreateAppointmentRequest(start, end, patient, requester, proposedDoctor, timestamp, room);
         }
 
-        public async Task<SurgeryRequest> CreateSurgeryRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor, bool isUrgent, DateTime timestamp, Room room)
+        public async Task<SurgeryRequest> CreateSurgeryRequest(DateTime start, DateTime end, Patient patient, Doctor requester, Doctor proposedDoctor,
+            bool isUrgent, DateTime timestamp, Room room)
         {
             return await _surgeryService.CreateSurgeryRequest(start, end, patient, requester, proposedDoctor, isUrgent, timestamp, room);
         }
@@ -72,11 +74,10 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
 
         public async Task<ICollection<CalendarEntry>> GetAllByRoomAndTimeFrame(Room room, DateTime start, DateTime end)
         {
-            // ToList
             var entries = await GetAllByTimeFrame(start, end);
-            if(entries.Any())
-                return entries.Where(calendarEntry => calendarEntry.Room.Floor == room.Floor && calendarEntry.Room.Number == room.Number).ToList();
-            return new List<CalendarEntry>();
+            return entries.Any() ?
+                entries.Where(calendarEntry => calendarEntry.Room.Floor == room.Floor && calendarEntry.Room.Number == room.Number).ToList()
+                : new List<CalendarEntry>();
         }
 
         public async Task<ICollection<Appointment>> GetAllByDoctor(Doctor doctor)
@@ -98,7 +99,6 @@ namespace HospitalCalendar.EntityFramework.Services.CalendarEntryServices
                 .ToList();
         }
 
-        // Was this task successful?
         public async Task<bool> CancelCalendarEntry(CalendarEntry calendarEntry)
         {
             if (calendarEntry.Status == AppointmentStatus.Finished || calendarEntry.Status == AppointmentStatus.InProgress)

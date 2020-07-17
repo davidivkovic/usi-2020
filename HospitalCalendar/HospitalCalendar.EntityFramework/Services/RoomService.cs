@@ -50,8 +50,6 @@ namespace HospitalCalendar.EntityFramework.Services
         public async Task<ICollection<Room>> GetAllByEquipmentType(EquipmentType equipmentType)
         {
             await using var context = ContextFactory.CreateDbContext();
-            // TODO: Re-check - doesn't work
-
             return await context.Rooms
                 .Where(r => r.IsActive)
                 .Include(r => r.Equipment
@@ -114,13 +112,6 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<(Room room, DateTime? timeSlotStart)> GetFirstFreeByTimeSlotAndDoctor(TimeSpan start, TimeSpan end, DateTime latestDate, Doctor doctor)
         {
-            //var doctorIsFree = await _doctorService.IsDoctorFreeInTimeSpan(start, end, doctor);
-
-            // No room found or the doctor is not free in the given time frame
-            //if (!doctorIsFree || (await GetAllFree(start, end)).FirstOrDefault() == null)
-            //{
-            //    return (null, null);
-            //}
             var startDate = DateTime.Today + start;
             var endDate = DateTime.Today + end;
 
@@ -152,15 +143,6 @@ namespace HospitalCalendar.EntityFramework.Services
                 endDate = endDate.Date + TimeSpan.FromDays(1) + end;
             }
 
-
-            //var doctorIsFree = await _doctorService.IsDoctorFreeInTimeSpan(startDate, startDate.AddMinutes(30), doctor);
-            //var freeRoom = (await GetAllFree(startDate, startDate.AddMinutes(30))).FirstOrDefault();
-
-            // And check if both the doctor and room are free in the given time frame
-            //if (doctorIsFree && freeRoom != null)
-            //{
-            //    return (freeRoom, startDate);
-            //}
             return (null, null);
         }
 
@@ -188,11 +170,10 @@ namespace HospitalCalendar.EntityFramework.Services
         public new async Task<bool> Delete(Guid id)
         {
             var room = await Get(id);
-            // TODO: Test removal of items from room
             room.Equipment?.Clear();
             room.IsActive = false;
 
-            _ = await Update(room);
+            await Update(room);
 
             return true;
         }
@@ -208,7 +189,6 @@ namespace HospitalCalendar.EntityFramework.Services
 
         public async Task<Room> AddItems(Room room, ICollection<EquipmentItem> equipment)
         {
-            //TODO: Check
             room.Equipment = equipment;
             await Update(room);
             return room;
