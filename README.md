@@ -18,7 +18,7 @@ A GUI based Hospital calendar and general planning System, developed during the 
 ## How to run 🚀
 
 - Open `HospitalCalendar.sln` in Visual Studio
-- `Restore NuGet Packages` for the solution *(Right click the solution -> Restore NuGet packages)*- 
+- `Restore NuGet Packages` for the solution *(Right click the solution -> Restore NuGet packages)*
 
 ##### Editing the connection string
 - Set `HospitalCalendar.EntityFramework` as the startup project *(Right Click -> Set As Startup Project)*
