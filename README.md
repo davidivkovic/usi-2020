@@ -15,6 +15,12 @@ A GUI based Hospital calendar and general planning System, developed during the 
 - [Visual studio 2019](https://visualstudio.microsoft.com/vs/)
 - The [.NET Desktop Development Workload for Visual studio](https://visualstudio.microsoft.com/vs/features/net-development/)
 
+# Showcase 📸
+![login](/images/login.png)
+![admin](/images/admin.png)
+![doctor](/images/doctor.png)
+![manager](/images/manager.png)
+
 ## How to run 🚀
 
 - Open `HospitalCalendar.sln` in Visual Studio
